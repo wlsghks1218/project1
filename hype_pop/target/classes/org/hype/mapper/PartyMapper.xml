@@ -40,6 +40,6 @@
 		select * from sign_in_info_tbl where userNo = #{userNo}
 	</select>
 	<select id="getAllChatContent" resultType="org.hype.domain.ChatContentVO">
-		select * from chat_content_tbl where bno = #{bno}
+		select * from chat_content_tbl where bno = #{bno} order by chatdate
 	</select>
 </mapper>
