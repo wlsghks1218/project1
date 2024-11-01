@@ -89,4 +89,9 @@ public class PartyServiceImpl implements PartyService {
 		return mapper.getAllChatContent(bno);
 	}
 	
+	@Override
+	public List<ChatRoomVO> getPartyInfo(int bno) {
+		return mapper.getPartyUser(bno);
+	}
+	
 }

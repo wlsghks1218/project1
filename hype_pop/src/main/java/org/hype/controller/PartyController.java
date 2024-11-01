@@ -3,6 +3,7 @@ package org.hype.controller;
 import java.util.List;
 
 import org.hype.domain.ChatContentVO;
+import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.signInVO;
@@ -104,5 +105,16 @@ public class PartyController {
 	public List<ChatContentVO> getAllChatContent(@PathVariable int bno) {
 	    List<ChatContentVO> chatContents = service.getAllChatContent(bno);
 	    return chatContents;
+	}
+	
+	@GetMapping(value = "/getPartyInfo/{bno}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<ChatRoomVO> getPartyInfo(@PathVariable int bno){
+		List<ChatRoomVO> voList = service.getPartyInfo(bno);
+		for(ChatRoomVO vo : voList) {
+			log.info(vo.getJoinTime());
+			log.info(vo.getLastJoinTime());
+		}
+		return voList;
 	}
 }

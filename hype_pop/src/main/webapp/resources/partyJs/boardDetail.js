@@ -1,9 +1,9 @@
 let name;
 let ws;
 const bno = new URLSearchParams(location.search).get('bno');
-const url = `ws://192.168.0.121:9090/chatserver.do?bno=${bno}`;
+const url = `ws://localhost:9090/chatserver.do?bno=${bno}`;
 const userNo = 1;
-const userId = "user1";
+const userId = "user1"; 
 const userMap = {}; // userNo와 userId를 매핑하여 저장할 객체
 
 // 채팅방에 유저가 참여하고 있는지 확인하는 fetch
@@ -18,6 +18,13 @@ fetch(`/party/chkJoined/${bno}/${userNo}`)
     }
 })
 .catch(error => console.error("Error fetching data:", error));
+
+fetch(`/party/getPartyInfo/${bno}`)
+.then(response => response.json())
+.then(data = {
+	
+})
+
 
 // 참여 유저 목록 가져오기
 fetch(`/party/getPartyUser/${bno}`)
@@ -39,17 +46,38 @@ fetch(`/party/getPartyUser/${bno}`)
 .catch(error => console.error("Error fetching party users:", error));
 
 function fetchChatContents() {
-    fetch(`/party/getAllChatContent/${bno}`)
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(message => {
-                const senderId = userMap[message.userNo];
-                print(senderId, message.content,
-                    message.userNo === userNo ? 'me' : 'other',
-                    'msg', message.chatDate);
-            });
-        })
-        .catch(error => console.error("Error fetching chat contents:", error));
+	fetch(`/party/getPartyInfo/${bno}`)
+    .then(response => response.json())
+    .then(data => {
+        // userNo에 해당하는 joinTime과 lastJoinTime 추출
+        const userPartyInfo = data.find(info => info.userNo === userNo);
+        if (userPartyInfo) {
+            const { joinTime, lastJoinTime } = userPartyInfo;
+            console.log("Join Time:", joinTime, "Last Join Time:", lastJoinTime);
+
+            fetch(`/party/getAllChatContent/${bno}`)
+                .then(response => response.json())
+                .then(chatData => {
+                    chatData.forEach((message, index) => {
+                        const messageTime = new Date(message.chatDate);
+
+                        // joinTime 이후 메시지 필터링 및 lastJoinTime 이후 첫 메시지 구분
+                        if (messageTime >= new Date(joinTime)) {
+                            if (lastJoinTime && messageTime > new Date(lastJoinTime) && index === 0) {
+                                print('', '여기까지 봤습니다', 'me', 'state', message.chatDate);
+                            }
+
+                            const senderId = userMap[message.userNo];
+                            print(senderId, message.content,
+                                message.userNo === userNo ? 'me' : 'other',
+                                'msg', message.chatDate);
+                        }
+                    });
+                })
+                .catch(error => console.error("Error fetching chat contents:", error));
+        }
+    })
+    .catch(error => console.error("Error fetching party info:", error));
 }
 
 // WebSocket 연결 함수
@@ -62,9 +90,8 @@ function connect() {
     ws = new WebSocket(url);
 
     ws.onopen = function(evt) {
-        console.log("WebSocket connection opened");
         let message = {
-            code: '1',
+            code: '1',  // 진입 코드
             bno: bno,
             userNo: userNo,
             userId: userId,
@@ -81,12 +108,15 @@ function connect() {
         let message = JSON.parse(evt.data);
         const senderId = userMap[message.userNo] || "알 수 없는 사용자";
 
-        if (message.code === '1') {
-            print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', message.chatDate);
-        } else if (message.code === '2') {
-            print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', message.chatDate);
-        } else if (message.code === '3' && message.userNo !== userNo) {  // 중복 방지
-            print(senderId, message.content, 'other', 'msg', message.chatDate);
+        // 본인이 아닌 다른 사용자의 메시지만 출력
+        if (message.userNo !== userNo) {
+            if (message.code === '1') { 
+                print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', message.chatDate);
+            } else if (message.code === '2') {
+                print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', message.chatDate);
+            } else if (message.code === '3') {
+                print(senderId, message.content, 'other', 'msg', message.chatDate);
+            }
         }
     };
 
@@ -94,7 +124,6 @@ function connect() {
         console.log("WebSocket connection closed");
     };
 }
-
 // 메시지 출력 함수
 function print(sender, msg, side, state, time) {
     const isMyMessage = sender === userId;
@@ -119,14 +148,9 @@ function sendMessage() {
         chatDate: getFormattedTime()
     };
     
-    // WebSocket이 OPEN 상태일 때만 메시지를 전송
-    if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(message));
-        $('#msg').val('').focus();
-        print(userId, messageContent, 'me', 'msg', message.chatDate);
-    } else {
-        console.error("WebSocket is not open. Cannot send message.");
-    }
+    ws.send(JSON.stringify(message));
+    $('#msg').val('').focus();
+    print(userId, messageContent, 'me', 'msg', message.chatDate);
 }
 
 // 엔터 키로 메시지 전송
