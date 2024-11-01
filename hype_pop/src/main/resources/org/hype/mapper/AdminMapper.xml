@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.AdminMapper"> <!-- 정확한 Mapper 인터페이스 경로 -->
+<!-- 	<select id="getList" resultType="org.hype.domain.popStoreVO">
+		SELECT psNo, psName, psStartDate, psEndDate FROM pop_main_tbl
+	</select>  -->
+	
+	<!-- 검색어와 함께 페이징 처리 -->
+	<!-- 검색어가 있을 때 where psName LIKE '%' || #{searchPs} || '% -->
+	<!-- 검색어가 없을 때 where 1=1 (무조건 참이므로 모든 리스트 반환)-->
+	<select id="getPList" resultType="org.hype.domain.popStoreVO">
+	<![CDATA[
+		SELECT psNo, psName, psStartDate, psEndDate
+	        FROM (
+	            SELECT ROWNUM rn, psNo, psName, psStartDate, psEndDate
+	            FROM (
+	                SELECT * FROM pop_main_tbl 
+	                ]]>
+	                WHERE  
+	                <if test="searchPs != null and searchPs != ''">
+		            	psName LIKE '%' || #{searchPs} || '%'
+		            </if>
+		            <if test="searchPs == null or searchPs == ''">
+		            	1=1
+		            </if> 
+		        <![CDATA[
+				ORDER BY psNo asc
+	            ) a
+	            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}	
+	        )
+	        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	   ]]>
+	</select>
+	
+	<select id="getPTotal" resultType="int">
+	    SELECT COUNT(*) FROM pop_main_tbl 
+	</select>
+	
+	<select id="getGList" resultType="org.hype.domain.goodsVO">
+	<![CDATA[
+		SELECT gNo, gName, gPrice, sellDate
+	        FROM (
+	            SELECT ROWNUM rn, gNo, gName, gPrice, sellDate
+	            FROM (
+	                SELECT * FROM goods_info_tbl 
+	                ]]>
+	                WHERE  
+	                <if test="searchGs != null and searchGs != ''">
+		            	gName LIKE '%' || #{searchGs} || '%'
+		            </if>
+		            <if test="searchGs == null or searchGs == ''">
+		            	1=1
+		            </if> 
+		        <![CDATA[
+				ORDER BY gNo asc
+	            ) a
+	            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}	
+	        )
+	        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	   ]]>
+    </select>
+    
+    <select id="getGTotal" resultType="int">
+	    SELECT COUNT(*) FROM goods_info_tbl 
+	</select>
+	
+	<select id="getMList" resultType="org.hype.domain.signInVO">
+	<![CDATA[
+		SELECT userNo, userId, userEmail, lastLoginDate, enabled, auth
+	        FROM (
+	            SELECT ROWNUM rn, userNo, userId, userEmail, lastLoginDate, enabled, auth
+	            FROM (
+	                SELECT * FROM sign_in_info_tbl 
+	                ]]>
+	                WHERE  
+	                <if test="searchMs != null and searchMs != ''">
+		            	userId LIKE '%' || #{searchMs} || '%'
+		            </if>
+		            <if test="searchMs == null or searchMs == ''">
+		            	1=1
+		            </if> 
+		        <![CDATA[
+				ORDER BY userNo asc
+	            ) a
+	            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}	
+	        )
+	        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	   ]]>
+    </select>
+    
+    <select id="getMTotal" resultType="int">
+	    SELECT COUNT(*) FROM sign_in_info_tbl 
+	</select>
+    
+	<select id="getQList" resultType="org.hype.domain.qnaVO">
+	    SELECT *
+		FROM qna_tbl
+		ORDER BY qnaNo ASC
+	</select>   
+   
+	<select id="getPopStoreById" parameterType="int" resultType="org.hype.domain.popStoreVO">
+   		SELECT psNo, psName, psStartDate, psEndDate FROM pop_main_tbl WHERE psNo = #{psNo}
+	</select>
+	
+	<select id="getGoodsById" parameterType="int" resultType="org.hype.domain.goodsVO">
+   		SELECT gNo, gName, gPrice, sellDate FROM goods_info_tbl WHERE gNo = #{gNo}
+	</select>
+	
+	<select id="getMembersById" parameterType="String" resultType="org.hype.domain.signInVO">
+   		SELECT userNo, userId, userEmail, lastLoginDate, enabled, auth FROM sign_in_info_tbl WHERE userNo = #{userNo}
+	</select>
+	<update id="updateMem" parameterType="org.hype.domain.signInVO">
+      UPDATE sign_in_info_tbl
+      SET 
+         userId = #{userId},
+         userName = #{userName},
+         userEmail = #{userEmail},
+         userNumber = #{userNumber},         
+         enabled = #{enabled},         
+         auth = #{auth}   
+      WHERE 
+         userNo = #{userNo}
+   </update>
+	
+	
+</mapper>

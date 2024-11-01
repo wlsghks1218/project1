@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.PopUpMapper">
+
+	<!-- 특정 유저의 관심사를 가져오는 쿼리 -->
+	<select id="getUserInterests" parameterType="java.lang.Integer"
+		resultType="java.lang.String">
+    <![CDATA[
+        SELECT interest
+        FROM (
+            SELECT 'HEALTHBEAUTY' AS interest FROM member_cat_tbl WHERE USERNO = #{userno} AND HEALTHBEAUTY = 1 UNION ALL
+            SELECT 'GAME' FROM member_cat_tbl WHERE USERNO = #{userno} AND GAME = 1 UNION ALL
+            SELECT 'CULTURE' FROM member_cat_tbl WHERE USERNO = #{userno} AND CULTURE = 1 UNION ALL
+            SELECT 'SHOPPING' FROM member_cat_tbl WHERE USERNO = #{userno} AND SHOPPING = 1 UNION ALL
+            SELECT 'SUPPLY' FROM member_cat_tbl WHERE USERNO = #{userno} AND SUPPLY = 1 UNION ALL
+            SELECT 'KIDS' FROM member_cat_tbl WHERE USERNO = #{userno} AND KIDS = 1 UNION ALL
+            SELECT 'DESIGN' FROM member_cat_tbl WHERE USERNO = #{userno} AND DESIGN = 1 UNION ALL
+            SELECT 'FOODS' FROM member_cat_tbl WHERE USERNO = #{userno} AND FOODS = 1 UNION ALL
+            SELECT 'INTERIOR' FROM member_cat_tbl WHERE USERNO = #{userno} AND INTERIOR = 1 UNION ALL
+            SELECT 'POLICY' FROM member_cat_tbl WHERE USERNO = #{userno} AND POLICY = 1 UNION ALL
+            SELECT 'CHARACTER' FROM member_cat_tbl WHERE USERNO = #{userno} AND CHARACTER = 1 UNION ALL
+            SELECT 'EXPERIENCE' FROM member_cat_tbl WHERE USERNO = #{userno} AND EXPERIENCE = 1 UNION ALL
+            SELECT 'COLLABORATION' FROM member_cat_tbl WHERE USERNO = #{userno} AND COLLABORATION = 1 UNION ALL
+            SELECT 'ENTERTAINMENT' FROM member_cat_tbl WHERE USERNO = #{userno} AND ENTERTAINMENT = 1
+        )
+    ]]>
+	</select>
+
+	<select id="getTopStoresByInterest"
+		parameterType="java.lang.String"
+		resultType="org.hype.domain.popStoreVO">
+		SELECT PSNAME, LIKECOUNT
+		FROM (
+		SELECT pop_main_tbl.PSNAME,
+		pop_main_tbl.LIKECOUNT,
+		ROW_NUMBER() OVER (ORDER BY
+		pop_main_tbl.LIKECOUNT DESC) AS rn
+		FROM pop_main_tbl
+		JOIN pop_cat_tbl ON
+		pop_main_tbl.PSNO = pop_cat_tbl.PSNO
+		WHERE pop_cat_tbl.${value} = 1
+		)
+		WHERE rn BETWEEN 1 AND 8
+	</select>
+
+
+
+
+	<!-- 인기 팝업 스토어를 가져오는 쿼리 -->
+	<select id="getPopularPopUps"
+		resultType="org.hype.domain.popStoreVO">
+    <![CDATA[
+        SELECT * 
+        FROM pop_main_tbl 
+        WHERE PSNO IN (
+            SELECT PSNO 
+            FROM (
+                SELECT PSNO 
+                FROM pop_main_tbl 
+                WHERE PSSTARTDATE <= SYSDATE 
+                  AND PSENDDATE >= SYSDATE 
+                ORDER BY LIKECOUNT DESC
+            ) 
+            WHERE ROWNUM <= 8
+        )
+        ORDER BY LIKECOUNT DESC
+    ]]>
+	</select>
+
+
+
+	<select id="getStoreInfoByName" parameterType="String"
+		resultType="org.hype.domain.popStoreVO">
+		SELECT p.*,
+		(SELECT CASE WHEN HEALTHBEAUTY = 1 THEN
+		'HEALTHBEAUTY'
+		WHEN GAME = 1 THEN 'Game'
+		WHEN CULTURE = 1 THEN 'Culture'
+		WHEN SHOPPING = 1 THEN 'Shopping'
+		WHEN SUPPLY = 1 THEN 'Supply'
+		WHEN
+		KIDS = 1 THEN 'Kids'
+		WHEN DESIGN = 1 THEN 'Design'
+		WHEN FOODS = 1 THEN
+		'Foods'
+		WHEN INTERIOR = 1 THEN 'Interior'
+		WHEN POLICY = 1 THEN 'Policy'
+		WHEN CHARACTER = 1 THEN 'Character'
+		WHEN EXPERIENCE = 1 THEN
+		'Experience'
+		WHEN COLLABORATION = 1 THEN 'Collaboration'
+		WHEN
+		ENTERTAINMENT = 1 THEN 'Entertainment'
+		ELSE NULL END
+		FROM pop_cat_tbl
+		WHERE PSNO = p.PSNO AND ROWNUM = 1) AS interest
+		FROM pop_main_tbl p
+		WHERE p.PSNAME = #{storeName}
+	</select>
+
+
+
+	<select id="checkLikeStatus" parameterType="map"
+		resultType="int">
+		SELECT count(*) FROM like_list_tbl
+		WHERE psNo = #{psNo} AND
+		userNo = #{userNo}
+	</select>
+
+	<insert id="insertLike" parameterType="org.hype.domain.likeVO">
+		INSERT INTO like_list_tbl
+		(psNo, userNo, likeDate)
+		VALUES (#{psNo}, #{userNo}, sysdate)
+	</insert>
+
+	<update id="incrementLikeCount" parameterType="int">
+		UPDATE
+		pop_main_tbl
+		SET likeCount = likeCount + 1
+		WHERE psNo = #{psNo}
+	</update>
+
+	<update id="decrementLikeCount" parameterType="int">
+		UPDATE
+		pop_main_tbl
+		SET likeCount = likeCount - 1
+		WHERE psNo = #{psNo}
+	</update>
+
+	<delete id="deleteLike" parameterType="org.hype.domain.likeVO">
+		DELETE FROM like_list_tbl
+		WHERE psNo = #{psNo} AND userNo = #{userNo}
+	</delete>
+
+	<select id="getLikeCount" parameterType="int"
+		resultType="Integer">
+		SELECT likeCount FROM pop_main_tbl
+		WHERE psNo = #{psNo}
+	</select>
+
+
+	<select id="getPsNo" parameterType="String" resultType="int">
+		SELECT
+		psNo FROM pop_main_tbl
+		WHERE psName = #{storeName}
+	</select>
+
+	<select id="getGoodsInfoByName" parameterType="int"
+		resultType="org.hype.domain.goodsVO">
+    <![CDATA[
+    SELECT * 
+    FROM (
+        SELECT *
+        FROM goods_info_tbl
+        WHERE PSNO = #{psNo}
+        ORDER BY LIKECOUNT DESC
+    )
+    WHERE ROWNUM <= 3
+    ]]>
+	</select>
+
+	<select id="popUpSearchByData" parameterType="String"
+		resultType="org.hype.domain.popStoreVO">
+		SELECT *
+		FROM pop_main_tbl
+		WHERE psName LIKE '%' ||
+		#{searchData} || '%'
+	</select>
+
+	<select id="getInterestsByPsNo" parameterType="int" resultType="map">
+    <![CDATA[
+    SELECT PSNO, LISTAGG(INTEREST, ', ') WITHIN GROUP (ORDER BY INTEREST) AS INTERESTS
+    FROM (
+        SELECT PSNO, '헬스&뷰티' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND HEALTHBEAUTY = 1
+        UNION ALL
+        SELECT PSNO, '게임' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND GAME = 1
+        UNION ALL
+        SELECT PSNO, '문화' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND CULTURE = 1
+        UNION ALL
+        SELECT PSNO, '쇼핑' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND SHOPPING = 1
+        UNION ALL
+        SELECT PSNO, '제공' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND SUPPLY = 1
+        UNION ALL
+        SELECT PSNO, '키즈' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND KIDS = 1
+        UNION ALL
+        SELECT PSNO, '디자인' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND DESIGN = 1
+        UNION ALL
+        SELECT PSNO, '식품' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND FOODS = 1
+        UNION ALL
+        SELECT PSNO, '인테리어' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND INTERIOR = 1
+        UNION ALL
+        SELECT PSNO, '정책' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND POLICY = 1
+        UNION ALL
+        SELECT PSNO, '캐릭터' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND CHARACTER = 1
+        UNION ALL
+        SELECT PSNO, '체험' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND EXPERIENCE = 1
+        UNION ALL
+        SELECT PSNO, '콜라보' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND COLLABORATION = 1
+        UNION ALL
+        SELECT PSNO, '방송' AS INTEREST FROM pop_cat_tbl WHERE PSNO = #{psNo} AND ENTERTAINMENT = 1
+    ) INTERESTS_TABLE
+    GROUP BY PSNO
+    ]]>
+</select>
+
+	<!-- 특정 팝업 스토어의 평균 별점을 계산하는 쿼리 -->
+	<select id="findRatingsByPsNo" parameterType="int"
+		resultType="double">
+		SELECT NVL(AVG(psScore), 0)
+		FROM pop_reply_tbl
+		WHERE psNo =
+		#{psNo}
+	</select>
+
+
+	<!-- 근처 스토어 찾기 -->
+	<select id="findNearbyStores" parameterType="map"
+		resultType="org.hype.domain.popStoreVO">
+    <![CDATA[
+        SELECT *
+        FROM pop_main_tbl
+        WHERE (
+            6371000 * acos(
+                cos(#{lat} * 3.14159 / 180) * 
+                cos(latitude * 3.14159 / 180) * 
+                cos(longitude * 3.14159 / 180 - #{lng} * 3.14159 / 180) + 
+                sin(#{lat} * 3.14159 / 180) * 
+                sin(latitude * 3.14159 / 180)
+            )
+        ) <= #{radius}
+    ]]>
+	</select>
+
+
+
+	<!--요셉이 캘린더 부분 -->
+	<select id="showCalendar"
+		resultType="org.hype.domain.popStoreVO">
+		select * from pop_main_tbl order by psno
+	</select>
+
+	<select id="getCategoryData" resultType="org.hype.domain.pCatVO">
+		select * from
+		pop_cat_tbl order by psno
+	</select>
+	
+	<!-- 관심사 가져오기 -->
+	<select id="getUserInterest" resultType="org.hype.domain.mCatVO">
+		select * from member_cat_tbl where userNo = #{userNo}
+	</select>
+
+	<!-- 좋아요 한 팝업스토어 가져오기 -->
+	<select id="getUserLike" resultType="org.hype.domain.likeVO">
+		select * from like_list_tbl where userNo = #{userNo}
+	</select>
+
+	
+
+</mapper>

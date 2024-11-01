@@ -1,0 +1,75 @@
+admincss.txt
+/* 기본 스타일 초기화 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* 원래 색으로 설정 */
+    color: #333; /* 기본 텍스트 색상 */
+}
+
+.adminHeader {
+    background-color: #ff0000; /* 헤더 배경색을 빨강으로 설정 */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.adminHeader span {
+    cursor: pointer;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.adminHeader input[type="text"] {
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    width: 200px;
+}
+
+#searchBTN {
+    background-color: #ff0000; /* 검색 버튼을 빨강으로 설정 */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#searchBTN:hover {
+    background-color: #cc0000; /* 버튼 호버 시 어두운 빨강으로 변경 */
+}
+
+.adminMain {
+    padding: 20px;
+}
+
+#AllList {
+    background-color: #fff; /* 리스트 배경색을 흰색으로 설정 */
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(255, 0, 0, 0.5); /* 빨간색 그림자 효과 */
+    margin-bottom: 20px;
+}
+
+#pagination {
+    text-align: center;
+}
+
+.adminFooter {
+    background-color: #ff0000; /* 푸터 배경색을 빨강으로 설정 */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.adminFooter span {
+    cursor: pointer;
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.PartyMapper">
+	<select id="getPopupName" resultType="org.hype.domain.popStoreVO">
+		SELECT * FROM pop_main_tbl WHERE psName LIKE '%' ||
+		#{searchText} || '%'
+	</select>
+	<!-- <select id="getAllExhibition"> select * from exh_main_tbl </select> -->
+	<insert id="insertParty" parameterType="org.hype.domain.PartyBoardVO">
+		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
+			SELECT party_info_seq.nextVal FROM dual
+		</selectKey>
+		insert into party_info_tbl values(#{bno}, #{userNo}, #{boardTitle}, SYSDATE, #{category}, #{targetName})
+	</insert>
+	<select id="getAllParty" resultType="org.hype.domain.PartyBoardVO">
+		select * from party_info_tbl
+	</select>
+	<select id="getOneParty" resultType="org.hype.domain.PartyBoardVO">
+		select * from party_info_tbl where bno = #{bno}
+	</select>
+	<insert id="insertChatContent" parameterType="org.hype.domain.ChatContentVO">
+		insert into chat_content_tbl values(#{bno}, #{userNo},
+		#{content}, #{chatDate})
+	</insert>
+	<insert id="insertChatRoom">
+		insert into chat_tbl values(#{bno}, #{userNo}, SYSDATE, SYSDATE)
+	</insert>
+	<select id="chkJoined" resultType="int">
+		select count(*) from chat_tbl where bno = #{bno} and userNo = #{userNo} 
+	</select>
+	<update id="updateJoinTime">
+		update chat_tbl set lastJoinTime = sysdate where bno = #{bno} and userNo = #{userNo}
+	</update>
+	<select id="getPartyUser" resultType="org.hype.domain.ChatRoomVO">
+		select * from chat_tbl where bno = #{bno}
+	</select>
+	<select id="getUserInfo" resultType="org.hype.domain.signInVO">
+		select * from sign_in_info_tbl where userNo = #{userNo}
+	</select>
+	<select id="getAllChatContent" resultType="org.hype.domain.ChatContentVO">
+		select * from chat_content_tbl where bno = #{bno}
+	</select>
+</mapper>

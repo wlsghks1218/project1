@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.GoodsMapper">
+	<select id="getGList" resultType="org.hype.domain.goodsVO">
+	    SELECT 
+            gNo, 
+            gName, 
+            gPrice,
+            sellDate
+        FROM goods_info_tbl
+    </select>
+    
+   	<select id="getListBySearchGs" parameterType="String" resultType="org.hype.domain.goodsVO">
+    	SELECT * FROM goods_info_tbl WHERE gName LIKE '%' || #{searchGs} || '%'
+	</select>
+	
+	<select id="getGoodsById" parameterType="int" resultType="org.hype.domain.goodsVO">
+   		SELECT gNo, gName, gPrice, sellDate FROM goods_info_tbl WHERE gNo = #{gNo}
+	</select>
+	
+	<!-- 진환이 형님 취합 부분 -->
+	<select id="getListByLikeCount" resultType="org.hype.domain.goodsVO">
+	
+	<![CDATA[
+		select * from (select * from goods_info_tbl order by likeCount DESC) where ROWNUM <=8
+	]]>
+	</select>
+	<select id="getCategoryRankNotLogin" resultType="org.hype.domain.rankVO">
+	<![CDATA[
+		SELECT * FROM(
+	    	SELECT category, total FROM (
+	        SELECT 'healthBeauty' AS category, SUM(healthBeauty) AS total FROM goods_cat_tbl UNION ALL
+	        SELECT 'game', SUM(game) FROM goods_cat_tbl UNION ALL
+	        SELECT 'culture', SUM(culture) FROM goods_cat_tbl UNION ALL
+	        SELECT 'shopping', SUM(shopping) FROM goods_cat_tbl UNION ALL
+	        SELECT 'kids', SUM(kids) FROM goods_cat_tbl UNION ALL
+	        SELECT 'design', SUM(design) FROM goods_cat_tbl UNION ALL
+	        SELECT 'foods', SUM(foods) FROM goods_cat_tbl UNION ALL
+	        SELECT 'interior', SUM(interior) FROM goods_cat_tbl UNION ALL
+	        SELECT 'policy', SUM(policy) FROM goods_cat_tbl UNION ALL
+	        SELECT 'character', SUM(character) FROM goods_cat_tbl UNION ALL
+	        SELECT 'experience', SUM(experience) FROM goods_cat_tbl UNION ALL
+	        SELECT 'collaboration', SUM(collaboration) FROM goods_cat_tbl UNION ALL
+	        SELECT 'entertainment', SUM(entertainment) FROM goods_cat_tbl
+  		  	)
+    		order by total DESC)
+		where ROWNUM <= 3
+	]]>
+	</select>
+	<select id="getListByInterest" parameterType="map" resultType="org.hype.domain.goodsVO">
+			select * from (
+				select * from goods_info_tbl
+				where gno in ( 
+					select gno from goods_cat_tbl where
+			<choose>
+                <when test="key == 'healthbeauty'"> HEALTHBEAUTY = 1</when>
+                <when test="key == 'game'"> GAME = 1</when>
+                <when test="key == 'culture'"> CULTURE = 1</when>
+                <when test="key == 'shopping'"> SHOPPING = 1</when>
+                <when test="key == 'supply'"> SUPPLY = 1</when>
+                <when test="key == 'kids'"> KIDS = 1</when>
+                <when test="key == 'design'"> DESIGN = 1</when>
+                <when test="key == 'foods'"> FOODS = 1</when>
+                <when test="key == 'interior'">INTERIOR = 1</when>
+                <when test="key == 'policy'"> POLICY = 1</when>
+                <when test="key == 'character'"> CHARACTER = 1</when>
+                <when test="key == 'experience'"> EXPERIENCE = 1</when>
+                <when test="key == 'collaboration'"> COLLABORATION = 1</when>
+                <when test="key == 'entertainment'"> ENTERTAINMENT = 1</when>
+			</choose>
+					)
+			 	order by likeCount DESC
+			 	)
+			where ROWNUM between 1 and 8
+	</select>
+	<select id="getOneByGno" resultType="org.hype.domain.goodsVO">
+		select * from goods_info_tbl where gNo = #{gNo}
+	</select>
+	<select id="getCategory" resultType="org.hype.domain.gCatVO">
+		select * from goods_cat_tbl where gno = #{gno}
+	</select>
+	<update id="getUpdatehit" parameterType="org.hype.domain.goodsVO">
+		update goods_info_tbl set ghit = #{ghit} where gno = #{gno}
+	</update>
+	<select id="getLike" parameterType="int" resultType="int">
+		select count(*) from goods_like_list_table where userNo = #{userNo} and gno = #{gno}
+	</select>
+	<insert id="insertLike">
+		insert into goods_like_list_table values(#{userNo}, #{gno}, sysdate)
+	</insert>
+	<delete id="deleteLike">
+		delete from goods_like_list_table where userNo = #{userNo} and gno = #{gno}
+	</delete>
+	<update id="updateLikeCountPlus">
+		update goods_info_tbl set likeCount = likeCount +1 where gno = #{gno}
+	</update>
+	<update id="updatetLikeCountMinus">
+		update goods_info_tbl set likeCount = likeCount -1 where gno = #{gno}
+	</update>
+	<select id="getLikeCount" resultType="int">
+		select likeCount from goods_info_tbl where gno = #{gno} 
+	</select>
+	<select id="getAllSearchList" parameterType="String" resultType="org.hype.domain.goodsVO">
+		select * from goods_info_tbl where gName like '%' || #{searchText} || '%'
+	</select>
+	<select id="getAllGoodsList" resultType="org.hype.domain.goodsVO">
+		select * from goods_info_tbl order by gno desc
+	</select>
+	<select id="getUserInfo" resultType="org.hype.domain.mCatVO">
+		select * from member_cat_tbl where userNo = #{userNo}
+	</select>
+	<select id="getListByInterestLogined" resultType="org.hype.domain.goodsVO">
+		select * from goods_info_tbl where 
+	</select>
+	<select id="getImgByGno" resultType="org.hype.domain.gImgVO">
+		select * from goods_banner_img_tbl where gno = #{gno}
+	</select>
+	<select id="getGoodsDetailImg" resultType="org.hype.domain.gImgVO">
+		select * from goods_detail_img_tbl where gno = #{gno}
+	</select>
+	<select id="getAllStore" resultType="org.hype.domain.popStoreVO">
+		select * from pop_main_tbl
+	</select>
+	<select id="getPsnoByGno" resultType="org.hype.domain.goodsVO">
+		select * from goods_info_tbl where gno = #{gno}
+	</select>
+	<select id="getStoreName" resultType="org.hype.domain.popStoreVO">
+		select psName from pop_main_tbl where psNo = #{psNo}
+	</select>
+</mapper>

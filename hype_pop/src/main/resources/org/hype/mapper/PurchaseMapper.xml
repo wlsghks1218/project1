@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.PurchaseMapper">
+   
+   
+   <!--장바구니 테이블에 추가   -->
+   <insert id="addToCart" parameterType="org.hype.domain.cartVO">
+      insert into cart_tbl(gno, userNo, camount, cprice, gprice, gname) values(#{gno},#{userNo},#{camount},#{cprice},#{gprice},#{gname})
+   </insert>
+
+
+   <!--장바구니 페이지에 정보 불러오기  -->
+   <select id="getCartInfo" parameterType="int" resultType="org.hype.domain.cartVO">
+      select * from cart_tbl where userNo = #{userNo}
+   </select>
+
+
+   <!--gno로 장바구니 이미지 가져오기  -->
+   <select id="getMyCartImg" parameterType="int"  resultType="org.hype.domain.gImgVO">
+      select * from goods_banner_img_tbl where gno = #{gno}
+   </select>
+
+   
+</mapper>
