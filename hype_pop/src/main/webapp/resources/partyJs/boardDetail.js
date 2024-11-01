@@ -1,9 +1,9 @@
 let name;
 let ws;
 const bno = new URLSearchParams(location.search).get('bno');
-const url = `ws://localhost:9090/chatserver.do?bno=${bno}`;
-const userNo = 2;
-const userId = "user2"; 
+const url = `ws://192.168.0.121:9090/chatserver.do?bno=${bno}`;
+const userNo = 1;
+const userId = "user1";
 const userMap = {}; // userNo와 userId를 매핑하여 저장할 객체
 
 // 채팅방에 유저가 참여하고 있는지 확인하는 fetch
@@ -62,6 +62,7 @@ function connect() {
     ws = new WebSocket(url);
 
     ws.onopen = function(evt) {
+        console.log("WebSocket connection opened");
         let message = {
             code: '1',
             bno: bno,
@@ -118,9 +119,14 @@ function sendMessage() {
         chatDate: getFormattedTime()
     };
     
-    ws.send(JSON.stringify(message));
-    $('#msg').val('').focus();
-    print(userId, messageContent, 'me', 'msg', message.chatDate);
+    // WebSocket이 OPEN 상태일 때만 메시지를 전송
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message));
+        $('#msg').val('').focus();
+        print(userId, messageContent, 'me', 'msg', message.chatDate);
+    } else {
+        console.error("WebSocket is not open. Cannot send message.");
+    }
 }
 
 // 엔터 키로 메시지 전송

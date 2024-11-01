@@ -41,13 +41,12 @@ public class ChatServer {
             service = context.getBean(PartyService.class);
         }
 
+        // 클라이언트가 접속할 때 bno를 요청 파라미터로 전달받음
         String bno = session.getRequestParameterMap().get("bno").get(0);
 
-        // bno에 해당하는 세션 리스트가 없으면 생성하고, 중복되지 않게 세션 추가
+        // bno에 해당하는 세션 리스트가 없으면 생성하고, 세션 추가
         bnoSessionMap.putIfAbsent(bno, new ArrayList<>());
-        if (!bnoSessionMap.get(bno).contains(session)) {
-            bnoSessionMap.get(bno).add(session);
-        }
+        bnoSessionMap.get(bno).add(session);
 
         log.info("Session connected: " + session.getId() + " for bno: " + bno);
         checkSessionList(bno);
@@ -68,7 +67,7 @@ public class ChatServer {
             List<Session> sessions = bnoSessionMap.get(bno);
             if (sessions != null) {
                 for (Session s : sessions) {
-                    if (s.isOpen() && s != session) {  // 자신에게는 다시 전송하지 않음
+                    if (s.isOpen()) {
                         s.getBasicRemote().sendText(msg);
                     }
                 }
