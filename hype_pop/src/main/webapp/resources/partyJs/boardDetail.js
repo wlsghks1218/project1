@@ -50,7 +50,6 @@ function fetchChatContents() {
     fetch(`/party/getPartyInfo/${bno}`)
         .then(response => response.json())
         .then(data => {
-            // 현재 유저의 joinTime과 lastLeftTime 가져오기
             const currentUserInfo = data.find(info => info.userNo === userNo);
             const userJoinTime = new Date(currentUserInfo.joinTime);
             const userLastLeftTime = new Date(currentUserInfo.lastLeftTime);
@@ -58,23 +57,20 @@ function fetchChatContents() {
             fetch(`/party/getAllChatContent/${bno}`)
                 .then(response => response.json())
                 .then(chatData => {
-                    // joinTime 이후의 메시지만 필터링하여 chatList 배열에 저장
                     const chatList = chatData.filter(message => {
                         const messageTime = new Date(message.chatDate);
-                        return messageTime >= userJoinTime; // 현재 유저의 joinTime 이후 메시지만 포함
+                        return messageTime >= userJoinTime;
                     });
 
-                    // lastLeftTime 이후 첫 번째 메시지에 "여기까지 읽었습니다" 표시
                     let lastLeftMessageDisplayed = false;
                     chatList.forEach(message => {
                         const messageTime = new Date(message.chatDate);
                         const content = message.content || "";
                         const senderId = userMap[message.userNo] || "알 수 없는 사용자";
 
-                        // lastLeftTime 기준으로 이전/이후 메시지 구분 및 출력
                         if (userLastLeftTime && messageTime > userLastLeftTime) {
                             if (!lastLeftMessageDisplayed) {
-                                print('', "여기까지 읽었습니다.", 'system', 'state', message.chatDate);
+                                print('', "여기까지 읽었습니다.", 'system', 'state read-marker', message.chatDate);
                                 lastLeftMessageDisplayed = true;
                             }
                             print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', message.chatDate);
@@ -83,16 +79,21 @@ function fetchChatContents() {
                         }
                     });
 
-                    // '여기까지 읽었습니다' 메시지로 스크롤 이동
-                    const systemMessage = document.querySelector('.state-message');
-                    if (systemMessage) {
-                        systemMessage.scrollIntoView();
+                    const chatArea = $('#chatArea')[0];
+                    if (lastLeftMessageDisplayed) {
+                        const readMarker = document.querySelector('.read-marker');
+                        if (readMarker) {
+                            readMarker.scrollIntoView();
+                        }
+                    } else {
+                        chatArea.scrollTop = chatArea.scrollHeight;
                     }
                 })
                 .catch(error => console.error("Error fetching chat contents:", error));
         })
         .catch(error => console.error("Error fetching party info:", error));
 }
+
 // WebSocket 연결 함수
 function connect() {
     if (ws && ws.readyState === WebSocket.OPEN) {
