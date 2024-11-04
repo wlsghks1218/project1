@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ChatRoomVO {
 	int bno, userNo;
-	Timestamp joinTime, lastJoinTime;
+	Timestamp joinTime, lastJoinTime, lastLeftTime;
 }

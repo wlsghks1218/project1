@@ -21,4 +21,5 @@ public interface PartyMapper {
 	public List<ChatRoomVO> getPartyUser(int bno);
 	public signInVO getUserInfo(int userNo);
 	public List<ChatContentVO> getAllChatContent(int bno);
+	public int updateLeftTime(@Param("bno") int bno, @Param("userNo") int userNo);
 }

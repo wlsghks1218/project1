@@ -25,7 +25,7 @@
 		#{content}, #{chatDate})
 	</insert>
 	<insert id="insertChatRoom">
-		insert into chat_tbl values(#{bno}, #{userNo}, SYSDATE, SYSDATE)
+		insert into chat_tbl values(#{bno}, #{userNo}, SYSDATE, SYSDATE, SYSDATE)
 	</insert>
 	<select id="chkJoined" resultType="int">
 		select count(*) from chat_tbl where bno = #{bno} and userNo = #{userNo} 
@@ -42,4 +42,7 @@
 	<select id="getAllChatContent" resultType="org.hype.domain.ChatContentVO">
 		select * from chat_content_tbl where bno = #{bno} order by chatdate
 	</select>
+	<update id="updateLeftTime">
+		update chat_tbl set lastLeftTime = sysdate where bno = #{bno} and userNo = #{userNo}
+	</update>
 </mapper>

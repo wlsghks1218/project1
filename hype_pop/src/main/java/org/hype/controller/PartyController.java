@@ -117,4 +117,12 @@ public class PartyController {
 		}
 		return voList;
 	}
+	
+	@GetMapping(value = "/updateLeftTime/{bno}/{userNo}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public int updateLeftTime(@PathVariable("bno") int bno, @PathVariable("userNo") int userNo) {
+		log.warn("updateLeftTime에서" + bno + userNo);
+		int result = service.updateLeftTime(bno, userNo);
+		return result;
+	}
 }

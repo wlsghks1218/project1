@@ -1,9 +1,13 @@
 package org.hype.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -28,6 +32,7 @@ public class ChatServer {
 
     // bno별로 세션을 관리하는 맵
     private static Map<String, List<Session>> bnoSessionMap = new ConcurrentHashMap<>();
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // Ping을 위한 스케줄러
 
     @Autowired
     private PartyService service;
@@ -50,6 +55,19 @@ public class ChatServer {
 
         log.info("Session connected: " + session.getId() + " for bno: " + bno);
         checkSessionList(bno);
+        
+        scheduler.scheduleAtFixedRate(() -> sendPing(session), 0, 30, TimeUnit.SECONDS);
+    }
+    
+    private void sendPing(Session session) {
+        if (session.isOpen()) {
+            try {
+                session.getBasicRemote().sendPing(null); // Ping 메시지 전송
+                log.info("Ping message sent to session: " + session.getId());
+            } catch (IOException e) {
+                log.error("Error sending Ping message", e);
+            }
+        }
     }
 
     @OnMessage

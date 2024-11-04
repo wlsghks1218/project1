@@ -94,4 +94,9 @@ public class PartyServiceImpl implements PartyService {
 		return mapper.getPartyUser(bno);
 	}
 	
+	@Override
+	public int updateLeftTime(int bno, int userNo) {
+		return mapper.updateLeftTime(bno, userNo);
+	}
+	
 }
