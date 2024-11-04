@@ -50,29 +50,49 @@ function fetchChatContents() {
     fetch(`/party/getPartyInfo/${bno}`)
         .then(response => response.json())
         .then(data => {
-            // 현재 사용자(userNo)의 joinTime을 매핑
-            const userJoinTime = new Date(data.find(info => info.userNo === userNo).joinTime);
+            // 현재 유저의 joinTime과 lastLeftTime 가져오기
+            const currentUserInfo = data.find(info => info.userNo === userNo);
+            const userJoinTime = new Date(currentUserInfo.joinTime);
+            const userLastLeftTime = new Date(currentUserInfo.lastLeftTime);
 
             fetch(`/party/getAllChatContent/${bno}`)
                 .then(response => response.json())
                 .then(chatData => {
-                    chatData.forEach((message) => {
-                        const messageTime = new Date(message.chatDate);  // 메시지 날짜를 Date 객체로 변환
-                        const content = message.content || "";  // content가 null이면 빈 문자열로 처리
+                    // joinTime 이후의 메시지만 필터링하여 chatList 배열에 저장
+                    const chatList = chatData.filter(message => {
+                        const messageTime = new Date(message.chatDate);
+                        return messageTime >= userJoinTime; // 현재 유저의 joinTime 이후 메시지만 포함
+                    });
 
-                        if (userJoinTime && messageTime >= userJoinTime) {
-                            const senderId = userMap[message.userNo] || "알 수 없는 사용자";
-                            print(senderId, content,  // content를 빈 문자열로 출력
-                                message.userNo === userNo ? 'me' : 'other',
-                                'msg', message.chatDate);
+                    // lastLeftTime 이후 첫 번째 메시지에 "여기까지 읽었습니다" 표시
+                    let lastLeftMessageDisplayed = false;
+                    chatList.forEach(message => {
+                        const messageTime = new Date(message.chatDate);
+                        const content = message.content || "";
+                        const senderId = userMap[message.userNo] || "알 수 없는 사용자";
+
+                        // lastLeftTime 기준으로 이전/이후 메시지 구분 및 출력
+                        if (userLastLeftTime && messageTime > userLastLeftTime) {
+                            if (!lastLeftMessageDisplayed) {
+                                print('', "여기까지 읽었습니다.", 'system', 'state', message.chatDate);
+                                lastLeftMessageDisplayed = true;
+                            }
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', message.chatDate);
+                        } else {
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', message.chatDate);
                         }
                     });
+
+                    // '여기까지 읽었습니다' 메시지로 스크롤 이동
+                    const systemMessage = document.querySelector('.state-message');
+                    if (systemMessage) {
+                        systemMessage.scrollIntoView();
+                    }
                 })
                 .catch(error => console.error("Error fetching chat contents:", error));
         })
         .catch(error => console.error("Error fetching party info:", error));
 }
-
 // WebSocket 연결 함수
 function connect() {
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -91,9 +111,14 @@ function connect() {
             content: '',
             chatDate: getFormattedTime()
         };
-        
+
         ws.send(JSON.stringify(message));
         print('', '대화방에 참여했습니다.', 'me', 'state', message.chatDate);
+
+        // 최하단으로 스크롤 조정
+        const chatArea = $('#chatArea')[0];
+        chatArea.scrollTop = chatArea.scrollHeight;
+
         $('#msg').focus();
     };
 
@@ -101,10 +126,8 @@ function connect() {
         let message = JSON.parse(evt.data);
         const senderId = userMap[message.userNo] || "알 수 없는 사용자";
 
-        // 모든 수신 메시지를 출력하여 확인
         console.log("Received WebSocket message:", message);
 
-        // 본인이 아닌 다른 사용자의 메시지만 출력
         if (message.userNo !== userNo) {
             if (message.code === '1') { 
                 console.log(`[${senderId}] 입장 메시지 수신`);
@@ -128,10 +151,8 @@ function print(sender, msg, side, type, time) {
     let temp;
 
     if (type === 'state') {
-        // 상태 메시지일 경우 중앙 정렬
         temp = `<div class="state-message">${msg}</div>`;
     } else {
-        // 일반 메시지일 경우, 내 메시지와 다른 유저 메시지를 구분하여 위치 설정
         const isMyMessage = sender === userId;
         temp = `
             <div class="message ${isMyMessage ? 'my-message' : 'other-message'}">
@@ -142,9 +163,11 @@ function print(sender, msg, side, type, time) {
     }
 
     $('#chatArea').append(temp);
-    $('#chatArea').scrollTop($('#chatArea')[0].scrollHeight);
-}
 
+    // 최하단으로 스크롤 조정
+    const chatArea = $('#chatArea')[0];
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
 // 메시지 전송 함수
 function sendMessage() {
     let messageContent = $('#msg').val() || '';
