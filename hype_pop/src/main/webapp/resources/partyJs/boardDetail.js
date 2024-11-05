@@ -20,13 +20,6 @@ fetch(`/party/chkJoined/${bno}/${userNo}`)
 })
 .catch(error => console.error("Error fetching data:", error));
 
-fetch(`/party/getPartyInfo/${bno}`)
-.then(response => response.json())
-.then(data = {
-	
-})
-
-
 // 참여 유저 목록 가져오기
 fetch(`/party/getPartyUser/${bno}`)
 .then(response => response.json())
