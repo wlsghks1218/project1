@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="store-info">
                 <div class="header">
                     <h2 class="storeName"><span class="storeName">${store.name}</span></h2>
-                    <span class="likeCount">좋아요 수: ${store.likeCount}</span>
+                    <span class="likeCount">❤️ ${store.likeCount}</span>
                     <input type="hidden" class="psNo" value="${store.psNo}">
                     <input type="hidden" class="rating" value="${store.rating}">
                     <input type="hidden" class="latitude" value="${store.latitude}">

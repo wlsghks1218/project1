@@ -23,10 +23,10 @@ public interface PopUpService {
 	public Integer getLikeCount(int psNo);
 	// 유저가 좋아요 했는지 안했는지 확인
 	public boolean checkUserLike(int psNo, int userNo);
-	
 	// 팝업스토어 이름으로 굿즈 정보 받아오기
 	public List<goodsVO> getGoodsInfoByName(String storeName);
 	
+	public String getStoreNameByPsNo(int referenceNo);
 	// 검색내용으로 팝업스토어 검색하기
 	public List<popStoreVO> popUpSearchByData(String searchData);
 	
@@ -49,4 +49,5 @@ public interface PopUpService {
 
 		// 좋아요한 팝업스토어 가져오기
 		public List<likeVO> getUserLike(int userNo);
+	
 }

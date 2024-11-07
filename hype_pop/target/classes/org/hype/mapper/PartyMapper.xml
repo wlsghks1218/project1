@@ -12,7 +12,7 @@
 		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
 			SELECT party_info_seq.nextVal FROM dual
 		</selectKey>
-		insert into party_info_tbl values(#{bno}, #{userNo}, #{boardTitle}, SYSDATE, #{category}, #{targetName})
+		insert into party_info_tbl values(#{bno}, #{userNo}, #{boardTitle}, SYSDATE, #{category}, #{targetName}, 1, #{maxUser})
 	</insert>
 	<select id="getAllParty" resultType="org.hype.domain.PartyBoardVO">
 		select * from party_info_tbl
@@ -45,4 +45,19 @@
 	<update id="updateLeftTime">
 		update chat_tbl set lastLeftTime = sysdate where bno = #{bno} and userNo = #{userNo}
 	</update>
+	<update id="updatePlusMember">
+		update party_info_tbl set currentUser = currentUser +1 where bno = #{bno}
+	</update>
+	<update id="updateMinusMember">
+		update party_info_tbl set currentUser = currentUser -1 where bno = #{bno}
+	</update>
+	<select id="chkMaster" resultType="int">
+		select count(*) from party_info_tbl where bno = #{bno} and userNo = #{userNo}
+	</select>
+	<delete id="deleteLeaveMember">
+		delete from chat_tbl where bno = #{bno} and userNo = #{userNo}
+	</delete>
+	<delete id="deleteParty">
+		delete from party_info_tbl where bno = #{bno} and userNo = #{userNo}
+	</delete>
 </mapper>

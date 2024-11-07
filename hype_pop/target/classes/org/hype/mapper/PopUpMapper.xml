@@ -100,7 +100,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		FROM pop_main_tbl p
 		WHERE p.PSNAME = #{storeName}
 	</select>
-
+	<select id="getStoreNameByPsNo" parameterType="int" resultType="String">
+	select psName from pop_main_tbl where psNo = #{psNo}
+</select>
 
 
 	<select id="checkLikeStatus" parameterType="map"
@@ -257,6 +259,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from like_list_tbl where userNo = #{userNo}
 	</select>
 
-	
 
 </mapper>

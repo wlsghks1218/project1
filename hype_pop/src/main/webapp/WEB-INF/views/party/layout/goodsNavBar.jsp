@@ -39,6 +39,7 @@
         <a href="/member/login">로그인</a>
         <a href="/member/myPage?userNo=1">마이페이지</a>
         <a href="/party/partyBoard">파티구하기</a>
+        <a id="logout">로그아웃</a>
     </div>
 </body>
 </html>

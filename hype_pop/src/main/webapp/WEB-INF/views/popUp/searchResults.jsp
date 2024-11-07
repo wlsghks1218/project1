@@ -45,7 +45,7 @@
             <div class="store-info">
                 <div class="header">
                     <h2><span class="storeName">${store.psName}</span></h2>
-                    <span class="likeCount">좋아요 수: ${store.likeCount}</span>
+                    <span class="likeCount">${store.likeCount}</span>
                     <input type="hidden" class="psNo" value="${store.psNo}">
                     <input type="hidden" class="latitude" value="${store.latitude}">
                     <input type="hidden" class="longitude" value="${store.longitude}">    

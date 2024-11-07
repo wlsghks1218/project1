@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class PartyBoardVO {
-	int bno, userNo;
+	int bno, userNo, currentUser, maxUser;
 	String boardTitle, category, targetName;
 	Date regDate;
 }

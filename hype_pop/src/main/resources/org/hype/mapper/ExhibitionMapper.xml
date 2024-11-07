@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.hype.mapper.ExhibitionMapper">
+	
+     <select id="getExhibitionsByPage" resultType="org.hype.domain.exhVO">
+      <![CDATA[
+        SELECT * FROM (
+            SELECT a.*, ROWNUM rnum
+            FROM (
+                SELECT * 
+                FROM exh_main_tbl
+                ORDER BY exhNo
+            ) a 
+            WHERE ROWNUM <= #{offset} + #{pageSize}
+        )
+        WHERE rnum > #{offset}
+       ]]>
+    </select>
+
+	<select id="getExhibitionByNo" parameterType="int" resultType="org.hype.domain.exhVO">
+    SELECT * FROM exh_main_tbl WHERE exhNo = #{exhNo}
+	</select>
+
+	<insert id="insertLike" parameterType="org.hype.domain.exhLikeVO">
+        INSERT INTO exh_like_list_tbl (exhNo, userNo, likeDate)
+        VALUES (#{exhNo}, #{userNo}, sysdate)
+    </insert>
+
+	<delete id="deleteLike" parameterType="org.hype.domain.exhLikeVO">
+		DELETE FROM exh_like_list_tbl WHERE exhNo = #{exhNo} AND userNo = #{userNo}		
+	</delete>
+	
+	<select id="isLiked" parameterType="org.hype.domain.exhLikeVO" resultType="int">
+   		SELECT *
+    	FROM exh_like_list_tbl 
+    	WHERE exhNo = #{exhNo} AND userNo = #{userNo}
+	</select>
+	
+	<select id="getLikeCount" parameterType="int" resultType="int">
+   		SELECT COUNT(*) FROM exh_like_list_tbl WHERE exhNo = #{exhNo}
+	</select>	
+	
+	<insert id="insertReply" parameterType="org.hype.domain.exhReplyVO">
+		INSERT INTO exh_reply_tbl (exhNo, userNo, exhComment, exhScore, exhRegDate)
+        VALUES (#{exhNo}, #{userNo}, #{exhComment}, #{exhScore}, sysdate)
+	</insert>
+
+	<select id="getAllReplies" resultType="org.hype.domain.exhReplyVO">
+		select * from exh_reply_tbl order by exhRegDate desc
+	</select>
+
+	<update id="updateReview" parameterType= "org.hype.domain.exhReplyVO">
+        UPDATE exh_reply_tbl
+        SET exhComment = #{exhComment}, exhScore = #{exhScore}, exhUpdateDate = sysdate
+        WHERE exhReplyNo = #{exhReplyNo} AND userNo = #{userNo}
+    </update>
+
+	<delete id="deleteComment">
+        DELETE FROM exh_reply_tbl
+        WHERE userNo = #{userNo} AND exhReplyNo = #{exhReplyNo}
+    </delete>
+
+</mapper>

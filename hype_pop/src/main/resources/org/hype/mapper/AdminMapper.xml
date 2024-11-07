@@ -3,13 +3,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.hype.mapper.AdminMapper"> <!-- 정확한 Mapper 인터페이스 경로 -->
-<!-- 	<select id="getList" resultType="org.hype.domain.popStoreVO">
-		SELECT psNo, psName, psStartDate, psEndDate FROM pop_main_tbl
-	</select>  -->
-	
 	<!-- 검색어와 함께 페이징 처리 -->
 	<!-- 검색어가 있을 때 where psName LIKE '%' || #{searchPs} || '% -->
 	<!-- 검색어가 없을 때 where 1=1 (무조건 참이므로 모든 리스트 반환)-->
+	
+	<!-- 관리자 메인 페이지 -->
+	<!-- 공통 Header 영역 -->
+	<!-- 팝업스토어 전체 리스트 출력 -->
 	<select id="getPList" resultType="org.hype.domain.popStoreVO">
 	<![CDATA[
 		SELECT psNo, psName, psStartDate, psEndDate
@@ -34,10 +34,12 @@
 	   ]]>
 	</select>
 	
+	<!-- 검색 시 특정 팝업스토어 리스트 출력 -->
 	<select id="getPTotal" resultType="int">
 	    SELECT COUNT(*) FROM pop_main_tbl 
 	</select>
 	
+	<!-- 상품(굿즈) 리스트 출력 -->
 	<select id="getGList" resultType="org.hype.domain.goodsVO">
 	<![CDATA[
 		SELECT gNo, gName, gPrice, sellDate
@@ -62,10 +64,12 @@
 	   ]]>
     </select>
     
+    <!-- 검색 시 특정 상품(굿즈) 리스트 출력 -->
     <select id="getGTotal" resultType="int">
 	    SELECT COUNT(*) FROM goods_info_tbl 
 	</select>
 	
+	<!-- 회원 리스트 출력 -->
 	<select id="getMList" resultType="org.hype.domain.signInVO">
 	<![CDATA[
 		SELECT userNo, userId, userEmail, lastLoginDate, enabled, auth
@@ -90,39 +94,136 @@
 	   ]]>
     </select>
     
+    <!-- 검색 시 특정 회원 리스트 출력 -->
     <select id="getMTotal" resultType="int">
 	    SELECT COUNT(*) FROM sign_in_info_tbl 
 	</select>
     
-	<select id="getQList" resultType="org.hype.domain.qnaVO">
-	    SELECT *
-		FROM qna_tbl
-		ORDER BY qnaNo ASC
-	</select>   
-   
+    <!-- 특정 팝업스토어 조회 -->
 	<select id="getPopStoreById" parameterType="int" resultType="org.hype.domain.popStoreVO">
    		SELECT psNo, psName, psStartDate, psEndDate FROM pop_main_tbl WHERE psNo = #{psNo}
 	</select>
 	
+    <!-- 특정 상품(굿즈) 조회 -->
 	<select id="getGoodsById" parameterType="int" resultType="org.hype.domain.goodsVO">
    		SELECT gNo, gName, gPrice, sellDate FROM goods_info_tbl WHERE gNo = #{gNo}
 	</select>
 	
+    <!-- 특정 회원 조회 -->
 	<select id="getMembersById" parameterType="String" resultType="org.hype.domain.signInVO">
-   		SELECT userNo, userId, userEmail, lastLoginDate, enabled, auth FROM sign_in_info_tbl WHERE userNo = #{userNo}
+   		SELECT userNo, userId, userName, userNumber, regDate, userEmail, lastLoginDate, enabled, auth 
+   		FROM sign_in_info_tbl 
+   		WHERE userNo = #{userNo}
 	</select>
+	
+	
+	<!-- 팝업스토어 등록하기 페이지 -->	
+	<insert id="insertPopStore" parameterType="org.hype.domain.popStoreVO">
+		<selectKey keyProperty="psNo" resultType="int" order="BEFORE">
+         	SELECT popmain_seq.nextVal FROM dual
+      	</selectKey>
+	    INSERT INTO pop_main_tbl 
+	    (psNo, psName, latitude, longitude, psStartDate, 
+	    psEndDate, psAddress, snsAd, comInfo, transInfo, parkingInfo, psExp)
+	    VALUES 
+	    (#{psNo}, #{psName}, #{latitude}, #{longitude}, 
+	    #{psStartDate}, #{psEndDate}, #{psAddress}, #{snsAd}, 
+	    #{comInfo}, #{transInfo}, #{parkingInfo}, #{psExp})
+	</insert>
+	
+	<insert id="insertPsImage" parameterType="org.hype.domain.pImgVO">
+        INSERT INTO pop_img_tbl (psNo, uuid, uploadPath, filename)
+        VALUES (#{psNo}, #{uuid}, #{uploadPath}, #{filename})
+    </insert>
+    
+    <insert id="insertPsCat" parameterType="org.hype.domain.pCatVO">
+	    INSERT INTO pop_cat_tbl 
+	    (psNo, healthBeauty, game, culture, shopping, supply, kids, design, foods, interior, policy, character, experience, collaboration, entertainment)
+	    VALUES 
+	    (#{psNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character}, #{experience}, #{collaboration}, #{entertainment})
+	</insert>
+	
+	<!-- 상품(굿즈) 등록하기 페이지 -->
+	<select id="getAllPopStores" resultType="org.hype.domain.popStoreVO">
+	    SELECT psNo, psName 
+	    FROM pop_main_tbl
+	</select>
+	
+	<insert id="insertGoodsStore" parameterType="org.hype.domain.goodsVO">
+		<selectKey keyProperty="gno" resultType="int" order="BEFORE">
+         	SELECT goods_info_seq.nextVal FROM dual
+      	</selectKey>
+      	
+	    INSERT INTO goods_info_tbl 
+	    (gno, psno, gname, gprice, sellDate, gexp)
+	    VALUES 
+	    (#{gno}, 999, #{gname}, #{gprice}, #{sellDate}, #{gexp})
+	</insert>
+	
+	<insert id="insertGImage" parameterType="org.hype.domain.gImgVO">
+	    INSERT INTO goods_banner_img_tbl (gno, uuid, uploadPath, filename) 
+	    VALUES (#{gno}, #{uuid}, #{uploadPath}, #{fileName})
+	</insert>
+	<insert id="insertGImage2" parameterType="org.hype.domain.gImgVO">
+	    INSERT INTO goods_detail_img_tbl  (gno, uuid, uploadPath, filename) 
+	    VALUES (#{gno}, #{uuid}, #{uploadPath}, #{fileName})
+	</insert>
+	
+    
+	
+    <!-- 문의 리스트 회원 페이지 -->	
+	<!-- 필터링된 Q&A 리스트 가져오기 -->
+ 	<select id="getQnaListByType" resultType="org.hype.domain.qnaVO">
+	    SELECT qnaNo, qnaType, qnaTitle, qnaRegDate, qnaAnswer
+	    FROM qna_tbl
+	    <!-- 문의 유형 선택  -->
+	    <if test="qnaType !='전체'">
+	    	where qnaType = #{qnaType}
+	    </if>
+	    <!-- 답변 여부 선택 -->
+	   <if test="qnaAnswer != null and qnaAnswer == '답변 완료'">
+	       <if test="qnaType == null or qnaType == '전체'">
+	           WHERE qnaAnswer IS NOT NULL
+	       </if>
+	       <if test="qnaType != null and qnaType != '전체'">
+	           AND qnaAnswer IS NOT NULL
+	       </if>
+	   </if>	   
+	   <if test="qnaAnswer != null and qnaAnswer == '답변 미완료'">
+	       <if test="qnaType == null or qnaType == '전체'">
+	           WHERE qnaAnswer IS NULL
+	       </if>
+	       <if test="qnaType != null and qnaType != '전체'">
+	           AND qnaAnswer IS NULL
+	       </if>
+	   </if>
+	    ORDER BY qnaRegDate DESC
+	</select>
+	
+	
+	<!-- 상품 상태 조회 페이지 -->
+	<!-- 상품 상태 조회 -->
+	<!-- <select id="getPurchaseList" resultType="org.hype.domain.payVO">
+	    SELECT p.gno, g.gname, p.gamount, 
+	           p.gprice, p.gbuydate, p.gsituation
+	    FROM pay_list_tbl p
+	    LEFT JOIN goods_info_tbl g ON p.gno = g.gno
+	</select>  -->
+    
+	<!-- 회원 정보 수정페이지 -->
+	<!-- 회원 정보 업데이트 -->
 	<update id="updateMem" parameterType="org.hype.domain.signInVO">
-      UPDATE sign_in_info_tbl
-      SET 
-         userId = #{userId},
-         userName = #{userName},
-         userEmail = #{userEmail},
-         userNumber = #{userNumber},         
-         enabled = #{enabled},         
-         auth = #{auth}   
-      WHERE 
-         userNo = #{userNo}
-   </update>
+		UPDATE sign_in_info_tbl
+		SET 
+			userName = #{userName},
+			userEmail = #{userEmail},
+			userNumber = #{userNumber},					
+			enabled = #{enabled},			
+			auth = #{auth},
+        	lastLoginDate = #{lastLoginDate}
+		WHERE 
+			userNo = #{userNo}
+	</update>
 	
 	
 </mapper>

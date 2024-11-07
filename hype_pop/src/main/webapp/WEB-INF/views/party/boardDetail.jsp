@@ -189,6 +189,7 @@ button:hover {
 		</div>
 		<div class="boardTitle">${vo.boardTitle}</div>
 		<div class="chat-title">실시간 채팅</div>
+		<div class="memberCount">${vo.currentUser}/${vo.maxUser }</div>
 		<div class="joinMember"></div>
 
 		<div id="chatArea"></div>
@@ -197,6 +198,9 @@ button:hover {
 			<input type="text" id="msg" placeholder="메시지를 입력하세요">
 			<button id="sendButton">전송</button>
 		</div>
+		<div id="leaveParty">
+			<button id="leavePartyBtn">파티 나가기</button>
+		</div>
 	</div>
 	<jsp:include page="layout/popUpFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
@@ -204,4 +208,6 @@ button:hover {
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script type="text/javascript" src="/resources/partyJs/boardDetail.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyNav.js"></script>
 </html>

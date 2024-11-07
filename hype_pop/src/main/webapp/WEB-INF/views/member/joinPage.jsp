@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+   pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -68,7 +68,7 @@ header {
     margin-right: 10px;
 }
 
-#interestBtn, #joinBtn, #duplicateCheckButton, #confirmButton {
+#interestBtn, #joinBtn, #duplicateCheckButton {
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -99,7 +99,7 @@ header {
     max-height: 80%;
 }
 
-.interestBox {
+.interestBox{
     display: inline-block;
     padding: 10px;
     margin: 5px;
@@ -107,6 +107,9 @@ header {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+.interestBox label{
+   cursor: pointer;
 }
 
 .selectedBox {
@@ -205,14 +208,6 @@ input:checked + .slider:before {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
 .close {
     color: #aaa;
     float: right;
@@ -255,10 +250,14 @@ input:checked + .slider:before {
 /* 모달 내용 */
 .modal-content {
     background-color: #fefefe; 
-    margin: 15% auto;  /* 화면 중앙 */ 
+    margin: 1% auto;  /* 화면 중앙 */ 
     padding: 20px; 
     border: 1px solid #888; 
     width: 80%;  /* 모달 너비 */ 
+}
+#modalContent{
+   max-height: 800px;
+   overflow: auto;
 }
 
 /* 닫기 버튼 */
@@ -282,260 +281,248 @@ input:checked + .slider:before {
  </head>
 <body>
 
-	<header>
-		<a href="/home" class="home-link">홈으로</a>
-		<!-- 홈으로 가는 링크 -->
-		<h1>회원가입</h1>
-	</header>
+   <header>
+      <a href="/home" class="home-link">홈으로</a>
+      <!-- 홈으로 가는 링크 -->
+      <h1>회원가입</h1>
+   </header>
 
-	<div class="container">
-		<form action="join" method="post" onsubmit="return formSubmit()">
-			<div class="input-group">
-				<label for="userId">아이디</label> <input type="text" id="userId"
-					name="userId" placeholder="아이디를 입력하세요.">
-				<button type="button" id="duplicateCheckButton"
-					onclick="checkUserId()">중복 확인</button>
-			</div>
-			<!-- 아이디 중복 확인 버튼 -->
+   <div class="container">
+      <form action="/member/join" method="post">
+         <div class="input-group">
+            <label for="userId">아이디</label> <input type="text" id="userId"
+               name="userId" placeholder="4~8자, 영문 대소문자와 숫자">
+            <button type="button" id="duplicateCheckButton"
+               onclick="checkUserId()">중복 확인</button>
+         </div>
+         <!-- 아이디 중복 확인 버튼 -->
 
-			<div class="input-group">
-				<label for="password">비밀번호</label> <input type="password"
-					id="userPw" name="userPw" placeholder="비밀번호를 입력하세요.">
-			</div>
+         <div class="input-group">
+            <label for="password">비밀번호</label> <input type="password"
+               id="userPw" name="userPw" placeholder="8~16자, 문자, 숫자, 특수문자">
+         </div>
 
-			<div class="input-group">
-				<label for="passwordCheck">비밀번호 확인</label> <input type="password"
-					id="passwordCheck" name="passwordCheck"
-					placeholder="비밀번호를 다시 입력하세요.">
-			</div>
+         <div class="input-group">
+            <label for="passwordCheck">비밀번호 확인</label> <input type="password"
+               id="passwordCheck" name="passwordCheck"
+               placeholder="비밀번호를 다시 입력하세요.">
+         </div>
 
-			<div class="input-group">
-				<label for="userEmail">이메일</label> <input type="email"
-					id="userEmail" name="userEmail" placeholder="이메일을 입력하세요.">
-			</div>
+         <div class="input-group">
+            <label for="userEmail">이메일</label> <input type="email"
+               id="userEmail" name="userEmail" placeholder="이메일을 입력하세요.">
+         </div>
 
-			<div class="input-group">
-				<label for="userName">이름</label> <input type="text" id="userName"
-					name="userName" placeholder="이름을 입력하세요.">
-			</div>
+         <div class="input-group">
+            <label for="userName">이름</label> <input type="text" id="userName"
+               name="userName" placeholder="이름을 입력하세요.">
+         </div>
 
-			<div class="input-group">
-				<label for="userNumber">전화번호</label> <input type="tel"
-					id="userNumber" name="userNumber" placeholder="전화번호를 입력하세요.">
-			</div>
+         <div class="input-group">
+            <label for="userNumber">전화번호</label> 
+            <input type="tel" maxlength="13" id="userNumber" name="userNumber" placeholder="하이픈(-) 제외 숫자만">
+         </div>
 
-			<!-- 관심사 선택 버튼 -->
-			<div>
-				<label>관심사</label>
-				<button type="button" id="interestBtn">관심사 선택</button>
-			</div>
+         <!-- 관심사 선택 버튼 -->
+         <div>
+            <label>관심사</label>
+            <button type="button" id="interestBtn">관심사 선택</button>
+         </div>
 
+         <!-- 모달 창  -->
+         <div id="userInterest" name="userInterest" class="userInterest" style="display: none;">
+            <div class="modal-background" onclick="closeModal()"></div>
+            <!-- 배경 클릭 시 모달 닫기 -->
+            <div class="interestBoxContainer">
+               <input type="checkbox" style="display: none;">
+               <div>
+                  <p>관심사를 선택하세요(3개 필수)</p>
+               </div>
+               <!-- 관심사 박스 -->
+               <div class="interestBox" data-interest="헬스/뷰티">
+                  <label for="healthBeauty"> 
+                  <input type="checkbox"
+                     class="interestBox" name="userInterest.healthBeauty" value="1"
+                     > 헬스/뷰티
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="게임">
+                  <label for="game">
+                  <input type="checkbox" name="userInterest.game"
+                     value="1"> 게임</label>
+               </div>
+               <div class="interestBox" data-interest="문화">
+                  <label for="culture"><input type="checkbox" name="userInterest.culture"
+                     value="1"> 문화</label>
+               </div>
+               <div class="interestBox" data-interest="쇼핑">
+                  <label for="shopping"><input type="checkbox"
+                     name="userInterest.shopping" value="1"> 쇼핑</label>
+               </div>
+               <div class="interestBox" data-interest="문구">
+                  <label for="supply"><input type="checkbox"
+                     name="userInterest.supply" value="1"> 문구</label>
+               </div>
+               <div class="interestBox" data-interest="키즈">
+                  <label for="kids"><input type="checkbox" name="userInterest.kids"
+                     value="1"> 키즈</label>
+               </div>
+               <div class="interestBox" data-interest="디자인">
+                  <label for="design"><input type="checkbox" name="userInterest.design"
+                     value="1"> 디자인</label>
+               </div>
+               <div class="interestBox" data-interest="식품">
+                  <label for="foods"><input type="checkbox" name="userInterest.foods"
+                     value="1"> 식품</label>
+               </div>
+               <div class="interestBox" data-interest="인테리어">
+                  <label for="interior"><input type="checkbox"
+                     name="userInterest.interior" value="1"> 인테리어</label>
+               </div>
+               <div class="interestBox" data-interest="정책">
+                  <label for="policy"><input type="checkbox" name="userInterest.policy"
+                     value="1" > 정책</label>
+               </div>
+               <div class="interestBox" data-interest="캐릭터">
+                  <label for="character"><input type="checkbox"
+                     name="userInterest.character" value="1" > 캐릭터</label>
+               </div>
+               <div class="interestBox" data-interest="체험">
+                  <label for="experience"><input type="checkbox"
+                     name="userInterest.experience" value="1" > 체험</label>
+               </div>
+               <div class="interestBox" data-interest="콜라보">
+                  <label for="collaboration"><input type="checkbox"
+                     name="userInterest.collaboration" value="1" >
+                     콜라보</label>
+               </div>
+               <div class="interestBox" data-interest="방송">
+                  <label for="entertainment"><input type="checkbox"
+                     name="userInterest.entertainment" value="1" > 방송</label>
+               </div>
+               <button type="button" id="interestModalclose" onclick="interestModalclose()">확인</button>
+            </div>
 
+         </div>
 
-			<!-- 모달 창  -->
-			<div id="userInterest" name="userInterest" class="userInterest"
-				style="display: none;">
-				<div class="modal-background" onclick="closeModal()"></div>
-				<!-- 배경 클릭 시 모달 닫기 -->
-				<div class="interestBoxContainer">
-					<input type="checkbox" style="display: none;">
-					<div>
-						<p>관심사를 선택하세요(최소 3개 선택)</p>
-					</div>
-					<!-- 관심사 박스 -->
-					<div class="interestBox" data-interest="헬스/뷰티">
-						<label for="healthBeauty"> 
-						<input type="checkbox"
-							class="interestBox" name="healthBeauty" value="1"
-							> 헬스/뷰티
-						</label>
-					</div>
-					<div class="interestBox" data-interest="게임">
-						<label for="game">
-						<input type="checkbox" name="game"
-							value="1"> 게임</label>
-					</div>
-					<div class="interestBox" data-interest="문화">
-						<label for="culture"><input type="checkbox" name="culture"
-							value="1"> 문화</label>
-					</div>
-					<div class="interestBox" data-interest="쇼핑">
-						<label for="shopping"><input type="checkbox"
-							name="shopping" value="1"> 쇼핑</label>
-					</div>
-					<div class="interestBox" data-interest="문구">
-						<label for="supply"><input type="checkbox"
-							name="supply" value="1"> 문구</label>
-					</div>
-					<div class="interestBox" data-interest="키즈">
-						<label for="kids"><input type="checkbox" name="kids"
-							value="1"> 키즈</label>
-					</div>
-					<div class="interestBox" data-interest="디자인">
-						<label for="design"><input type="checkbox" name="design"
-							value="1"> 디자인</label>
-					</div>
-					<div class="interestBox" data-interest="식품">
-						<label for="foods"><input type="checkbox" name="foods"
-							value="1"> 식품</label>
-					</div>
-					<div class="interestBox" data-interest="인테리어">
-						<label for="interior"><input type="checkbox"
-							name="interior" value="1"> 인테리어</label>
-					</div>
-					<div class="interestBox" data-interest="정책">
-						<label for="policy"><input type="checkbox" name="policy"
-							value="1" > 정책</label>
-					</div>
-					<div class="interestBox" data-interest="캐릭터">
-						<label for="character"><input type="checkbox"
-							name="character" value="1" > 캐릭터</label>
-					</div>
-					<div class="interestBox" data-interest="체험">
-						<label for="experience"><input type="checkbox"
-							name="experience" value="1" > 체험</label>
-					</div>
-					<div class="interestBox" data-interest="콜라보">
-						<label for="collaboration"><input type="checkbox"
-							name="collaboration" value="1" >
-							콜라보</label>
-					</div>
-					<div class="interestBox" data-interest="방송">
-						<label for="entertainment"><input type="checkbox"
-							name="entertainment" value="1" > 방송</label>
-					</div>
-					<div>
-						<button id="confirmButton" class="confirm-button" required>확인</button>
-					</div>
-				</div>
+         <!-- 선택된 관심사 출력 영역 -->
+         <!-- <div class="selectedInterests" id="selectedInterests"></div> -->
 
-			</div>
+         <!-- 동의 항목 -->
+         <div class="agreement">
+            <label>개인정보 처리 방침 동의</label> <label class="toggle-switch"> <input
+               type="checkbox" id="privacy" required> <span class="slider"></span>
+            </label>
+            <button class="modal-trigger" onclick="policyModal('privacy')">&gt;</button>
+         </div>
+         <div class="agreement">
+            <label>위치 정보 사용 동의 </label> <label class="toggle-switch"> <input
+               type="checkbox" id="location" required> <span
+               class="slider"></span>
+            </label>
+            <button class="modal-trigger" onclick="policyModal('location')">&gt;</button>
+         </div>
+         <div class="agreement">
+            <label>알림 수신 동의</label> <label class="toggle-switch"> <input
+               type="checkbox" id="notification" required> <span
+               class="slider"></span>
+            </label>
+            <button class="modal-trigger" onclick="policyModal('notification')">&gt;</button>
+         </div>
 
-
-
-
-
-			<!-- 선택된 관심사 출력 영역 -->
-			<div class="selectedInterests" id="selectedInterests"></div>
-
-
-			<!-- 동의 항목 -->
-			<div class="agreement">
-				<label>개인정보 처리 방침 동의</label> <label class="toggle-switch"> <input
-					type="checkbox" id="privacy" required> <span class="slider"></span>
-				</label>
-				<button class="modal-trigger" onclick="policyModal('privacy')">&gt;</button>
-			</div>
-			<div class="agreement">
-				<label>위치 정보 사용 동의 </label> <label class="toggle-switch"> <input
-					type="checkbox" id="location" required> <span
-					class="slider"></span>
-				</label>
-				<button class="modal-trigger" onclick="policyModal('location')">&gt;</button>
-			</div>
-			<div class="agreement">
-				<label>알림 수신 동의</label> <label class="toggle-switch"> <input
-					type="checkbox" id="notification" required> <span
-					class="slider"></span>
-				</label>
-				<button class="modal-trigger" onclick="policyModal('notification')">&gt;</button>
-			</div>
-
-
-			<button type="submit" id="joinBtn" onclick="formSubmit()">회원가입
-				버튼</button>
-		</form>
-	</div>
+         <button type="button" id="joinBtn" onclick="formSubmit()">회원가입   버튼</button>
+      </form>
+   </div>
 
 
 
 
-	<!--동의 내용 모달  -->
+   <!--동의 내용 모달  -->
 
-	<!--개인정보 처리 방침 동의 모달  -->
-	<div id="policyModal" class="modal">
-		<div class="modal-content">
-			<span class="close" onclick="closePolicyModal()">&times;</span>
-			<div id="modalContent"></div>
-		</div>
-	</div>
+   <!--개인정보 처리 방침 동의 모달  -->
+   <div id="policyModal" class="modal">
+      <div class="modal-content">
+         <span class="close" onclick="closePolicyModal()">&times;</span>
+         <div id="modalContent"></div>
+      </div>
+   </div>
 
-	<!--위치기반서비스 동의 모달  -->
-	<div id="locationModal" class="modal">
-		<div class="modal-content">
-			<span class="close" onclick="closeModal()">&times;</span>
-			<div id="modalContent"></div>
-		</div>
-	</div>
+   <!--위치기반서비스 동의 모달  -->
+   <div id="locationModal" class="modal">
+      <div class="modal-content">
+         <span class="close" onclick="closeModal()">&times;</span>
+         <div id="modalContent"></div>
+      </div>
+   </div>
 
 
-	<!--마케팅 알림 수신 동의 안내  -->
+   <!--마케팅 알림 수신 동의 안내  -->
 
-	<div id="notificationModal" class="modal">
-		<div class="modal-content">
-			<span class="close" onclick="closeModal()">&times;</span>
-			<div id="modalContent"></div>
+   <div id="notificationModal" class="modal">
+      <div class="modal-content">
+         <span class="close" onclick="closeModal()">&times;</span>
+         <div id="modalContent"></div>
 
-		</div>
-	</div>
+      </div>
+   </div>
 
 
 
 
 
 
-	<!-- 동의 안내(style과 클릭이벤트로 동의 안내문 띄우기) -->
-	<!-- <div class="agreement">
-		    <label>개인정보 처리 방침 동의</label>
-		    <label class="toggle-switch">
-		        <input type="checkbox" id="privacyPolicy" required>
-		        <span class="slider"></span>
-		    </label>
-		    <span class="modal-trigger" onclick="openModal('privacyPolicyModal')"> &gt; </span>
-		</div>
-		<div class="agreement">
-		    <label>위치 정보 사용 동의</label>
-		    <label class="toggle-switch">
-		        <input type="checkbox" id="locationPolicy" required>
-		        <span class="slider"></span>
-		    </label>
-		    <span class="modal-trigger" onclick="openModal('locationPolicyModal')"> &gt; </span>
-		</div>
-		<div class="agreement">
-		    <label>알림 수신 동의</label>
-		    <label class="toggle-switch">
-		        <input type="checkbox" id="notificationPolicy" required>
-		        <span class="slider"></span>
-		    </label>
-		    <span class="modal-trigger" onclick="openModal('notificationPolicyModal')"> &gt; </span>
-		</div>
-		
-		모달창
-		<div id="privacyPolicyModal" class="modal">
-		    <div class="modal-content">
-		        <span class="close" onclick="closeModal('privacyPolicyModal')">&times;</span>
-		        <h2>개인정보 처리 방침</h2>
-		        <p>여기에 개인정보 처리 방침 내용을 입력하세요.</p>
-		    </div>
-		</div>
-		
-		<div id="locationPolicyModal" class="modal">
-		    <div class="modal-content">
-		        <span class="close" onclick="closeModal('locationPolicyModal')">&times;</span>
-		        <h2>위치 정보 사용 방침</h2>
-		        <p>여기에 위치 정보 사용 방침 내용을 입력하세요.</p>
-		    </div>
-		</div>
-		
-		<div id="notificationPolicyModal" class="modal">
-		    <div class="modal-content">
-		        <span class="close" onclick="closeModal('notificationPolicyModal')">&times;</span>
-		        <h2>알림 수신 방침</h2>
-		        <p>여기에 알림 수신 방침 내용을 입력하세요.</p>
-		    </div>
-		</div>
-			 -->
+   <!-- 동의 안내(style과 클릭이벤트로 동의 안내문 띄우기) -->
+   <!-- <div class="agreement">
+          <label>개인정보 처리 방침 동의</label>
+          <label class="toggle-switch">
+              <input type="checkbox" id="privacyPolicy" required>
+              <span class="slider"></span>
+          </label>
+          <span class="modal-trigger" onclick="openModal('privacyPolicyModal')"> &gt; </span>
+      </div>
+      <div class="agreement">
+          <label>위치 정보 사용 동의</label>
+          <label class="toggle-switch">
+              <input type="checkbox" id="locationPolicy" required>
+              <span class="slider"></span>
+          </label>
+          <span class="modal-trigger" onclick="openModal('locationPolicyModal')"> &gt; </span>
+      </div>
+      <div class="agreement">
+          <label>알림 수신 동의</label>
+          <label class="toggle-switch">
+              <input type="checkbox" id="notificationPolicy" required>
+              <span class="slider"></span>
+          </label>
+          <span class="modal-trigger" onclick="openModal('notificationPolicyModal')"> &gt; </span>
+      </div>
+      
+      모달창
+      <div id="privacyPolicyModal" class="modal">
+          <div class="modal-content">
+              <span class="close" onclick="closeModal('privacyPolicyModal')">&times;</span>
+              <h2>개인정보 처리 방침</h2>
+              <p>여기에 개인정보 처리 방침 내용을 입력하세요.</p>
+          </div>
+      </div>
+      
+      <div id="locationPolicyModal" class="modal">
+          <div class="modal-content">
+              <span class="close" onclick="closeModal('locationPolicyModal')">&times;</span>
+              <h2>위치 정보 사용 방침</h2>
+              <p>여기에 위치 정보 사용 방침 내용을 입력하세요.</p>
+          </div>
+      </div>
+      
+      <div id="notificationPolicyModal" class="modal">
+          <div class="modal-content">
+              <span class="close" onclick="closeModal('notificationPolicyModal')">&times;</span>
+              <h2>알림 수신 방침</h2>
+              <p>여기에 알림 수신 방침 내용을 입력하세요.</p>
+          </div>
+      </div>
+          -->
 
-	<script type="text/javascript" src="/resources/memberJs/joinPage.js"></script>
+   <script type="text/javascript" src="/resources/memberJs/joinPage.js"></script>
 </body>
 </html>

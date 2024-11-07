@@ -75,7 +75,9 @@ public class GReplyController {
     
     @GetMapping(value = "/chkReplied/{userNo}/{gno}", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> chkReplied(@PathVariable("userNo") int userNo, @PathVariable("gno") int gno){
+    	log.warn("aaaaaaaaaaaa" + userNo + gno);
     	String result = gService.chkReplied(userNo, gno);
+    	log.warn("result가 여기 표시됨 : " + result );
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
     

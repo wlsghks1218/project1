@@ -87,7 +87,7 @@
         
     </style>
 </head>
-<body>
+<body onload="calculateTotal()">
 
 <!-- 내비게이션 바 -->
 <div class="navbar">
@@ -99,44 +99,55 @@
     <div class="header">
         <h2>장바구니</h2>
     </div>
+    
+      <!-- 전체 선택 체크박스 -->
+    <div>
+        <input type="checkbox" id="selectAll" onclick="toggleAll(this)" checked> 전체 선택/해제
+    </div>
 
-  <!-- 장바구니 목록을 감싸는 div -->
-<div class="cart-list">
-    <input type="hidden" value="2" name="userNo" id="userNo"> 
-    <!-- 장바구니 목록 -->
-    <c:forEach var="cart" items="${cartInfo}">
-        <div class="cart-item">
-            <c:forEach var="img" items="${cart.gimg}">
-                <img src="${img.uploadPath}/${img.uuid}_${img.fileName}" alt="${cart.gname}" width="100" height="100" />
-            </c:forEach>
-            <div class="cart-info">
-                <h4>굿즈 이름 : ${cart.gname}</h4>
-                <p>가격: ₩<span>${cart.gprice}</span></p>
-                <p>개수: <input type="number" value="${cart.camount}" min="1"></p>
-                <p>총 가격: ₩<span>${cart.camount * cart.gprice}</span></p>
+    <!-- 장바구니 목록을 감싸는 div -->
+    <div class="cart-list">
+        <input type="hidden" value="2" name="userNo" id="userNo"> 
+        <!-- 장바구니 목록 -->
+        
+   
+        <c:forEach var="cart" items="${cartInfo}">
+            <div class="cart-item" id="cart-${cart.gno}" >
+                <input type="checkbox" class="cart-checkbox" id="cart-${cart.gno}" checked onchange="calculateTotal()">
+                <c:forEach var="img" items="${cart.gimg}">
+                    <img src="${img.uploadPath}/${img.uuid}_${img.fileName}" alt="${cart.gname}" width="100" height="100" />
+                </c:forEach>
+                <div class="cart-info">
+                    <h4>굿즈 이름 : ${cart.gname}</h4>
+                    <p>가격: ₩<span class="price">${cart.gprice}</span></p> <!-- 가격에 class 추가 -->
+                    <button onclick="changeAmount(${cart.gno}, -1)">-</button>
+                    <input type="number" id="quantity-${cart.gno}" value="${cart.camount}" min="1" readonly>
+                    <button onclick="changeAmount(${cart.gno}, +1)">+</button>
+                    <p>상품 목록 1개의 총 가격: ₩<span class="total-price">${cart.camount * cart.gprice}</span></p> <!-- 총 가격에 class 추가 -->
+                </div>
+                <span class="delete-button" onclick="deleteItem(${cart.gno})">X</span>
             </div>
-            <span class="delete-button" onclick="confirm('삭제 하시겠습니까?') ? alert('삭제되었습니다.') : '';">X</span>
-        </div>
-    </c:forEach>
+        </c:forEach>
+    </div>
 </div>
 
-    </div>
-
-    <!-- 총 가격 표시 -->
-    <div class="cart-total">
-        <h3>총 가격: ₩<span>${cartInfo.camount} * ${cartInfo.gprice}</span></h3>
-    </div>
+ 
+   <!-- 총 가격 표시 -->
+   <div class="cart-total">
+       총 가격: ₩<span id="grandTotal">0</span>
+   </div>
 
     <!-- 결제하기 버튼 -->
     <div class="checkout-button">
-        <button onclick="alert('결제 페이지로 이동합니다.')">결제하기</button>
+        <button  class="goPayInfo-button" onclick="goPayInfo()">결제하기</button>
     </div>
-</div>
+
 
 <!-- Footer -->
 <div class="footer">
     <h1>footer</h1>    
 </div>
+   <script type="text/javascript" src="/resources/purchaseJs/myCart.js"></script>
 
 </body>
 </html>

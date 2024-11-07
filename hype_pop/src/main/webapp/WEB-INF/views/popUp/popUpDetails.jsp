@@ -14,7 +14,7 @@
             </td>
             <td>
                 <div id="likeCount_${storeInfo.psNo}">
-                    <span id="totalLikeCount">좋아요 수: ${storeInfo.likeCount}</span>
+                    <span id="totalLikeCount">❤️ ${storeInfo.likeCount}</span>
                 </div>
             </td>
         </tr>

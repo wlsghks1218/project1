@@ -63,8 +63,10 @@ public class PartyServiceImpl implements PartyService {
 		return mapper.chkJoined(bno, userNo);
 	}
 	
+	@Transactional
 	@Override
 	public int joinParty(int bno, int userNo) {
+		mapper.updatePlusMember(bno);
 		return mapper.insertChatRoom(bno, userNo);
 	}
 	
@@ -97,6 +99,25 @@ public class PartyServiceImpl implements PartyService {
 	@Override
 	public int updateLeftTime(int bno, int userNo) {
 		return mapper.updateLeftTime(bno, userNo);
+	}
+	
+	@Override
+	public int updatePlusJoin(int bno) {
+		return mapper.updatePlusMember(bno);
+	}
+	
+	@Override
+	public int updateLeaveMember(int bno, int userNo) {
+		int result1= mapper.chkMaster(bno, userNo);
+		log.warn("마스터 여부 체크" + result1);
+		if(result1 == 0) {
+			int result3 = mapper.updateMinusMember(bno, userNo);
+			return mapper.deleteLeaveMember(bno, userNo);
+		}else {
+			int result2 = mapper.deleteLeaveMember(bno, userNo); 
+			int result4 = mapper.updateMinusMember(bno, userNo);
+			return mapper.deleteParty(bno, userNo);
+		}
 	}
 	
 }

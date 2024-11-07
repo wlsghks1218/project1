@@ -29,18 +29,18 @@
         text-align: center; /* 가운데 정렬 */
         color: black; /* 글자색 검정으로 변경 */
     }
-    #saveAsk {
+    #saveGoods {
         margin-top: 10px; /* 위쪽 여백 */
-        padding: 10px 20px;
-        background-color: #dc3545; /* 빨간색 */
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        float: right; /* 오른쪽으로 정렬 */
-        text-align: center; /* 중앙 정렬 */
+	    padding: 10px 20px;
+	    background-color: #dc3545; /* 빨간색 */
+	    color: white;
+	    border: none;
+	    border-radius: 5px;
+	    cursor: pointer;
+	    float: right; /* 오른쪽으로 정렬 */
+	    text-align: center; /* 중앙 정렬 */
     }
-    #saveAsk:hover {
+    #saveGoods:hover {
         background-color: #c82333; /* 조금 어두운 빨간색 */
     }
 </style>
@@ -48,33 +48,31 @@
 <body>
     <jsp:include page="layout/adminHeader.jsp"/>
 
-    <div class="askTable">
+	<div id="AllList"></div>
+	
+    <div class="goodsTable">
         <table>
             <thead>
                 <tr>
                     <th>구매 번호</th>
-                    <th>상품명</th>
                     <th>개수</th>
                     <th>가격</th>
                     <th>구매날짜</th>
                     <th>상품현황</th>
                 </tr>
             </thead>
-            <tbody>
-                <c:forEach var="vo" items="${list}">
-                    <tr>
-                        <td>${vo.bno}</td>
-                        <td><a href="${vo.bno}">${vo.title}</a></td>
-                        <td>${vo.quantity}</td> <!-- 개수를 vo.quantity로 수정 -->
-                        <td>${vo.price}</td> <!-- 가격을 vo.price로 수정 -->
-                        <td>${vo.regdate}</td> <!-- 구매날짜 -->
-                        <td>${vo.status}</td> <!-- 상품현황 -->
-                    </tr>
-                </c:forEach>
-            </tbody>
+            <tbody id="goodsListBody">
+            	<!-- JavaScript로 동적으로 채워질 부분 -->
+	            
+	        </tbody>
         </table>
     </div>
+        
+    <button type="button" id="saveGoods" onclick="updateGoodsList()">저장</button>
 
-    <div id="saveAsk">저장</div>
+    <div id="pagination"></div>
+    
+<script type="text/javascript" src="/resources/adminJs/admin.js"></script> 
+<script type="text/javascript" src="/resources/adminJs/adminGoods.js"></script>  
 </body>
 </html>

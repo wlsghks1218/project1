@@ -12,13 +12,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class likedGoodsImgVO {
-    private int userNo;
-    private int gno;
-    private Date likeDate;
-    private String gname;
-    private String uuid;
-    private String uploadPath;
-    private String fileName;
+
+    private int userNo; // ???? �???
+    private int gno; // ???? �???
+    private Date likeDate; // �????? ??�?
+    private String gname; // ????�?
+    private String uuid; // uuid
+    private String uploadPath; // ??�??? 경�?
+    private String fileName; // ???? ?��?
 
     @Override
     public String toString() {

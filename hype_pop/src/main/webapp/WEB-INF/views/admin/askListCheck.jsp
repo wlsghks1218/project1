@@ -37,12 +37,18 @@
     <form action="#" id="qnaTypeBox">
         <label for="qnaType">문의 유형 선택:</label>
         <select id="qnaType">
-            <option value="refund">일반</option>
-            <option value="delivery">결제</option>
-            <option value="complain">기타</option>
+            <option value="전체">전체</option>
+            <option value="일반">일반</option>
+            <option value="결제">결제</option>
+            <option value="기술">기술</option>
+            <option value="기타">기타</option>
         </select>
-        <label for="answerStatus">답변 여부:</label>
-        <input type="checkbox" id="answerStatus"> 답변 완료
+        <label for="qnaAnswer">답변 여부:</label>
+        <select id="qnaAnswer">
+        	<option value="전체 답변">전체 답변</option>
+        	<option value="답변 완료">답변 완료</option>
+            <option value="답변 미완료">답변 미완료</option>
+        </select>
     </form>
 
     <table id="qnaListCat">
@@ -55,7 +61,10 @@
                 <th>답변 여부</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="qnaListBody">
+            <!-- 데이터가 여기에 삽입됩니다 -->
+        </tbody>
+        <%-- <tbody>
         	<c:forEach var="qnaList" items="${qna}">
                 <tr>
                     <td>${qna.qnaNo}</td>
@@ -63,14 +72,12 @@
                     <td>${qna.qnaTitle}</td>
                     <td>${qna.qnaRegDate}</td>                    
                     <td>${qna.qnaAnswer}</td>                    
-                    <%-- <td>${qna.qnaAnswer != null && !qna.qnaAnswer.isEmpty() ? '답변 완료' : '답변 미완료'}</td> --%>
                 </tr>
             </c:forEach>           
-        </tbody>
+        </tbody> --%>
     </table>
 
-	<div id="pagination">         
-	</div>
+	<div id="pagination"></div>
 	
 <script type="text/javascript" src="/resources/adminJs/adminQna.js"></script>  
 <script type="text/javascript" src="/resources/adminJs/admin.js"></script>  

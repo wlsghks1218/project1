@@ -70,7 +70,7 @@
 	
 	<div id="pagination"></div>
          
-	<jsp:include page="layout/adminFooter.jsp"/>
+    </div>
 	
 	<script type="text/javascript" src="/resources/adminJs/admin.js"></script>    
 </body>

@@ -5,96 +5,9 @@
     box-sizing: border-box; /* 레이아웃 안정성을 위해 box-sizing 설정 */
 }
 
-/* popUpHeader 클래스 내부 스타일 */
-body .popUpHeader {
-    width: 100%;
-    display: flex; /* 유연한 레이아웃을 위한 flexbox 사용 */
-    align-items: center; /* 세로 중앙 정렬 */
-    position: relative; /* 상대 위치 */
-    background-color: #282828; /* 헤더 배경색 */
-    color: #fff; /* 텍스트 색상 */
-    z-index: 100; /* 다른 요소 위에 표시되도록 설정 */
-}
-
-/* 햄버거 메뉴 리스트 스타일 */
-body .popUpHeader #hamburgerList ul {
-    list-style: none;
-    padding: 0;
-    position: absolute; /* 절대 위치 */
-    left: 0; /* 왼쪽 정렬 */
-    top: 60px; /* 헤더 바로 아래에 표시 */
-    z-index: 1000; /* 다른 요소들 위에 표시 */
-    background: white; /* 배경색 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    display: none; /* 초기 상태에서 숨김 */
-}
-
-/* 햄버거 리스트 항목 스타일 */
-body .popUpHeader #hamburgerList ul li {
-    padding: 10px 15px; /* 내부 여백 */
-    cursor: pointer; /* 커서 모양 변경 */
-    transition: background-color 0.3s; /* 배경색 전환 애니메이션 */
-}
-/* 햄버거 리스트 항목 hover 스타일 */
-body .popUpHeader #hamburgerList ul li:hover {
-    background-color: #f0f0f0; /* 마우스 오버 시 배경색 변화 */
-}
-
-/* 햄버거 리스트 항목 active 스타일 */
-body .popUpHeader #hamburgerList ul li:active {
-    background-color: #e0e0e0; /* 클릭 시 배경색 변화 */
-}
-
-/* 햄버거 버튼이 보일 때 */
-body .popUpHeader .show {
-    display: block; /* 필요 시 표시 */
-}
-
-/* 햄버거 버튼 스타일 */
-body .popUpHeader #hamburgerBTN {
-    width: 20px; /* 크기 조정 */
-    height: 20px;
-    cursor: pointer; /* 커서 모양 변경 */
-}
-
-/* Header 내부 div 스타일 */
-body .popUpHeader div {
-    text-align: center;
-    padding: 0 1%;
-}
-
-/* Header에서 각 요소들의 비율 */
-body .popUpHeader #hamburgerDiv {
-    flex: 0 0 5%; /* 고정된 너비 */
-}
-
-body .popUpHeader #mainLogoDiv {
-    flex: 0 0 10%; /* 적절한 비율로 조정 */
-}
-
-body .popUpHeader #goodsMainLogoDiv {
-    flex: 0 0 10%; /* 적절한 비율로 조정 */
-}
-
-body .popUpHeader #popUpSearchDiv {
-    flex: 1; /* 나머지 공간을 차지 */
-    display: flex; /* 검색창과 버튼을 위한 flexbox */
-    align-items: center; /* 세로 중앙 정렬 */
-}
-
-/* 검색창 스타일 */
-body .popUpHeader #popUpSearchBox {
-    width: 70%; /* 검색창 너비 */
-    padding: 5px; /* 패딩 */
-}
-
-/* 알림 아이콘 스타일 */
-body .popUpHeader #noticeDiv {
-    flex: 0 0 5%; /* 고정된 너비 */
-}
-
-body .popUpHeader #notice {
-    cursor: pointer; /* 커서 모양 변경 */
+/* 기본 배경 색상 설정 */
+body {
+    background-color: #00aff0; /* 전체 배경 색상 변경 */
 }
 
 /* 팝업 추천 관련 스타일 */
@@ -103,16 +16,17 @@ body .popUpRecommend {
     max-width: 800px; /* 최대 너비 설정 */
     margin: 0 auto; /* 중앙 정렬 */
     padding: 20px; /* 패딩 추가 */
-    background-color: #141414; /* 배경 색상 */
+    background-color: #00aff0; /* 배경 색상 변경 */
     border-radius: 8px; /* 둥근 모서리 */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* 깊이감 있는 그림자 효과 */
-    color: #ffffff; /* 텍스트 색상 */
+    color: #fee7ed; /* 텍스트 색상 변경 */
 }
 
 /* 팝업 추천 제목 스타일 */
 body .popUpRecommend h1 {
     font-size: 28px; /* 제목 크기 */
     margin-bottom: 15px; /* 하단 여백 */
+    color: #fee7ed; /* 제목 색상 변경 */
 }
 
 /* 팝업 추천 소제목 스타일 */
@@ -120,7 +34,7 @@ body .popUpRecommend h2 {
     font-size: 22px; /* 소제목 크기 */
     margin-top: 30px; /* 상단 여백 */
     margin-bottom: 10px; /* 하단 여백 */
-    color: #f5f5f5; /* 소제목 색상 */
+    color: #fee7ed; /* 소제목 색상 변경 */
 }
 
 /* 팝업 추천 카드 스타일 */
@@ -131,220 +45,17 @@ body .popUpRecommend div {
 body .popUpRecommend span {
     display: inline-block; /* 인라인 블록 설정 */
     padding: 10px 15px; /* 내부 여백 */
-    background-color: #333; /* 배경 색상 */
+    background-color: #fee7ed; /* 배경 색상 변경 */
     border-radius: 4px; /* 둥근 모서리 */
     margin-right: 10px; /* 오른쪽 여백 */
     transition: background-color 0.3s; /* 호버 효과 */
     font-size: 16px; /* 텍스트 크기 */
+    color: #00aff0; /* 텍스트 색상 변경 */
 }
 
 /* 팝업 추천 카드 호버 효과 */
 body .popUpRecommend span:hover {
-    background-color: #555; /* 호버 시 배경 색상 변화 */
-}
-
-/* 슬라이더 컨테이너 */
-.slider-container {
-    display: flex;
-    align-items: center;
-    overflow: hidden; /* 요소가 밖으로 넘치지 않도록 설정 */
-    position: relative;
-    width: 100%;
-    max-width: 800px; /* 원하는 최대 너비 설정 */
-    margin: 0 auto;
-}
-
-/* 슬라이더 내부 요소 */
-.slider {
-    display: flex;
-    transition: transform 0.5s ease;
-    width: calc(100% + 1%); /* 슬라이더 너비를 아이템의 마진을 고려하여 조정 */
-}
-
-/* 슬라이더 아이템 스타일 */
-.popUpItem {
-    flex: 0 0 23%; /* 아이템 크기를 25%에서 23%로 수정 */
-    height: 200px; /* 높이를 정사각형으로 고정 */
-    margin-right: 1%; /* 아이템 간 마진 */
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ccc; /* 테두리 */
-    box-sizing: border-box; /* 내부 패딩과 테두리를 포함한 크기 계산 */
-}
-
-
-
-/* 좌우 화살표 스타일 */
-.arrow {
-    background: rgba(255, 255, 255, 0.8); 
-    border: 1px solid #ccc; 
-    border-radius: 5px;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px 10px; 
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2; /* 슬라이더 위에 화살표가 표시되도록 z-index 설정 */
-}
-
-#leftArrow1, #leftArrow2, #leftArrow3 {
-    left: 10px; /* 왼쪽 화살표 위치 */
-}
-
-#rightArrow1, #rightArrow2, #rightArrow3 {
-    right: 10px; /* 오른쪽 화살표 위치 */
-}
-
-.arrow:hover {
-    background-color: #f0f0f0; /* 호버 시 배경 색상 변경 */
-}
-/* 전체 요소에 대한 기본 스타일 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; /* 레이아웃 안정성을 위해 box-sizing 설정 */
-}
-
-/* popUpHeader 클래스 내부 스타일 */
-body .popUpHeader {
-    width: 100%;
-    display: flex; /* 유연한 레이아웃을 위한 flexbox 사용 */
-    align-items: center; /* 세로 중앙 정렬 */
-    position: relative; /* 상대 위치 */
-    background-color: #282828; /* 헤더 배경색 */
-    color: #fff; /* 텍스트 색상 */
-    z-index: 100; /* 다른 요소 위에 표시되도록 설정 */
-}
-
-/* 햄버거 메뉴 리스트 스타일 */
-body .popUpHeader #hamburgerList ul {
-    list-style: none;
-    padding: 0;
-    position: absolute; /* 절대 위치 */
-    left: 0; /* 왼쪽 정렬 */
-    top: 60px; /* 헤더 바로 아래에 표시 */
-    z-index: 1000; /* 다른 요소들 위에 표시 */
-    background: white; /* 배경색 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-    display: none; /* 초기 상태에서 숨김 */
-}
-
-/* 햄버거 리스트 항목 스타일 */
-body .popUpHeader #hamburgerList ul li {
-    padding: 10px 15px; /* 내부 여백 */
-    cursor: pointer; /* 커서 모양 변경 */
-    transition: background-color 0.3s; /* 배경색 전환 애니메이션 */
-}
-
-/* 햄버거 리스트 항목 hover 스타일 */
-body .popUpHeader #hamburgerList ul li:hover {
-    background-color: #f0f0f0; /* 마우스 오버 시 배경색 변화 */
-}
-
-/* 햄버거 리스트 항목 active 스타일 */
-body .popUpHeader #hamburgerList ul li:active {
-    background-color: #e0e0e0; /* 클릭 시 배경색 변화 */
-}
-
-/* 햄버거 버튼이 보일 때 */
-body .popUpHeader .show {
-    display: block; /* 필요 시 표시 */
-}
-
-/* 햄버거 버튼 스타일 */
-body .popUpHeader #hamburgerBTN {
-    width: 20px; /* 크기 조정 */
-    height: 20px;
-    cursor: pointer; /* 커서 모양 변경 */
-}
-
-/* Header 내부 div 스타일 */
-body .popUpHeader div {
-    text-align: center;
-    padding: 0 1%;
-}
-
-/* Header에서 각 요소들의 비율 */
-body .popUpHeader #hamburgerDiv {
-    flex: 0 0 5%; /* 고정된 너비 */
-}
-
-body .popUpHeader #mainLogoDiv {
-    flex: 0 0 10%; /* 적절한 비율로 조정 */
-}
-
-body .popUpHeader #goodsMainLogoDiv {
-    flex: 0 0 10%; /* 적절한 비율로 조정 */
-}
-
-body .popUpHeader #popUpSearchDiv {
-    flex: 1; /* 나머지 공간을 차지 */
-    display: flex; /* 검색창과 버튼을 위한 flexbox */
-    align-items: center; /* 세로 중앙 정렬 */
-}
-
-/* 검색창 스타일 */
-body .popUpHeader #popUpSearchBox {
-    width: 70%; /* 검색창 너비 */
-    padding: 5px; /* 패딩 */
-}
-
-/* 알림 아이콘 스타일 */
-body .popUpHeader #noticeDiv {
-    flex: 0 0 5%; /* 고정된 너비 */
-}
-
-body .popUpHeader #notice {
-    cursor: pointer; /* 커서 모양 변경 */
-}
-
-/* 팝업 추천 관련 스타일 */
-body .popUpRecommend {
-    font-family: 'Helvetica Neue', Arial, sans-serif; /* 기본 폰트 설정 */
-    max-width: 800px; /* 최대 너비 설정 */
-    margin: 0 auto; /* 중앙 정렬 */
-    padding: 20px; /* 패딩 추가 */
-    background-color: #141414; /* 배경 색상 */
-    border-radius: 8px; /* 둥근 모서리 */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* 깊이감 있는 그림자 효과 */
-    color: #ffffff; /* 텍스트 색상 */
-}
-
-/* 팝업 추천 제목 스타일 */
-body .popUpRecommend h1 {
-    font-size: 28px; /* 제목 크기 */
-    margin-bottom: 15px; /* 하단 여백 */
-}
-
-/* 팝업 추천 소제목 스타일 */
-body .popUpRecommend h2 {
-    font-size: 22px; /* 소제목 크기 */
-    margin-top: 30px; /* 상단 여백 */
-    margin-bottom: 10px; /* 하단 여백 */
-    color: #f5f5f5; /* 소제목 색상 */
-}
-
-/* 팝업 추천 카드 스타일 */
-body .popUpRecommend div {
-    margin-bottom: 20px; /* 하단 여백 */
-}
-
-body .popUpRecommend span {
-    display: inline-block; /* 인라인 블록 설정 */
-    padding: 10px 15px; /* 내부 여백 */
-    background-color: #333; /* 배경 색상 */
-    border-radius: 4px; /* 둥근 모서리 */
-    margin-right: 10px; /* 오른쪽 여백 */
-    transition: background-color 0.3s; /* 호버 효과 */
-    font-size: 16px; /* 텍스트 크기 */
-}
-
-/* 팝업 추천 카드 호버 효과 */
-body .popUpRecommend span:hover {
-    background-color: #555; /* 호버 시 배경 색상 변화 */
+    background-color: #e6a8c1; /* 호버 시 배경 색상 변화 */
 }
 
 /* 슬라이더 컨테이너 */
@@ -396,18 +107,6 @@ body .popUpRecommend span:hover {
     transform: translateY(-50%);
     z-index: 50; /* 네비게이션 바보다 낮은 z-index 설정 */
 }
-#leftArrow, #rightArrow {
-    background: rgba(255, 255, 255, 0.8); /* 화살표 배경 */
-    border: 1px solid #ccc; /* 화살표 테두리 */
-    border-radius: 5px;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px 10px; 
-    position: absolute;
-    top: 50%; /* 세로 중앙 정렬 */
-    transform: translateY(-50%);
-    z-index: 2; /* 슬라이더 위에 표시되도록 설정 */
-}
 
 #leftArrow {
     left: 10px; /* 왼쪽 화살표 위치 */
@@ -442,8 +141,4 @@ body .popUpRecommend span:hover {
 }
 #rightArrow3 {
     right: 10px;
-}
-
-.arrow:hover {
-    background-color: #f0f0f0; /* 호버 시 배경 색상 변경 */
 }

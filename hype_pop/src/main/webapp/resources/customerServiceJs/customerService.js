@@ -1,6 +1,6 @@
 let currentPage = 1;
 let totalPages = 0; 
-const userNo = 2; // 나중에 로그인 시 처리 해야됨 
+const userNo = 1; // 나중에 로그인 시 처리 해야됨 
 
 function fetchNotices(pageNum = 1, amount = 5) {
     currentPage = pageNum; 
@@ -218,9 +218,46 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+function replyCheck(pageNum = 1, amount = 5) {
+    const isReplyChecked = document.getElementById('replyCheck').checked; // 체크박스 상태 확인
+    const inquiryList = document.querySelector('.inquiry-list');
+    currentPage = pageNum;
 
+    // 답변 완료 필터링 파라미터 추가
+    const url = `/support/replyCheck?pageNum=${pageNum}&amount=${amount}&userNo=${userNo}&answered=${isReplyChecked}`;
 
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            inquiryList.innerHTML = '';
+            totalPages = Math.ceil(data.totalCount / amount); 
 
+            if (data.inquiries.length === 0) {
+                inquiryList.innerHTML = '<p>문의 없음</p>';
+            } else {
+                data.inquiries.forEach(inquiry => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('inquiry');
+
+                    // 클릭 시 이동하는 이벤트 리스너
+                    listItem.addEventListener('click', function() {
+                        location.href = `/support/inquiryInfo?qnaNo=${inquiry.qnaNo}`;
+                    });
+
+                    const hasAnswer = inquiry.qnaAnswer ? '답변 완료' : '답변 대기 중';
+                    listItem.innerHTML = `
+                        <span class="inquiryType">${inquiry.qnaType}</span>
+                        <span class="inquiryTitle">${inquiry.qnaTitle}</span>
+                        <span class="inquiryRegDate">${new Date(inquiry.qnaRegDate).toLocaleDateString()}</span>
+                        <span class="answerStatus">${hasAnswer}</span>
+                    `;
+                    inquiryList.appendChild(listItem);
+                });
+            }
+            updateInquiryPagination();
+        })
+        .catch(error => console.error('Fetch error:', error));
+}
 
 
 

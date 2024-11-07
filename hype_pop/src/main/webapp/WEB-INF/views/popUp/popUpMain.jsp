@@ -36,4 +36,4 @@
 
 </div>
 
-<div id="map" style="width: 800px; height: 400px; margin: 0 auto; display: flex; justify-content: center;" ></div>
+<div id="map" style="width: 800px; height: 400px; margin: 30px auto; display: flex; justify-content: center;" ></div>

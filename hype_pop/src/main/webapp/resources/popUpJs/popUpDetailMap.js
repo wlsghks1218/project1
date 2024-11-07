@@ -10,7 +10,6 @@ let storeInfo = spanElement.getAttribute('data-storeInfo');
 
 storeInfo = JSON.parse(storeInfo.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
 
-
 // 페이지 로드 시 위치 정보 요청
 if (navigator.geolocation) {
     if (localStorage.getItem("userLocation")) {
@@ -36,16 +35,68 @@ function initMap(latitude, longitude) {
 
     // 지도 설정
     var mapOptions = {
-        center: new naver.maps.LatLng(latitude, longitude),
-        zoom: 11
+        center: new naver.maps.LatLng(storeLatitude, storeLongitude), // 팝업스토어 위치로 중심 설정
+        zoom: 15
     };
 
     map = new naver.maps.Map('map', mapOptions); // 지도 객체 초기화
-    if (localStorage.getItem("userLocation")) {
-        addCurrentLocationMarker(latitude, longitude); // 내 위치 마커 추가
-    }
     addStoreMarker(storeLatitude, storeLongitude, storeName, storeStartDate, storeEndDate); // 스토어 마커 추가
+
+    // 내 위치가 저장되어 있는 경우에만 내 위치 마커 추가
+    if (localStorage.getItem("userLocation")) {
+        const savedLocation = JSON.parse(localStorage.getItem("userLocation"));
+        addCurrentLocationMarker(savedLocation.latitude, savedLocation.longitude); // 내 위치 마커 추가
+    }
+
+    // 내 위치 보기 버튼 생성
+    createMyLocationButton();
 }
+
+// 내 위치 버튼 생성
+function createMyLocationButton() {
+    const button = document.createElement('button');
+    button.textContent = '내 위치 보기';
+    button.style.position = 'absolute';
+    button.style.top = '10px';
+    button.style.right = '10px';
+    button.style.zIndex = 1000; // 버튼이 지도의 위에 표시되도록 설정
+    button.onclick = focusOnCurrentLocation; // 버튼 클릭 시 함수 호출
+
+    document.getElementById('map').appendChild(button); // 버튼을 지도에 추가
+}
+
+function focusOnCurrentLocation() {
+    if (localStorage.getItem("userLocation")) {
+        const savedLocation = JSON.parse(localStorage.getItem("userLocation"));
+        const currentPosition = new naver.maps.LatLng(savedLocation.latitude, savedLocation.longitude);
+
+        let currentCenter = map.getCenter();
+        let startLat = currentCenter.lat();
+        let startLng = currentCenter.lng();
+        let endLat = currentPosition.lat();
+        let endLng = currentPosition.lng();
+
+        let steps = 300; // 이동 단계 수 (값이 클수록 이동이 부드러움)
+        let step = 0;
+        
+        // 애니메이션을 위한 setInterval 사용
+        let interval = setInterval(() => {
+            step++;
+            let lat = startLat + (endLat - startLat) * (step / steps);
+            let lng = startLng + (endLng - startLng) * (step / steps);
+            map.setCenter(new naver.maps.LatLng(lat, lng));
+            
+            // 마지막 단계에서 종료 및 정보창 열기
+            if (step === steps) {
+                clearInterval(interval);
+                currentInfoWindow.open(map, currentLocationMarker);
+            }
+        }, 3); // 각 단계 사이의 시간 (10ms, 조절 가능)
+    } else {
+        alert('저장된 위치가 없습니다.');
+    }
+}
+
 
 // 내 위치 마커 추가
 function addCurrentLocationMarker(latitude, longitude) {
@@ -68,7 +119,6 @@ function addCurrentLocationMarker(latitude, longitude) {
                     <strong>내 위치</strong>
                   </div>`
     });
-    currentInfoWindow.open(map, currentLocationMarker); // 정보창 열기
 
     // 내 위치 마커 클릭 시 정보창 열기
     naver.maps.Event.addListener(currentLocationMarker, 'click', function() {
@@ -104,6 +154,9 @@ function addStoreMarker(latitude, longitude, storeName, startDate, endDate) {
     naver.maps.Event.addListener(storeMarker, 'click', function() {
         storeInfoWindow.open(map, storeMarker);
     });
+
+    // 초기 로드 시 스토어 정보창 열기
+    storeInfoWindow.open(map, storeMarker);
 }
 
 // 날짜 포맷팅 함수

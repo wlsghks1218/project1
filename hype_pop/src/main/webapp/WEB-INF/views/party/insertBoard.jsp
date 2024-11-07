@@ -155,6 +155,7 @@ footer, nav {
 					<select name="category"	id="categorySelect" class="inputField">
 						<option value="default" disabled selected>선택하세요</option>
 						<option value="popup">팝업스토어</option>
+						<option value="exhibition">전시회</option>
 					</select>
 				</div>
 
@@ -174,6 +175,15 @@ footer, nav {
 					<label for="boardTitle">게시판 제목</label>
 					<input type="text" name="boardTitle" id="boardTitle" placeholder="제목을 입력하세요"	class="inputField">
 				</div>
+				<div class="setUserCountGroup">
+					<label for="setUserCount">최대 인원</label>
+					<select name="maxUser">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+					</select>
+				</div>
 				<div class="buttonGroup">
 					<button type="button" id="submitBtn">작성 완료</button>
 					<button type="button" id="resetBtn">초기화</button>
@@ -186,4 +196,6 @@ footer, nav {
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/insertBoard.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyNav.js"></script>
 </html>

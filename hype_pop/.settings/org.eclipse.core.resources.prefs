@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/main/java/org/hype/controller/AdminController.java=UTF-8
+encoding//src/main/java/org/hype/controller/ExhibitionController.java=UTF-8
 encoding//src/main/java/org/hype/controller/MemberController.java=UTF-8
 encoding//src/main/java/org/hype/controller/MemberRestController.java=UTF-8
 encoding//src/main/java/org/hype/controller/popUpMapController.java=UTF-8

@@ -242,7 +242,10 @@ document.getElementById("init").addEventListener('click', (e) => {
     document.querySelectorAll('.searchCategory span').forEach(button => {
         button.classList.remove('active');
     });
-
+    
+    const searchedText = document.getElementById('goodsSearchBox');
+    searchedText.placeholder = '검색할 굿즈 이름을 입력하세요';
+    
     filteredGoods = goodsResults.slice();
 
     currentPage = 1;
@@ -279,7 +282,6 @@ function setBackgroundImage(item) {
             }
         });
     });
-
     observer.observe(item);
 }
 

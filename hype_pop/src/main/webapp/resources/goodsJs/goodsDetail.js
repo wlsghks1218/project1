@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const goodsDetailImg = document.querySelector(".goodsDetailImg");
     const fileNameBanner = document.getElementById("fileNameBanner").value;
     const fileNameDetail = document.getElementById("fileNameDetail").value;
+    
+    const searchedText = document.getElementById('goodsSearchBox');
+    searchedText.placeholder = '검색할 굿즈 이름을 입력하세요';
+    localStorage.setItem('searchText', ""); // 검색어 저장
 
     showReplyList(currentPage);
     displayAvgStars();

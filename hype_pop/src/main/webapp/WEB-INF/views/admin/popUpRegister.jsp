@@ -37,6 +37,13 @@ input[type="text"], select {
     box-sizing: border-box; /* 패딩과 테두리 포함 */
 }
 
+input[type="date"] {
+	padding: 10px; /* 내부 여백 */
+    border: 1px solid #ced4da; /* 테두리 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    box-sizing: border-box; /* 패딩과 테두리 포함 */
+}
+
 #adminSearchBox {
     width: auto; /* 자동 너비 조정 */
     margin: 20px 10px 10px; /* 위쪽 여백 추가 */
@@ -58,11 +65,9 @@ input[type="text"], select {
 }
 
 #uploadedImages {
-    margin-top: 10px; /* 상단 여백 */
-    min-height: 50px; /* 최소 높이 */
-    border: 1px dashed #ced4da; /* 점선 테두리 */
+    margin-top: 5px; /* 상단 여백 */
+    min-height: 70px; /* 최소 높이 */    
     padding: 10px; /* 내부 여백 */
-    border-radius: 5px; /* 모서리 둥글게 */
 }
 
 button {
@@ -89,7 +94,7 @@ button:hover {
 	
 	<div id="AllList"></div>
 	
-	<form id="registerForm" method="POST" action="/admin/psRegister" enctype="multipart/form-data" onsubmit="return popStoreRegister(event);">
+	<form id="psRegisterForm" method="POST" action="/admin/psRegister" enctype="multipart/form-data">
 	    <div id="popUpimg" style="cursor: pointer;">팝업스토어 이미지</div>
 	    <input type="file" id="imageFile" name="imageFile" style="display: none;">
 	    <div id="uploadedImages"></div>
@@ -99,33 +104,34 @@ button:hover {
 	    
 	    <div id="storeName">팝업스토어 이름 <input type="text" name="psName"></div>
 	    <div id="cats">팝업스토어 카테고리
-		    <select id="storeCat" name="psCat" multiple>
-		        <option value="1">헬스/뷰티</option>
-		        <option value="1">게임</option>
-		        <option value="1">문화</option>
-		        <option value="1">쇼핑</option>
-		        <option value="1">문구</option>
-		        <option value="1">키즈</option>
-		        <option value="1">디자인</option>
-		        <option value="1">식품</option>
-		        <option value="1">인테리어</option>
-		        <option value="1">정책</option>
-		        <option value="1">캐릭터</option>
-		        <option value="1">체험</option>
-		        <option value="1">콜라보</option>
-		        <option value="1">방송</option>
-		    </select>
-		</div>
-	    <div id="startDate">시작일 <input type="text" name="psStartDate"></div>
-	    <div id="endDate">종료일 <input type="text" name="psEndDate"></div>
-	    <div id="address">주소 <input type="text" name="psAddress"></div>
+          <div>
+             <input type="checkbox" name="psCat.healthBeauty" value="1">헬스/뷰티
+             <input type="checkbox" name="psCat.game" value="1">게임
+             <input type="checkbox" name="psCat.culture" value="1">문화
+             <input type="checkbox" name="psCat.shopping" value="1">쇼핑
+             <input type="checkbox" name="psCat.supply" value="1">문구
+             <input type="checkbox" name="psCat.kids" value="1">키즈
+             <input type="checkbox" name="psCat.design" value="1">디자인
+             <input type="checkbox" name="psCat.foods" value="1">식품
+             <input type="checkbox" name="psCat.interior" value="1">인테리어
+             <input type="checkbox" name="psCat.policy" value="1">정책
+             <input type="checkbox" name="psCat.character" value="1">캐릭터
+             <input type="checkbox" name="psCat.experience" value="1">체험
+             <input type="checkbox" name="psCat.collaboration" value="1">콜라보
+             <input type="checkbox" name="psCat.entertainment" value="1">방송
+          </div>
+      </div>
+	    <div id="startDate">시작일 <br><input type="date" name="psStartDate"></div>
+	    <div id="endDate">종료일 <br><input type="date" name="psEndDate"></div>
+	    
+	    <div id="address">주소 <input type="text" name="psAddress" ></div>
 	    <div id="snsAddress">SNS 주소 <input type="text" name="snsAd"></div>
 	    <div id="company">주최사 정보 <input type="text" name="comInfo"></div>
 	    <div id="transfer">교통편 <input type="text" name="transInfo"></div>
 	    <div id="parking">주차장 정보 <input type="text" name="parkingInfo"></div>
 	    <div id="storeExp">설명글 <input type="text" name="psExp"></div>
 	    
-        <!-- <button type="submit" id="psRegisterBtn">등록하기</button> -->
+        <button type="button" id="psRegisterBtn" onclick="popStoreRegister();">등록하기</button>
 	</form>	
 	
 	<div id="pagination"></div>

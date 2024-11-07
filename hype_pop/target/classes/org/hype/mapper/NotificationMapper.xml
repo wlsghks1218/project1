@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.hype.mapper.NotificationMapper"> <!-- 정확한 Mapper 인터페이스 경로 -->
+ <!-- 사용자 ID를 기준으로 알림을 조회하는 쿼리 -->
+    <select id="findAlarmsByUserNo" resultType="org.hype.domain.NotificationVO">
+        SELECT *
+        FROM notification_tbl
+        WHERE userNo = #{userNo}
+        ORDER BY notificationNo DESC
+    </select>
+    
+        <delete id="deleteNotification" parameterType="int">
+        DELETE FROM notification_tbl
+        WHERE notificationNo = #{notificationNo}
+    </delete>
+</mapper>

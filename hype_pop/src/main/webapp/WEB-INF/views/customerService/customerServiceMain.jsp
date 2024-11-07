@@ -230,6 +230,8 @@ blue
          <br>
          <hr>
          <br>
+         <div style = "float : right"><input type = "checkbox" id="replyCheck" onclick = "replyCheck()"> 답변완료</div>
+         <br>
          <ul class="inquiry-list">
             <li>로딩 중...</li>
          </ul>

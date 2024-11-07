@@ -22,6 +22,7 @@ public interface PopUpMapper {
 
    int checkLikeStatus(Map<String, Integer> params);
    
+   public String getStoreNameByPsNo(int referenceNo);
    // 좋아요 추가
    public void insertLike(likeVO newLike);
    
@@ -61,6 +62,8 @@ public interface PopUpMapper {
 
 	// 유저 번호로 좋아요 누른 팝업스토어 가져오기
 	public List<likeVO> getUserLike(int userNo);
+
+
 
 
 

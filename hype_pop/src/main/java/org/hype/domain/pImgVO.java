@@ -13,5 +13,5 @@ public class pImgVO {
 	private int psNo;
 	private String uuid;
 	private String uploadPath;
-	private String filename;
+	private String fileName;
 }

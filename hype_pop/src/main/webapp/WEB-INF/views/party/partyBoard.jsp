@@ -109,6 +109,7 @@ tr:hover {
 				<th>팝업스토어 or 전시회 이름</th>
 				<th>파티 구인 제목</th>
 				<th>파티 등록 날짜</th>
+				<th>파티 인원 현황</th>
 			</tr>
 		</thead>
 		<tbody></tbody>
@@ -122,4 +123,6 @@ tr:hover {
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/partyBoard.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>
+<script type="text/javascript" src="/resources/partyJs/partyNav.js"></script>
 </html>

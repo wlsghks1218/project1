@@ -2,6 +2,7 @@ package org.hype.controller;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.hype.domain.ChatContentVO;
 import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,6 +79,7 @@ public class PartyController {
 		return "/party/boardDetail";
 	}
 	
+	@Transactional
 	@GetMapping(value = "/chkJoined/{bno}/{userNo}", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String chkJoined(@PathVariable("bno") int bno, @PathVariable("userNo") int userNo) {
@@ -124,5 +127,13 @@ public class PartyController {
 		log.warn("updateLeftTime에서" + bno + userNo);
 		int result = service.updateLeftTime(bno, userNo);
 		return result;
+	}
+	
+	@GetMapping(value="/leaveParty")
+	public String leaveParty(@RequestParam("bno") int bno, @RequestParam("userNo") int userNo) {
+		log.warn("이거 타는거에여?"+bno+userNo);
+		int result = service.updateLeaveMember(bno, userNo);
+		log.warn("탄다면 result = " + result);
+		return "/party/partyBoard";
 	}
 }

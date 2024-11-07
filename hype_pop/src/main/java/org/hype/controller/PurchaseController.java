@@ -1,10 +1,15 @@
-
 package org.hype.controller;
 
+import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hype.domain.cartVO;
+import org.hype.domain.gImgVO;
+import org.hype.domain.payVO;
+import org.hype.domain.signInVO;
 import org.hype.service.MemberService;
 import org.hype.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +37,7 @@ public class PurchaseController {
    @Autowired
    private PurchaseService pservice;
    
-   //장바구니에 아이템 추가
-    @RequestMapping(value ="/addCart", produces = "application/json; charset=UTF-8")
-   @ResponseBody
-   public ResponseEntity<String> addToCart(@RequestBody cartVO cvo) {
-       
-       
-              pservice.addToCart(cvo);
-              return new ResponseEntity<>("상품이 장바구니에 추가되었습니다.", HttpStatus.OK);
-          }
-    
+
 
       
    
@@ -61,19 +57,85 @@ public class PurchaseController {
         
         return "/purchase/myCart"; 
     }
+    
 
-    // 결제 정보 입력 페이지로 이동
-    @GetMapping("/goPurchase")
-    public String goPurchase(@RequestParam("orderId") String orderId, Model model) {
-        log.info("결제 정보 입력창으로 이동");
-
-        // 주석: orderId에 해당하는 주문 정보 가져오기
-        // Order order = purchaseService.getOrderDetails(orderId);
-        // model.addAttribute("order", order);
-        
-        return "/purchase/goodsPurchase"; 
+    
+    //결제자 정보 가져오기
+    @GetMapping("/getPayInfo")
+    public String getPayInfo(@RequestParam("userNo") int userNo, Model model) {
+       log.info("결제 정보 불러오기.." + userNo);
+       
+       signInVO payInfo = pservice.getPayInfo(userNo);
+       int price = pservice.getPrice(userNo);
+       log.info("price...: " + price );
+       
+       model.addAttribute("getPayInfo", payInfo);
+       model.addAttribute("price", price);
+       
+       return "/purchase/payInfoPage"; 
+       
+       
     }
+    
+    
+    
+    //결제한 상품 목록 pay_list_tbl에 넣기
+    @GetMapping("/addToPayList")
+    public String addToPayList(cartVO cvo, Model model) {
+       
+       log.info("addToPayList.." + cvo);
+       
+       int addToPayList = pservice.addToPayList(cvo);
+   
+       
+       model.addAttribute("addToPayList", addToPayList);
+    
+       
+       return "/purchase/purchaseComplete"; 
+       
+       
+    }
+    
+   
+ 
+    
+    
+ // 내 결제 목록 가기
+    @GetMapping("/getPayList")
+    public String getPaymentList(@RequestParam("userNo") int userNo, Model model) {
+        log.info("getPaymentList...: " + userNo); 
+        
+        pservice.oneDayGbuyDate();
+        
+        pservice.threeDayGbuyDate();
+        
+        // 사용자 번호로 결제 목록 가져오기
+        List<payVO> getPayList = pservice.getPayList(userNo);
+        
+        
+        for(payVO pay:  getPayList) {
+           int gno = pay.getGno();
+           log.info("gnognogno..." + gno);      
+           List<gImgVO> imgList = pservice.getPayListImg(gno);
+           log.info("imgList..." + imgList);
+           pay.setGimg(imgList);
+        }
+        
+      
+         model.addAttribute("getPayList", getPayList);
 
+        return "/purchase/paymentList"; 
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // 결제 정보 입력 및 결제 처리
     @PostMapping("/processPurchase")
     public String processPurchase(@RequestParam("orderId") String orderId, 
@@ -94,16 +156,7 @@ public class PurchaseController {
            return "/purchase/goodsPurchase"; // 결제 실패 시 다시 결제 페이지로 이동
         // }
     }
-
-    // 구매한 목록 가져오기
-    @GetMapping("/purchaseHistory")
-    public String getPurchaseHistory(Model model) {
-        log.info("구매한 목록을 가져옵니다.");
-
-        // 주석: 사용자의 구매 내역을 DB에서 가져오는 로직 필요
-        // List<Purchase> purchaseHistory = purchaseService.getPurchaseHistory(userId);
-        // model.addAttribute("purchaseHistory", purchaseHistory);
-
-        return "/purchase/purchaseHistory"; // 구매 내역을 보여줄 JSP 페이지
-    }
 }
+
+
+    

@@ -53,8 +53,12 @@
         <span class="adminBox" id="storeManage">쇼핑몰 관리하기</span>
         <span class="adminBox" id="memberManage">회원 관리하기</span> 
         <br>
-        <input type="text" id="adminSearchBox"> 
-        <span id="searchBTN">검색</span>
+        <input type="text" id="adminSearchBox" style="display: none;"> 
+        <span id="searchBTN" style="display: none;">검색</span>
+        <br>
+        <span class="adminBox" id="askList">문의리스트 확인</span> 
+      	<span class="adminBox" id="goodsState">상품 상태 조회</span>
+      	<span class="adminBox" id="registerBtn">등록하기</span>
     </div>
 <div class="adminMain">  
 </body>

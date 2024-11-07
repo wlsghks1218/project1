@@ -44,13 +44,15 @@ public class MemberServiceImpl implements MemberService{
 	        log.warn("����媛��� �� userNo: " + svo.getUserNo());
 
 	        // userNo媛� null�몄� ����
-////	        if (svo.getUserNo() == "0") {
-//	            throw new RuntimeException("����媛��� �� userNo瑜� 媛��몄�ㅼ� 紐삵���듬����.");
-//	        }
+	        if (svo.getUserNo() == 0) {
+	            throw new RuntimeException("����媛��� �� userNo瑜� 媛��몄�ㅼ� 紐삵���듬����.");
+	        }
 
 	        // 愿��ъ�� �쎌��
-//	        mcvo.setUserNo(svo.getUserNo());
+	        mcvo.setUserNo(svo.getUserNo());
 	        return membermapper.insertInterest(mcvo);
+	        
+
 	    }
 	    
 	    //���대�� 以�蹂� ����

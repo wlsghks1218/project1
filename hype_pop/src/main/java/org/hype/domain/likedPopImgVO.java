@@ -14,11 +14,11 @@ import lombok.Setter;
 public class likedPopImgVO {
 
 	
-	private int userNo;
-	private int psNo;
-	private Date likeDate;
-	private String uuid;
-	private String uploadPath;
-	private String fileName;
-	private String psName;
+	private int userNo; // ????�???
+	private int psNo; // ?????��???? �???
+	private Date likeDate; // �????? ??�?
+	private String uuid; // uuid
+	private String uploadPath; // ??�??? 경�?
+	private String fileName; // ???? ?��?
+	private String psName; // ?????��???? ?��?
 }

@@ -10,77 +10,8 @@ document.querySelectorAll('.popUpItem').forEach(a => {
   });
 });
 
-document.querySelectorAll('#hamburgerList li').forEach(a => {
-  a.addEventListener('click', (event) => {
-    event.preventDefault();
-    
-    let hamburgerListName = a.textContent;
-
-    switch (hamburgerListName) {
-      case "팝업 스토어 전체 보기":
-        location.href = "/hypePop/search/noData";
-        break;
-      case "굿즈 전체 보기":
-        location.href = "/goodsStore/goodsSearch";
-        break;
-      case "내 주변":
-        location.href = "/#map";
-        break;
-      case "캘린더":
-        location.href = "/hypePop/calendar";
-        break;  
-      case "고객센터":
-        location.href = "/hypePop/customerMain";
-        break;
-      case "로그인":
-        location.href = "/member/login";
-        break;
-      case "회원가입":
-        location.href = "/member/join";
-        break;
-    }
-  });
-});
-
-document.querySelectorAll('.popUpHeader div').forEach(a => {
-  a.addEventListener('click', (event) => {
-    event.preventDefault();
-    
-    let headerClick = a.textContent;
-
-    switch (headerClick) {
-      case "메인 로고":
-        location.href = "/";
-        break;
-      case "굿즈 메인 로고":
-        location.href = "/goodsStore/goodsMain";
-        break;
-    }
-  });
-});
-
-// 검색 버튼 클릭 이벤트 추가
-document.getElementById("searchBTN").addEventListener('click', () => {
-  let inputText = document.getElementById("popUpSearchInput").value; // ID 변경
-
-  console.log(inputText); // 입력된 텍스트를 콘솔에 출력
-  
-  if (inputText.trim() !== "") {
-    location.href = "/hypePop/search?searchData=" + encodeURIComponent(inputText);
-  } else {
-    alert("검색어를 입력하세요.");
-  }
-});
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 햄버거 메뉴 관련 설정
-  const hamburgerList = document.getElementById('hamburgerList').querySelector('ul');
-  hamburgerList.style.display = "none"; // 초기 상태에서 숨김
-
-  // 햄버거 메뉴 클릭 이벤트
-  document.getElementById('hamburgerBTN').addEventListener('click', () => {
-    hamburgerList.style.display = (hamburgerList.style.display === "none") ? "block" : "none";
-  });
 
   // 슬라이더 관련 설정
   const sliderContainers = [

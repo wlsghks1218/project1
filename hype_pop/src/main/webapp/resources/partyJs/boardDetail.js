@@ -2,23 +2,24 @@ let name;
 let ws;
 const bno = new URLSearchParams(location.search).get('bno');
 const url = `ws://192.168.0.121:9090/chatserver.do?bno=${bno}`;
-const userNo = 3;
-const userId = "user3";
+const userNo = localStorage.getItem("userNo");
+console.log(userNo);
+let userId;
 const userMap = {}; // userNo와 userId를 매핑하여 저장할 객체
 console.log(userMap);
 
 // 채팅방에 유저가 참여하고 있는지 확인하는 fetch
 fetch(`/party/chkJoined/${bno}/${userNo}`)
-.then(response => response.text())
-.then(data => {
-    console.log("Fetched data:", data);
-    if (data === "채팅방에 진입했습니다.") {
-        console.log("새로운 WebSocket을 연결합니다.");
-    } else if (data === "채팅방에 이미 있는 유저입니다.") {
-        console.log("이미 연결된 WebSocket입니다.");
-    }
-})
-.catch(error => console.error("Error fetching data:", error));
+    .then(response => response.text())
+    .then(data => {
+        console.log("Fetched data:", data);
+        if (data === "채팅방에 진입했습니다.") {
+            console.log("새로운 WebSocket을 연결합니다.");
+        } else if (data === "채팅방에 이미 있는 유저입니다.") {
+            console.log("이미 연결된 WebSocket입니다.");
+        }
+    })
+    .catch(error => console.error("Error fetching data:", error));
 
 // 참여 유저 목록 가져오기
 fetch(`/party/getPartyUser/${bno}`)
@@ -27,23 +28,26 @@ fetch(`/party/getPartyUser/${bno}`)
     const joinMemberDiv = document.querySelector('.joinMember');
     joinMemberDiv.innerHTML = '<h3>참여 유저 목록:</h3>';
     
-    // 각 유저 ID와 번호를 joinMember 영역에 추가
+    // 각 유저 ID와 번호를 joinMember 영역에 추가하고 userMap에 저장
     data.forEach(user => {
         userMap[user.userNo] = user.userId;
-        console.log(user.userId);
         const userElement = document.createElement('div');
         userElement.textContent = `${user.userId}`;
         joinMemberDiv.appendChild(userElement);
     });
+    
+    // userNo에 해당하는 userId 설정
+    userId = userMap[userNo];
+    console.log("Assigned userId:", userId); // 확인용 로그
+    
     fetchChatContents();
 })
 .catch(error => console.error("Error fetching party users:", error));
-
 function fetchChatContents() {
     fetch(`/party/getPartyInfo/${bno}`)
         .then(response => response.json())
         .then(data => {
-            const currentUserInfo = data.find(info => info.userNo === userNo);
+            const currentUserInfo = data.find(info => info.userNo == userNo);
             const userJoinTime = new Date(currentUserInfo.joinTime);
             const userLastLeftTime = new Date(currentUserInfo.lastLeftTime);
 
@@ -63,21 +67,21 @@ function fetchChatContents() {
 
                         if (userLastLeftTime && messageTime > userLastLeftTime) {
                             if (!lastLeftMessageDisplayed) {
-                                print('', "여기까지 읽었습니다.", 'system', 'state read-marker', message.chatDate);
+                                print('', "여기까지 읽었습니다.", 'system', 'state', 'read-marker', message.chatDate);
                                 lastLeftMessageDisplayed = true;
                             }
-                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', message.chatDate);
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', '', message.chatDate);
                         } else {
-                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', message.chatDate);
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', '', message.chatDate);
                         }
                     });
 
+                    // 마지막에 스크롤 조정
                     const chatArea = $('#chatArea')[0];
-                    if (lastLeftMessageDisplayed) {
-                        const readMarker = document.querySelector('.read-marker');
-                        if (readMarker) {
-                            readMarker.scrollIntoView();
-                        }
+                    const readMarker = document.querySelector('.read-marker');
+                    if (readMarker) {
+                        readMarker.scrollIntoView();
+                        $('#scrollToBottomButton').show(); // 버튼 표시
                     } else {
                         chatArea.scrollTop = chatArea.scrollHeight;
                     }
@@ -107,7 +111,7 @@ function connect() {
         };
 
         ws.send(JSON.stringify(message));
-        print('', '대화방에 참여했습니다.', 'me', 'state', message.chatDate);
+        print('', '대화방에 참여했습니다.', 'me', 'state', '', message.chatDate);
 
         // 최하단으로 스크롤 조정
         const chatArea = $('#chatArea')[0];
@@ -125,13 +129,13 @@ function connect() {
         if (message.userNo !== userNo) {
             if (message.code === '1') { 
                 console.log(`[${senderId}] 입장 메시지 수신`);
-                print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', message.chatDate);
+                print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', '', message.chatDate);
             } else if (message.code === '2') {
                 console.log(`[${senderId}] 퇴장 메시지 수신`);
-                print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', message.chatDate);
+                print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', '', message.chatDate);
             } else if (message.code === '3') {
                 console.log(`[${senderId}] 일반 메시지 수신`);
-                print(senderId, message.content || "", 'other', 'msg', message.chatDate);
+                print(senderId, message.content || "", 'other', 'msg', '', message.chatDate);
             }
         }
     };
@@ -140,12 +144,19 @@ function connect() {
         console.log("WebSocket connection closed");
     };
 }
+
 // 메시지 출력 함수
-function print(sender, msg, side, type, time) {
+function print(sender, msg, side, type, additionalClass = '', time) {
     let temp;
 
     if (type === 'state') {
-        temp = `<div class="state-message">${msg}</div>`;
+        // 상태 메시지의 경우 'message' 클래스를 추가하지 않음
+        temp = `<div class="state-message ${side} ${additionalClass}">${msg}</div>`;
+        
+        if (additionalClass === 'read-marker') {
+            // "여기까지 읽었습니다" 메시지일 때 버튼을 함께 추가
+            temp += `<button id="scrollToBottomButton" onclick="scrollToBottom()" style="display: block; margin-top: 5px;">채팅 하단으로 이동</button>`;
+        }
     } else {
         const isMyMessage = sender === userId;
         temp = `
@@ -157,11 +168,18 @@ function print(sender, msg, side, type, time) {
     }
 
     $('#chatArea').append(temp);
-
-    // 최하단으로 스크롤 조정
+    
     const chatArea = $('#chatArea')[0];
     chatArea.scrollTop = chatArea.scrollHeight;
 }
+
+// "채팅 하단으로 이동" 버튼 클릭 시 하단으로 스크롤
+$('#scrollToBottomButton').click(function() {
+    const chatArea = $('#chatArea')[0];
+    chatArea.scrollTop = chatArea.scrollHeight;
+    $(this).hide(); // 버튼 숨기기
+});
+
 // 메시지 전송 함수
 function sendMessage() {
     let messageContent = $('#msg').val() || '';
@@ -178,7 +196,7 @@ function sendMessage() {
 
     ws.send(JSON.stringify(message));
     $('#msg').val('').focus();
-    print(userId, messageContent, 'me', 'msg', message.chatDate);
+    print(userId, messageContent, 'me', 'msg', '', message.chatDate);
 }
 
 // 엔터 키로 메시지 전송
@@ -227,14 +245,26 @@ function disconnect() {
 
 // 페이지 로드 시 WebSocket 연결
 $(document).ready(function() {
-    connect(); ws.onerror = function(evt) {
+    connect();
+    ws.onerror = function(evt) {
         console.error("WebSocket error observed:", evt);
     };
     $('#chatInputContainer').show();
+    $('#scrollToBottomButton').hide(); // 초기 상태에서 버튼 숨기기
 });
+
+document.getElementById("leavePartyBtn").addEventListener('click', ()=>{
+	location.href=`/party/leaveParty?bno=${bno}&userNo=${userNo}`;
+})
 
 // 날짜와 시간을 초 단위까지 포맷하는 함수
 function getFormattedTime() {
     const now = new Date();
     return `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+}
+
+function scrollToBottom() {
+    const chatArea = $('#chatArea')[0];
+    chatArea.scrollTop = chatArea.scrollHeight;
+    $('#scrollToBottomButton').hide(); // 버튼 숨기기
 }

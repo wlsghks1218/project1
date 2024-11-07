@@ -21,6 +21,70 @@
    <select id="getMyCartImg" parameterType="int"  resultType="org.hype.domain.gImgVO">
       select * from goods_banner_img_tbl where gno = #{gno}
    </select>
+   
+   <!--장바구니에 이미 추가됐는지 확인하기  -->
+   <select id="alreadyInCart"  parameterType="int" resultType="int">
+      select count(*) from cart_tbl where userNo = #{userNo} and  gno = #{gno}
+   </select>
 
+
+   <!--장바구니 상품 삭제  -->
+   <delete id="deleteItem" parameterType="int">
+       DELETE FROM cart_tbl WHERE userNo = #{userNo} AND gno = #{gno}
+   </delete>
+   
+   <!--사용자 결제 정보 가져오기  -->
+   <select id="getPayInfo" resultType="org.hype.domain.signInVO">
+      select userName,userEmail,userNumber from sign_in_info_tbl where userNo=#{userNo}
+   </select>
+   
+   <!--결제 가격 불러오기 -->
+   <select id="getPrice" resultType="int">
+      select cprice from cart_tbl where userNo=#{userNo}
+   </select>
+   
+   <!--구매한 상품들 pay_list_tbl에 넣기  -->
+   <insert id="addToPayList" parameterType="org.hype.domain.cartVO">
+      insert into pay_list_tbl(gno,userNo,camount,gBuyDate,gSituation) values (#{gno}, #{userNo}, #{camount}, systimestamp, '주문완료');
+   </insert>
+      
+   <!--구매한 상품 목록 정보 가져오기  -->
+   <select id="getPayList" resultType="org.hype.domain.payVO">
+      select  pay_list_tbl.camount,
+            pay_list_tbl.gSituation,
+            pay_list_tbl.gBuyDate,
+            goods_info_tbl.gname,
+            goods_info_tbl.gprice,
+            pay_list_tbl.gno
+      from pay_list_tbl
+      join goods_info_tbl on pay_list_tbl.gno = goods_info_tbl.gno
+      WHERE pay_list_tbl.userNo = #{userNo}
+   </select>
+   
+   <!--구매한 상품 목록에 이미지 가져오기  -->
+   <select id="getPayListImg" resultType="org.hype.domain.gImgVO">
+      select * from goods_banner_img_tbl where gno = #{gno}
+   </select>      
+            
+            
+   <!--1일 지난 상품 현황 바꾸기 -->
+   <update id="oneDayGsituation">
+        UPDATE pay_list_tbl 
+        SET gsituation = '배송중' 
+        WHERE gbuyDate &lt;= SYSTIMESTAMP - INTERVAL '1' DAY 
+        AND gsituation = '주문완료'
+    </update>   
+   
+   <!--3일 지난 상품 현황 바꾸기 -->
+   <update id="threeDayGsituation" >
+      update pay_list_tbl set gsituation='배송완료' where  gbuyDate &lt;= SYSTIMESTAMP - INTERVAL '3' day and gsituation='배송중'
+   </update>
+   
+   <!--배송지 기억하기 체크했을 때 가져오는 배송지 주소  -->
+   <select id="getUser" resultType="org.hype.domain.deliveryVO">
+      select address, DetailAddress from delivery_tbl where userNo=#{userNo}
+   </select> 
+   
+   
    
 </mapper>

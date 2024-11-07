@@ -25,7 +25,7 @@ public class popStoreVO {
     private double latitude; 
     private double longitude; 
     private String psExp; 
-    private List<pImgVO> psImg; 
+    private pImgVO psImg; 
     private int likeCount; 
     private String snsAd; 
     private String comInfo; 

@@ -21,4 +21,6 @@ public interface PartyService {
 	public List<ChatContentVO> getAllChatContent(int bno);
 	public List<ChatRoomVO> getPartyInfo(int bno);
 	public int updateLeftTime(int bno, int userNo);
+	public int updatePlusJoin(int bno);
+	public int updateLeaveMember(int bno, int userNo);
 }

@@ -113,6 +113,11 @@ public boolean checkUserLike(int psNo, int userNo) {
 		
 	}
 }
+@Override
+public String getStoreNameByPsNo(int referenceNo) {
+	String result = mapper.getStoreNameByPsNo(referenceNo);
+	return result;
+}
 
 // 해당 팝업스토어의 굿즈 정보들 받아오기
 @Transactional
@@ -138,6 +143,8 @@ public List<popStoreVO> popUpSearchByData(String searchData) {
 	
 	return result;
 }
+
+
 @Override
 public List<Map<String, Object>> getInterestsByPsNo(int psNo) {
 	List<Map<String, Object>> result = mapper.getInterestsByPsNo(psNo);
@@ -190,6 +197,6 @@ public List<popStoreVO> findNearbyStores(double lat, double lng, double radius) 
 		return mapper.getUserLike(userNo);
 	} 
 	
-		
+	
 
 }

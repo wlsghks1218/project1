@@ -22,4 +22,10 @@ public interface PartyMapper {
 	public signInVO getUserInfo(int userNo);
 	public List<ChatContentVO> getAllChatContent(int bno);
 	public int updateLeftTime(@Param("bno") int bno, @Param("userNo") int userNo);
+	public int updatePlusMember(@Param("bno") int bno);
+	public int updateMinusMember(@Param("bno") int bno);
+	public int chkMaster(@Param("bno") int bno, @Param("userNo") int userNo);
+	public int deleteLeaveMember(@Param("bno") int bno, @Param("userNo") int userNo);
+	public int deleteParty(@Param("bno") int bno, @Param("userNo") int userNo);
+	public int updateMinusMember(@Param("bno") int bno, @Param("userNo") int userNo);
 }

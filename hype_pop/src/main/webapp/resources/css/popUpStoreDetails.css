@@ -1,15 +1,15 @@
 /* 전체 레이아웃 설정 */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #141414; /* 어두운 배경 */
-    color: #e5e5e5; /* 회색 글자색 */
+    background-color: #fee7ed; /* 밝은 배경 */
+    color: #141414; /* 어두운 글자색 */
     margin: 0;
     padding: 0;
 }
 
 /* 팝업 배너 스타일 */
 .popUpbanner {
-    background-color: #e50914; /* 넷플릭스 레드 */
+    background-color: #00aff0; /* 주요 요소 색상 */
     padding: 30px; /* 여백 증가 */
     text-align: center;
     margin-bottom: 20px; /* 아래 여백 추가 */
@@ -23,7 +23,7 @@ body {
 
 /* 팝업 스토어 정보 */
 .popUpStoreInfo {
-    background-color: #181818; /* 어두운 회색 배경 */
+    background-color: #ffffff; /* 흰색 배경 */
     border-radius: 8px;
     padding: 30px; /* 여백 증가 */
     margin: 20px auto;
@@ -31,7 +31,7 @@ body {
 }
 
 #popUpStoreInfo {
-    color: #e5e5e5; /* 연한 회색 텍스트 */
+    color: #141414; /* 어두운 글자색 */
 }
 
 #popUpName {
@@ -45,19 +45,19 @@ body {
 }
 
 #category span {
-    color: #b3b3b3; /* 관심사 텍스트 회색 */
+    color: #888; /* 관심사 텍스트 회색 */
 }
 
 #popUpStoreAdd {
     margin-top: 15px;
     font-size: 1.2rem;
-    color: #b3b3b3; /* 주소 텍스트 */
+    color: #888; /* 주소 텍스트 */
 }
 
 /* 좋아요 버튼 스타일 */
 #likeCount {
     display: inline-block;
-    background-color: #e50914;
+    background-color: #00aff0; /* 주요 요소 색상 */
     padding: 8px 15px; /* 패딩 증가 */
     border-radius: 5px;
     color: white;
@@ -67,17 +67,17 @@ body {
 }
 
 #likeCount:hover {
-    background-color: #f40612; /* hover 시 밝은 레드 */
+    background-color: #007bb8; /* hover 시 진한 블루 */
 }
 
 /* 지도 및 기타 정보 */
 #popUpMap {
-    background-color: #000;
+    background-color: #ffffff; /* 흰색 배경 */
     height: 300px;
     margin: 30px auto; /* 위 아래 여백 추가 */
     width: 90%;
     max-width: 900px;
-    color: white;
+    color: #141414; /* 어두운 글자색 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,7 +85,7 @@ body {
 
 /* 추가 정보 */
 #popUpETCInfo {
-    background-color: #181818;
+    background-color: #ffffff; /* 흰색 배경 */
     padding: 30px; /* 여백 증가 */
     border-radius: 8px;
     margin: 20px auto;
@@ -94,7 +94,7 @@ body {
 
 /* 리뷰 폼 스타일 */
 #reviewForm {
-    background-color: #222; /* 어두운 배경 */
+    background-color: #ffffff; /* 흰색 배경 */
     padding: 30px; /* 여백 증가 */
     border-radius: 8px;
     margin: 20px auto;
@@ -106,13 +106,13 @@ body {
     padding: 10px;
     border: none;
     border-radius: 4px;
-    background-color: #333;
-    color: white;
+    background-color: #f0f0f0; /* 연한 회색 */
+    color: #141414; /* 어두운 글자색 */
 }
 
 /* 버튼 스타일 */
 input[type="button"], input[type="submit"] {
-    background-color: #e50914; /* 넷플릭스 레드 */
+    background-color: #00aff0; /* 주요 요소 색상 */
     color: white;
     border: none;
     padding: 12px 20px; /* 패딩 증가 */
@@ -124,7 +124,7 @@ input[type="button"], input[type="submit"] {
 }
 
 input[type="button"]:hover, input[type="submit"]:hover {
-    background-color: #f40612; /* hover 시 밝은 레드 */
+    background-color: #007bb8; /* hover 시 진한 블루 */
 }
 
 /* 리뷰 별점 스타일 */
@@ -146,7 +146,7 @@ input[type="button"]:hover, input[type="submit"]:hover {
 }
 
 #selectedRating {
-    color: #b3b3b3;
+    color: #888; /* 회색 */
     font-size: 1.5rem; /* 크기 증가 */
 }
 
@@ -162,7 +162,7 @@ input[type="button"]:hover, input[type="submit"]:hover {
     max-width: 800px; /* 최대 너비 설정 */
     margin: 20px auto; /* 상하 여백 20px, 좌우 중앙 정렬 */
     border-collapse: collapse; /* 테두리 겹치기 */
-    background-color: #222; /* 테이블 배경 색상 */
+    background-color: #222; /* 어두운 배경 색상 */
     border-radius: 8px; /* 모서리 둥글게 */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 그림자 효과 */
 }
@@ -190,7 +190,7 @@ input[type="button"]:hover, input[type="submit"]:hover {
 
 /* 더보기 버튼 스타일 */
 .moreButton {
-    background-color: #e50914; /* 버튼 배경 색상 */
+    background-color: #00aff0; /* 주요 요소 색상 */
     color: white; /* 버튼 글자 색상 */
     border: none; /* 테두리 없음 */
     padding: 10px 15px; /* 패딩 증가 */
@@ -202,7 +202,7 @@ input[type="button"]:hover, input[type="submit"]:hover {
 
 /* 버튼 호버 스타일 */
 .moreButton:hover {
-    background-color: #f40612; /* 호버 시 밝은 레드 */
+    background-color: #007bb8; /* 호버 시 진한 블루 */
 }
 
 /* 인기 상품 배너 */
@@ -252,13 +252,14 @@ input[type="button"]:hover, input[type="submit"]:hover {
     overflow: hidden; /* 잘린 텍스트 숨김 */
     transition: max-height 0.3s ease; /* 부드러운 전환 효과 */
 }
+
 .commentP.expanded {
     max-height: none; /* 확장 시 높이 제한 제거 */
 }
 
 /* 수정 폼 스타일 */
 #updateForm {
-    background-color: #222; /* 어두운 배경 */
+    background-color: #ffffff; /* 흰색 배경 */
     padding: 30px; /* 여백 증가 */
     border-radius: 8px;
     margin: 20px auto;
@@ -270,132 +271,22 @@ input[type="button"]:hover, input[type="submit"]:hover {
     padding: 10px;
     border: none;
     border-radius: 4px;
-    background-color: #333;
-    color: white;
+    background-color: #f0f0f0; /* 연한 회색 */
+    color: #141414; /* 어두운 글자색 */
 }
 
-/* 리뷰 별점 스타일 */
-#newReviewStars {
-    display: flex;
-    align-items: center; /* 수직 정렬
-    /* 수직 정렬 */
-    justify-content: flex-start; /* 왼쪽 정렬 */
+/* 수정 버튼 스타일 */
+.updateButton {
+    background-color: #00aff0; /* 주요 요소 색상 */
+    color: white; /* 버튼 글자 색상 */
+    border: none; /* 테두리 없음 */
+    padding: 10px 15px; /* 패딩 증가 */
+    border-radius: 4px; /* 모서리 둥글게 */
+    cursor: pointer; /* 포인터 커서 */
+    font-size: 1.2rem; /* 글자 크기 증가 */
+    margin-top: 15px; /* 위쪽 여백 추가 */
 }
 
-#newReviewStars span {
-    cursor: pointer;
-    font-size: 2.5rem; /* 별 크기 증가 */
-    color: gray; /* 기본 상태 */
-    transition: color 0.3s;
+.updateButton:hover {
+    background-color: #007bb8; /* 호버 시 진한 블루 */
 }
-
-#newReviewStars span.selected {
-    color: gold; /* 선택된 별 */
-}
-
-/* 추천 상품 스타일 */
-.recommendGoods {
-    margin: 20px auto;
-    max-width: 900px; /* 최대 너비 설정 */
-    text-align: center;
-}
-
-.recommendGoods td {
-    background-color: #333; /* 어두운 배경 */
-    color: white; /* 글자 색상 */
-    padding: 15px; /* 패딩 증가 */
-    border-radius: 8px; /* 모서리 둥글게 */
-    margin: 10px; /* 여백 추가 */
-}
-
-/* 스크롤바 스타일 */
-::-webkit-scrollbar {
-    width: 10px; /* 스크롤바 너비 */
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: #e50914; /* 스크롤바 색상 */
-    border-radius: 5px; /* 모서리 둥글게 */
-}
-
-::-webkit-scrollbar-track {
-    background-color: #444; /* 스크롤바 배경 색상 */
-}
-/* 다른 사용자가 남긴 후기 섹션 */
-#otherUserReviewsTitle {
-    text-align: center; /* 텍스트 중앙 정렬 */
-    margin-top: 20px; /* 상단 여백 */
-    font-size: 1.5rem; /* 글자 크기 */
-    color: #fff; /* 글자 색상 */
-}
-
-#noOtherUserComments {
-    text-align: center; /* 텍스트 중앙 정렬 */
-    margin-top: 10px; /* 상단 여백 */
-    font-size: 1.2rem; /* 글자 크기 */
-    color: #bbb; /* 글자 색상 */
-}
-
-/* 이전 및 다음 버튼 */
-.reviewPagination {
-    display: flex;
-    justify-content: center; /* 버튼들을 가운데로 정렬 */
-    gap: 20px; /* 버튼 사이 간격 */
-    margin-top: 20px; /* 상단 여백 */
-}
-
-.reviewPagination button {
-    padding: 10px 20px;
-    background-color: #e50914;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.reviewPagination button:hover {
-    background-color: #f41c26;
-}
-
-/* 상품 리스트 스타일 */
-.productListTitle {
-    text-align: center; /* 텍스트 중앙 정렬 */
-    font-size: 1.8rem;
-    margin-top: 30px; /* 상단 여백 */
-    color: #fff; /* 글자 색상 */
-}
-
-.productList {
-    display: flex;
-    justify-content: center; /* 상품 목록 중앙 정렬 */
-    flex-wrap: wrap; /* 화면 크기에 따라 줄바꿈 */
-    gap: 20px; /* 상품 간격 */
-}
-
-.productItem {
-    background-color: #333; /* 상품 배경 색상 */
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 200px; /* 상품 너비 */
-    text-align: center;
-}
-
-/* 내가 남긴 후기 섹션 */
-#myReviewTitle {
-    text-align: center; /* 텍스트 중앙 정렬 */
-    margin-top: 30px; /* 상단 여백 */
-    font-size: 1.5rem;
-    color: #fff; /* 글자 색상 */
-}
-
-#myReviewContent {
-    text-align: left; /* 텍스트 왼쪽 정렬 */
-    margin: 20px auto; /* 상하 여백 추가, 중앙 정렬 */
-    max-width: 600px; /* 최대 너비 설정 */
-    font-size: 1.2rem; /* 글자 크기 */
-    color: #ccc; /* 글자 색상 */
-}
-
-    	

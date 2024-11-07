@@ -1,47 +1,3 @@
-//// 버튼 클릭 이벤트
-//document.querySelectorAll('button').forEach(btn => {
-//    btn.addEventListener('click', e => {
-//        e.preventDefault();
-//        let type = btn.getAttribute('id');  // 버튼의 ID 가져오기
-//        
-//        // 비밀번호 변경 버튼(모달)
-//        if (type === 'newPasswordBtn') {
-//            newPasswordModal();  
-//        
-//        //이메일 변경 버튼(모달)
-//        } else if (type === 'newEmailBtn') {
-//            sendEmail();  
-//        
-//        //전화번호 변경 버튼(모달)
-//        } else if (type === 'newPhoneNumberBtn') {
-//            newPhoneNumModal();
-//        
-//        //모달 취소 버튼(모달)	
-//        } else if (type === 'closeModalBtn') {
-//            closeModal();
-//        
-//        //관심사 변경 버튼(모달)
-//        } else if (type === 'newInterestBtn') {
-//            newInterestModal();
-//
-//        //내 댓글 보기 버튼(페이지)
-//        } else if (type === 'userReplyBtn') {
-//            location.href = '/member/userReply';
-//        
-//        //장바구니 버튼 클릭(페이지)
-//        } else if (type === 'goCartBtn') {
-//            location.href = '/member/myCart';
-//        
-//        //내 결제 목록 클릭(페이지)		
-//        } else if (type === 'paymentListBtn') {
-//            location.href = '/member/paymentList';
-//        
-//        //회원탈퇴 버튼 클릭(confirm)
-//        } else if (type === 'deleteIdBtn') {
-//            deleteId();
-//        }		
-//    });
-//});
 
 // 비밀번호 변경 모달 열기
 const newPasswordBtn = document.getElementById('newPasswordBtn');
@@ -77,17 +33,20 @@ function closePwModal() {
 // 마이페이지 이메일변경 버튼 클릭
 const newEmailBtn = document.getElementById('newEmailBtn');
 const customAlert = document.getElementById('customAlert');
+const newEmailModal = document.getElementById('changeUserEmailModal');
 
 // 클릭 이벤트를 중복으로 등록하지 않도록 함수로 감싸기
 newEmailBtn.addEventListener('click', function() {
-	customAlert.style.display = 'block';
-	
-	setTimeout(function(){
-		customAlert.style.display = 'none';
-	}, 2000);
-	
-	// 이메일 전송 함수 호출
-	sendEmail();
+   customAlert.style.display = 'block';
+   
+   setTimeout(function(){
+      customAlert.style.display = 'none';
+   }, 2000);
+   
+   newEmailModal.style.display = 'block';
+   
+   // 이메일 전송 함수 호출
+   sendEmail();
 });
 
 function sendEmail() {
@@ -102,9 +61,7 @@ function sendEmail() {
         if (data === 'ok') {
             alert('인증코드가 전송되었습니다.');
             console.log(userEmail);
-            // 모달 창 열기
-            const modal = document.getElementById('changeUserEmailModal');
-            modal.style.display = 'block';
+
         } else {
             alert('이메일 전송에 실패했습니다. 다시 시도해주세요');
         }
@@ -113,27 +70,27 @@ function sendEmail() {
 }
 
 function verifyEmailCode(){
-	const inputCode = document.getElementById('verifyCodeInput').value;
-	
-	fetch('/member/api/verifyCode?code=' + inputCode)
-	.then(response => response.text())
-	.then(data => {
-		if (data === 'ok') {
-			alert('인증 성공! 이메일 변경을 진행하세요!');
-		}else{
-			alert('인증 코드가 잘못되었습니다.')
-		}
-	})
-	.catch(err => console.log(err));
-	
-	}
+   const inputCode = document.getElementById('verifyCodeInput').value;
+   
+   fetch('/member/api/verifyCode?code=' + inputCode)
+   .then(response => response.text())
+   .then(data => {
+      if (data === 'ok') {
+         alert('인증 성공! 이메일 변경을 진행하세요!');
+      }else{
+         alert('인증 코드가 잘못되었습니다.')
+      }
+   })
+   .catch(err => console.log(err));
+   
+   }
 
 
 
 function submitEmailChange() {
-	
-	
-	console.log("submitEmailChange....");
+   
+   
+   console.log("submitEmailChange....");
     const f = document.getElementById('EmailChangeForm');
     console.log(f);
     const newEmail = f.newEmail.value.trim(); // 불필요한 공백 제거
@@ -155,6 +112,8 @@ function submitEmailChange() {
         alert("이메일이 일치하지 않습니다.");
         return false; // 이메일이 일치하지 않으면 전송 중지
     }
+    
+    alert("이메일을 변경했습니다.");
 
    
     location.href=`/member/emailChange?userNo=${userNo}&newEmail=${newEmail}`;
@@ -185,9 +144,9 @@ const checkNewPw = f.checkNewPw.value;
 
 
 function PhoneNumberChange() {
-	const f = document.getElementById('phoneNumberChange');
-	const userNumber = document.getElementById('userNumber').value;
- 	console.log("phoneNumberChange:"+f);
+   const f = document.getElementById('phoneNumberChange');
+   const userNumber = document.getElementById('userNumber').value;
+    console.log("phoneNumberChange:"+f);
     const oldPhoneNumber = f.oldPhoneNumber.value;
     const newPhoneNumber = f.newPhoneNumber.value;
     const checkNewPhoneNumber = f.checkNewPhoneNumber.value;
@@ -198,8 +157,8 @@ function PhoneNumberChange() {
         alert("전화번호를 입력하세요");
         return false; // 함수 종료
     }else if (userNumber!==oldPhoneNumber) {
-    	alert("기존의 전화번호와 일치하지 않습니다.");
-    	return false; // 함수 종료
+       alert("기존의 전화번호와 일치하지 않습니다.");
+       return false; // 함수 종료
     } else if (!newPhoneNumber) {
         alert("새 전화번호를 입력하세요");
         return false; // 함수 종료
@@ -212,7 +171,7 @@ function PhoneNumberChange() {
 
 
 function closePhoneNumModal() {
-	changePhoneNumberModal .style.display = 'none'; // 모달 숨기기
+   changePhoneNumberModal .style.display = 'none'; // 모달 숨기기
 }
 
 function slideLeft(sliderId) {
@@ -229,9 +188,9 @@ function slideRight(sliderId) {
 
 
 function removePopup(psNo) {
-	
-	const userNo = document.getElementById('userNo').value;
-	
+   
+   const userNo = document.getElementById('userNo').value;
+   
     if (!confirm('정말로 삭제하시겠습니까?')) {
         return; // 사용자가 취소하면 함수를 종료
     }
@@ -263,10 +222,10 @@ function removePopup(psNo) {
     .catch(err => console.log(err));
 }
 
-function removePopup(gno) {
-	
-	const userNo = document.getElementById('userNo').value;
-	
+function removeGoods(gno) {
+   
+   const userNo = document.getElementById('userNo').value;
+   
     if (!confirm('정말로 삭제하시겠습니까?')) {
         return; // 사용자가 취소하면 함수를 종료
     }
@@ -289,7 +248,7 @@ function removePopup(gno) {
             // 삭제된 팝업스토어를 화면에서 제거
             const goodsItem = document.querySelector(`#goods-${gno}`);
             if (goodsItem) {
-            	goodsItem.remove(); // DOM에서 삭제
+               goodsItem.remove(); // DOM에서 삭제
             }
         } else {
             alert('데이터 삭제에 실패했습니다. 다시 시도해주세요.');
@@ -335,12 +294,29 @@ document.getElementById('confirmButton').addEventListener('click', function() {
 
 //내가 쓴 글 목록으로 가기
 function goToMyReply() {
-	location.href="/member/userReply?userNo=2";
+   location.href="/member/userReply?userNo=2";
+}
+
+//장바구니 가기
+//document.getElementById('goCartBtn').addEventListener('click', function() {
+//    location.href = "member/purchase/goCart;" // 실제 장바구니 페이지 URL로 교체
+//});
+
+
+//장바구니로 가기
+function goToMyCart(){
+   
+   
+   location.href="/purchase/goCart?userNo=2";
 }
 
 
+//내 결제 목록 가기
+function getPayList(userNo){
+   
+   location.href=`/purchase/getPayList?userNo=${userNo}`;
 
-
+}
 
 
 
@@ -351,8 +327,4 @@ function deleteId() {
         alert("회원 탈퇴 요청을 처리합니다...");
     } else {
         alert("회원 탈퇴가 취소되었습니다.");
-    }
-}
-
-
-
+    }}

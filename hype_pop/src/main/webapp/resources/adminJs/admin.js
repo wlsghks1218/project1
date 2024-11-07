@@ -27,7 +27,8 @@ document.getElementById('popUpManage').addEventListener('click', function() {
     isMemberPage = false;
     isGoodsPage = false;
     currentPageForPopUp = 1; // 초기화
-    loadPopUpStores(currentPageForPopUp);    
+    loadPopUpStores(currentPageForPopUp);   
+    toggleSearchBox(true); // 검색 박스와 버튼 보이기
 });
 document.getElementById('storeManage').addEventListener('click', function() {
     activeTab = 'store'; // 현재 활성화된 탭 업데이트
@@ -36,6 +37,7 @@ document.getElementById('storeManage').addEventListener('click', function() {
     isGoodsPage = true;
     currentPageForGoods = 1; // 초기화
     loadGoodsStores(currentPageForGoods);
+    toggleSearchBox(true); // 검색 박스와 버튼 보이기
 //    document.getElementById('registerBtn').style.visibility = 'visible'; // 등록 버튼 보이기
 });
 document.getElementById('memberManage').addEventListener('click', function() {
@@ -45,7 +47,26 @@ document.getElementById('memberManage').addEventListener('click', function() {
     isGoodsPage = false;
     currentPageForMembers = 1;  // 초기화
     loadMembersStores(currentPageForMembers);
+    toggleSearchBox(true); // 검색 박스와 버튼 보이기
+    document.getElementById('registerBtn').style.visibility = 'hidden'; // 등록 버튼 보이기
 });
+
+//검색 박스와 버튼 보이기/숨기기 함수
+function toggleSearchBox(shouldShow) {
+    const searchBox = document.getElementById('adminSearchBox');
+    const searchButton = document.getElementById('searchBTN');
+
+    if (shouldShow) {
+        searchBox.style.display = 'inline'; // 보이기
+        searchButton.style.display = 'inline'; // 보이기
+    } else {
+        searchBox.style.display = 'none'; // 숨기기
+        searchButton.style.display = 'none'; // 숨기기
+    }
+}
+
+// 관리자 메인페이지(초기 페이지 로드)에서는 검색 박스와 버튼 숨기기
+toggleSearchBox(false);
 
 // **** 관리자 페이지 영역 ****
 // **** 팝업스토어 영역 ****
@@ -66,7 +87,7 @@ document.getElementById('searchBTN').addEventListener('click', function() {
 
 // 팝업스토어 관리하기 버튼 활성화 
 function loadPopUpStores(page = 1) {
-	currentPageForPopUp = page; // 현재 페이지 업데이트 (추가된 코드)
+	currentPageForPopUp = page; // 현재 페이지 업데이트
 	 const searchPs = document.getElementById('adminSearchBox').value;
 	    fetch(`/admin/psList?searchPs=${encodeURIComponent(searchPs)}&pageNum=${page}&amount=${amount}`)
 	        .then(response => {
@@ -76,20 +97,20 @@ function loadPopUpStores(page = 1) {
 	            return response.json();
 	        })
 	        .then(data => {
-//	            console.log('API 응답:', JSON.stringify(data, null, 2));
 	            if (data.list && data.total) {
+	            	
 	                PopUpStoreLists(data.list);
 
 	                totalCountForPopUp = data.total; // 전체 아이템 수 저장
 	                totalPagesForPopUp = Math.ceil(totalCountForPopUp / amount); // 총 페이지 수 계산
-//	                createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
+	                createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
 
 	                // 에러 나서 임시로 막아둔 코드 
-	                if (totalPagesForPopUp > 0) {
-	                    createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
-	                } else {
-	                    console.log('페이지 수가 0이므로 페이지네이션을 표시하지 않습니다.');
-	                }
+//	                if (totalPagesForPopUp > 0) {
+//	                    createPagination(totalPagesForPopUp, totalCountForPopUp); // 페이지네이션 생성
+//	                } else {
+//	                    console.log('페이지 수가 0이므로 페이지네이션을 표시하지 않습니다.');
+//	                }
 	            } else {
 	                throw new Error('잘못된 데이터 구조입니다. 데이터: ' + JSON.stringify(data));
 	            }
@@ -101,7 +122,7 @@ function loadPopUpStores(page = 1) {
 
 // 팝업스토어 관리하기 버튼 클릭 시 팝업 스토어 리스트 영역 출력
 function PopUpStoreLists(popUpStores) {
-	console.log('PopUpStoreLists called with:', popUpStores);
+//	console.log('PopUpStoreLists called with:', popUpStores);
     const popSList = document.querySelector('#AllList');
     const adminMain = document.querySelector('.adminMain');
     popSList.innerHTML = '';
@@ -137,6 +158,8 @@ function PopUpStoreLists(popUpStores) {
     if (form) {
         form.style.display = 'none';
     }
+    
+//    hideMemInfo();  // 회원 정보 수정 폼 숨기기 
    
 }
 
@@ -321,6 +344,8 @@ function GoodsLists(goods) {
     if (form) {
         form.style.display = 'none';
     }
+    
+//    hideMemInfo(); // 회원 정보 수정 폼 숨기기 
 }
 
 //**** 회원 영역 ****
@@ -336,8 +361,8 @@ function loadMembersStores(page = 1) {
 	            return response.json();
 	        })
 	        .then(data => {
-//	            console.log('API 응답:', JSON.stringify(data, null, 2));
 	            if (data.list && data.total) {
+	            		            	
 	            	MemberLists(data.list);
 
 	            	totalCountForMembers = data.total; // 전체 아이템 수 저장
@@ -406,6 +431,8 @@ function MemberLists(members) {
     if (form) {
         form.style.display = 'none';
     }
+    
+//    hideMemInfo(); // 회원 정보 수정 폼 숨기기 
 }
 
 //**** footer 영역 ****
