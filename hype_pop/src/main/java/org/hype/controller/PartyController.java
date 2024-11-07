@@ -55,14 +55,11 @@ public class PartyController {
 	
 	@GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<popStoreVO> search(@RequestParam String searchText, @RequestParam String category) {
-	    if(category == "popup") {
+	public Object search(@RequestParam String searchText, @RequestParam String category) {
+	    if("popup".equals(category)) {
 	    	return service.getPopupName(searchText);
 	    }
-	    return service.getPopupName(searchText);
-//	    if(category == "exhibition") {
-//	    	return service.getExhName(searchText);
-//	    }
+	    return service.getExhName(searchText);
 	}
 	
 	@PostMapping(value = "/insertBoard")
@@ -130,10 +127,35 @@ public class PartyController {
 	}
 	
 	@GetMapping(value="/leaveParty")
-	public String leaveParty(@RequestParam("bno") int bno, @RequestParam("userNo") int userNo) {
-		log.warn("이거 타는거에여?"+bno+userNo);
-		int result = service.updateLeaveMember(bno, userNo);
-		log.warn("탄다면 result = " + result);
-		return "/party/partyBoard";
+	public String leaveParty(@RequestParam("bno") int bno, @RequestParam("userNo") int userNo, @RequestParam("isMaster") int isMaster) {
+		log.warn("이거 타는거에여?"+bno+userNo+isMaster);
+		if(isMaster == 0) {
+			int result1 = service.updateLeaveMember(bno, userNo);
+			return "redirect:/party/partyBoard";
+		}else {
+			int result2 = service.deleteAllPartyMember(bno);
+			int result3 = service.deleteParty(bno, userNo);
+			return "redirect:/party/partyBoard";
+		}
+	}
+	
+	@GetMapping(value="/chkJoinedOrNot/{bno}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<ChatRoomVO> chkJoinedOrNot(@PathVariable("bno") int bno){
+		return service.getPartyInfo(bno);
+	}
+	
+	@GetMapping(value="/partyUserCount/{bno}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public PartyBoardVO partyUserCount(@PathVariable("bno") int bno) {
+		return service.getOneParty(bno);
+	}
+	
+	@GetMapping(value="/chkMaster/{bno}/{userNo}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public String chkMaster(@PathVariable("bno") int bno, @PathVariable("userNo") int userNo) {
+		int result = service.chkMaster(bno, userNo);
+		return Integer.toString(result);
 	}
 }
+

@@ -5,6 +5,7 @@ import java.util.List;
 import org.hype.domain.ChatContentVO;
 import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
+import org.hype.domain.exhVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.signInVO;
 
@@ -23,4 +24,8 @@ public interface PartyService {
 	public int updateLeftTime(int bno, int userNo);
 	public int updatePlusJoin(int bno);
 	public int updateLeaveMember(int bno, int userNo);
+	public int deleteParty(int bno, int userNo);
+	public int chkMaster(int bno, int userNo);
+	public int deleteAllPartyMember(int bno);
+	public List<exhVO> getExhName(String searchText);
 }

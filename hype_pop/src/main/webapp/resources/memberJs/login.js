@@ -28,7 +28,7 @@ document.getElementById("loginBtn").addEventListener("click", function(event) {
             // 로그인 성공 시 localStorage에 userNo 저장
             localStorage.setItem("userNo", data.userNo);
             alert("로그인 성공");
-            window.location.href = "/"; // 메인 페이지로 이동
+            history.back();
         } else {
             alert(data.message); // 오류 메시지 표시
         }

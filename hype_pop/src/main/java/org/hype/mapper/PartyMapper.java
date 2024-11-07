@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.hype.domain.ChatContentVO;
 import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
+import org.hype.domain.exhVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.signInVO;
 
@@ -28,4 +29,6 @@ public interface PartyMapper {
 	public int deleteLeaveMember(@Param("bno") int bno, @Param("userNo") int userNo);
 	public int deleteParty(@Param("bno") int bno, @Param("userNo") int userNo);
 	public int updateMinusMember(@Param("bno") int bno, @Param("userNo") int userNo);
+	public int deleteAllPartyMember(@Param("bno") int bno);
+	public List<exhVO> getExhName(String searchText);
 }

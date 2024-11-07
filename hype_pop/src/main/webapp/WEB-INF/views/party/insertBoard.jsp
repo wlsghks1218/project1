@@ -138,6 +138,7 @@ footer, nav {
 	padding: 10px;
 	text-align: center;
 }
+
 </style>
 </head>
 <body>
@@ -177,8 +178,8 @@ footer, nav {
 				</div>
 				<div class="setUserCountGroup">
 					<label for="setUserCount">최대 인원</label>
-					<select name="maxUser">
-						<option value="1">1</option>
+					<select id="maxUser" name="maxUser">
+						<option value="default" disabled selected>최대 인원을 선택하세요.</option>
 						<option value="2">2</option>
 						<option value="3">3</option>
 						<option value="4">4</option>

@@ -42,15 +42,22 @@ function renderTable() {
     
     document.querySelectorAll(".partyTr").forEach(row => {
         row.addEventListener('click', (e) => {
+            const currentBno = e.currentTarget.getAttribute("data-bno");
             const currentUser = parseInt(e.currentTarget.getAttribute("data-current"));
             const maxUser = parseInt(e.currentTarget.getAttribute("data-max"));
             
-            if (currentUser === maxUser) {
-                alert("풀방입니다");
-                return;
-            }
-            const bno = e.currentTarget.getAttribute("data-bno");
-            location.href = `/party/boardDetail?bno=${bno}`;
+            fetch(`/party/chkJoinedOrNot/${currentBno}`)
+                .then(response => response.json())
+                .then(data => {
+                    const isUserInRoom = data.some(room => room.userNo === parseInt(userNo));
+
+                    if (currentUser === maxUser && !isUserInRoom) {
+                        alert("풀방입니다");
+                        return;
+                    }
+                    location.href = `/party/boardDetail?bno=${currentBno}`;
+                })
+                .catch(error => console.error("Error checking room status:", error));
         });
     });
 }

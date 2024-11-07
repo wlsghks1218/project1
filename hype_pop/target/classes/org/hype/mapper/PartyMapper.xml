@@ -60,4 +60,10 @@
 	<delete id="deleteParty">
 		delete from party_info_tbl where bno = #{bno} and userNo = #{userNo}
 	</delete>
+	<delete id="deleteAllPartyMember">
+		delete from chat_tbl where bno = #{bno}
+	</delete>
+	<select id="getExhName" resultType="org.hype.domain.exhVO">
+		select * from exh_main_tbl where exhName Like '%' || #{searchText} || '%'
+	</select>
 </mapper>

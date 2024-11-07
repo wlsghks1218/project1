@@ -189,7 +189,7 @@ button:hover {
 		</div>
 		<div class="boardTitle">${vo.boardTitle}</div>
 		<div class="chat-title">실시간 채팅</div>
-		<div class="memberCount">${vo.currentUser}/${vo.maxUser }</div>
+		<div class="memberCount"></div>
 		<div class="joinMember"></div>
 
 		<div id="chatArea"></div>

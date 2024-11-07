@@ -5,4 +5,5 @@ document.getElementById("searchReset").addEventListener('click', ()=>{
 
 document.getElementById("logout").addEventListener('click', () => {
 	localStorage.removeItem('userNo');
+	location.href="/member/login";
 })

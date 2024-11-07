@@ -4,45 +4,56 @@ const bno = new URLSearchParams(location.search).get('bno');
 const url = `ws://192.168.0.121:9090/chatserver.do?bno=${bno}`;
 const userNo = localStorage.getItem("userNo");
 console.log(userNo);
-let userId;
+const userId = "user3";
 const userMap = {}; // userNo와 userId를 매핑하여 저장할 객체
 console.log(userMap);
 
-// 채팅방에 유저가 참여하고 있는지 확인하는 fetch
+// chat_tbl에 bno, userNo를 전송하여 count값이 1,0으로 확인하여 진입여부 확인  
 fetch(`/party/chkJoined/${bno}/${userNo}`)
     .then(response => response.text())
     .then(data => {
         console.log("Fetched data:", data);
         if (data === "채팅방에 진입했습니다.") {
             console.log("새로운 WebSocket을 연결합니다.");
+            fetchPartyUserList(); // 참여 후 목록 갱신
         } else if (data === "채팅방에 이미 있는 유저입니다.") {
             console.log("이미 연결된 WebSocket입니다.");
+            fetchPartyUserList(); // 이미 참여 중이라도 목록을 불러옴
+            fetchPartyUserCount();
         }
     })
     .catch(error => console.error("Error fetching data:", error));
 
-// 참여 유저 목록 가져오기
-fetch(`/party/getPartyUser/${bno}`)
-.then(response => response.json())
-.then(data => {
-    const joinMemberDiv = document.querySelector('.joinMember');
-    joinMemberDiv.innerHTML = '<h3>참여 유저 목록:</h3>';
-    
-    // 각 유저 ID와 번호를 joinMember 영역에 추가하고 userMap에 저장
-    data.forEach(user => {
-        userMap[user.userNo] = user.userId;
-        const userElement = document.createElement('div');
-        userElement.textContent = `${user.userId}`;
-        joinMemberDiv.appendChild(userElement);
-    });
-    
-    // userNo에 해당하는 userId 설정
-    userId = userMap[userNo];
-    console.log("Assigned userId:", userId); // 확인용 로그
-    
-    fetchChatContents();
-})
-.catch(error => console.error("Error fetching party users:", error));
+function fetchPartyUserCount(){
+	fetch(`/party/partyUserCount/${bno}`)
+	.then(response => response.json())
+	.then(data => {
+		const currentUser = data.currentUser;
+		const maxUser = data.maxUser;
+		const memberCountDiv = document.querySelector(".memberCount");
+		memberCountDiv.innerHTML = currentUser + '/' + maxUser;
+	})
+}
+
+
+// sign_in_info_tbl(유저 정보 VO)를 받아오는 곳
+function fetchPartyUserList() {
+    fetch(`/party/getPartyUser/${bno}`)
+        .then(response => response.json())
+        .then(data => {
+            const joinMemberDiv = document.querySelector('.joinMember');
+            joinMemberDiv.innerHTML = '<h3>참여 유저 목록:</h3>';
+            data.forEach(user => {
+                userMap[user.userNo] = user.userId;
+                const userElement = document.createElement('div');
+                userElement.textContent = `${user.userId}`;
+                joinMemberDiv.appendChild(userElement);
+            });
+        })
+        .catch(error => console.error("Error fetching party users:", error));
+}
+
+// chat_tbl 정보를 bno로 받아오기
 function fetchChatContents() {
     fetch(`/party/getPartyInfo/${bno}`)
         .then(response => response.json())
@@ -50,7 +61,7 @@ function fetchChatContents() {
             const currentUserInfo = data.find(info => info.userNo == userNo);
             const userJoinTime = new Date(currentUserInfo.joinTime);
             const userLastLeftTime = new Date(currentUserInfo.lastLeftTime);
-
+            // 시간대에 맞게 chat_content_tbl 정보 받아오기
             fetch(`/party/getAllChatContent/${bno}`)
                 .then(response => response.json())
                 .then(chatData => {
@@ -226,7 +237,7 @@ function disconnect() {
             content: '',
             chatDate: getFormattedTime()
         };
-
+        
         fetch(`/party/updateLeftTime/${bno}/${userNo}`)
             .then(response => {
                 if (!response.ok) {
@@ -253,9 +264,25 @@ $(document).ready(function() {
     $('#scrollToBottomButton').hide(); // 초기 상태에서 버튼 숨기기
 });
 
-document.getElementById("leavePartyBtn").addEventListener('click', ()=>{
-	location.href=`/party/leaveParty?bno=${bno}&userNo=${userNo}`;
-})
+
+//partyInfotbl => chattbl => chatcontenttbl
+document.getElementById("leavePartyBtn").addEventListener('click', () => {
+    fetch(`/party/chkMaster/${bno}/${userNo}`)
+        .then(response => response.text())
+        .then(text => {
+            const parsedText = parseInt(text);
+            if (text == "0") {
+                // 일반 유저일 경우 바로 떠나기
+                location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
+            } else if (text == "1") {
+                // 방장일 경우 확인 창 띄우기
+                const isConfirmed = confirm("당신은 방장입니다. 방이 삭제됩니다. 계속하시겠습니까?");
+                if (isConfirmed) {
+                    location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
+                }
+            }
+        });
+});
 
 // 날짜와 시간을 초 단위까지 포맷하는 함수
 function getFormattedTime() {

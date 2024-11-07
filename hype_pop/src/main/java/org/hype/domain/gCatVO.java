@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class gCatVO {
-	private int gNo;
+	private int gno;
 	private int healthBeauty; // 헬스 /뷰티
 	private int game; // 게임
 	private int culture; // 문화

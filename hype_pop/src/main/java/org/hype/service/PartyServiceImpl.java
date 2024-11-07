@@ -6,6 +6,7 @@ import java.util.List;
 import org.hype.domain.ChatContentVO;
 import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
+import org.hype.domain.exhVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.signInVO;
 import org.hype.mapper.PartyMapper;
@@ -109,15 +110,24 @@ public class PartyServiceImpl implements PartyService {
 	@Override
 	public int updateLeaveMember(int bno, int userNo) {
 		int result1= mapper.chkMaster(bno, userNo);
-		log.warn("마스터 여부 체크" + result1);
-		if(result1 == 0) {
-			int result3 = mapper.updateMinusMember(bno, userNo);
-			return mapper.deleteLeaveMember(bno, userNo);
-		}else {
-			int result2 = mapper.deleteLeaveMember(bno, userNo); 
-			int result4 = mapper.updateMinusMember(bno, userNo);
-			return mapper.deleteParty(bno, userNo);
-		}
+		return mapper.deleteLeaveMember(bno, userNo);
 	}
 	
+	@Override
+	public int deleteParty(int bno, int userNo) {
+		return mapper.deleteParty(bno, userNo);
+	}
+	public int deleteAllPartyMember(int bno) {
+		return mapper.deleteAllPartyMember(bno);
+	}
+	
+	@Override
+	public int chkMaster(int bno, int userNo) {
+		return mapper.chkMaster(bno, userNo);
+	}
+	
+	@Override
+	public List<exhVO> getExhName(String searchText) {
+		return mapper.getExhName(searchText);
+	}
 }
