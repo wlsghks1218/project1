@@ -28,4 +28,5 @@ public interface PartyService {
 	public int chkMaster(int bno, int userNo);
 	public int deleteAllPartyMember(int bno);
 	public List<exhVO> getExhName(String searchText);
+	public exhVO findExhNo(String exhName);
 }

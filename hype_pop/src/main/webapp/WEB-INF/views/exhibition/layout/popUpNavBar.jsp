@@ -33,12 +33,39 @@
 <body>
 
     <div class="navBar">
-        <a href="/hypePop/search/noData">ÆË¾÷ ½ºÅä¾î °Ë»ö</a>
-        <a href="/goodsStore/goodsSearch">±ÂÁî °Ë»ö</a>
-        <a href="/#MapAPI">³» ÁÖº¯</a>
-        <a href="/hypePop/calendar">Ä¶¸°´õ</a>
-        <a href="/member/login">·Î±×ÀÎ</a>
+        <a href="/hypePop/search/noData">ï¿½Ë¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½</a>
+        <a href="/goodsStore/goodsSearch">ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½</a>
+        <a href="/hypePop/popUpMain#MapAPI">ï¿½ï¿½ ï¿½Öºï¿½</a>
+        <a href="/hypePop/calendar">Ä¶ï¿½ï¿½ï¿½ï¿½</a>
+        <a href="/member/login">ï¿½Î±ï¿½ï¿½ï¿½</a>
+        <a href="#" onclick="logout()" >ï¿½Î±×¾Æ¿ï¿½</a>
+        <a href="/member/myPage?userNo=2">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</a>
+        
+        
+    <!--     ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ìµµ ï¿½Ø´ï¿½) 
+      <sec:authorize access="isAnonymous()">
+         <a href="member/login">ï¿½Î±ï¿½ï¿½ï¿½</a>
+      </sec:authorize>
+      ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ 
+      <sec:authorize access="isAuthenticated()">
+         <a href="member/myPage">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</a>
+      </sec:authorize> -->
+        
+        
+        
+        
     </div>
+    
 
 </body>
+<script type="text/javascript">
+    function logout(){
+       // localStorageï¿½ï¿½ï¿½ï¿½ userNo ï¿½ï¿½ï¿½ï¿½
+       localStorage.removeItem('userNo');
+       
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½
+       location.reload();
+
+    }
+</script>
 </html>

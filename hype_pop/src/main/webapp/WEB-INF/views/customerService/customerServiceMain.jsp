@@ -230,8 +230,15 @@ blue
          <br>
          <hr>
          <br>
-         <div style = "float : right"><input type = "checkbox" id="replyCheck" onclick = "replyCheck()"> 답변완료</div>
-         <br>
+			<div style="float: right;">
+				<span id = "inquiryCount"></span>
+				<select id="replyStatus" onchange="handleReplyStatusChange()">
+					<option value="allCheck">전체보기</option>
+					<option value="replyCheck">답변 완료</option>
+					<option value="noReplyCheck">답변 미완료</option>
+				</select>
+			</div>
+		<br>
          <ul class="inquiry-list">
             <li>로딩 중...</li>
          </ul>
@@ -271,7 +278,6 @@ blue
    <br>
 
    <jsp:include page="layout/popUpFooter.jsp" />
-   <jsp:include page="layout/popUpNavBar.jsp" />
    <script type="text/javascript"
       src="/resources/customerServiceJs/customerService.js"></script>
    <script type="text/javascript" src="/resources/popUpJs/popUpMain.js"></script>

@@ -165,11 +165,17 @@ function deleteItem(gno) {
 
 }
 
-
-
 //내 결제 목록 가기
-//function goPayInfo(){
-//   location.href="/purchase/paymentList";
-//}
+document.getElementById('addToCart').addEventListener('click', function() {
+
+   location.href="/purchase/goPaymentList";
+});
+
+
+function goPayInfo(){
+   const grandTotal = document.getElementById("grandTotal").innerText;
+   const userNo = document.getElementById('userNo').value; 
+   location.href="/purchase/getPayInfo?totalPrice=" + grandTotal+"&userNo=" + userNo;;
+}
 
 

@@ -22,6 +22,9 @@ public class NotificationVO {
     private Date notifyAt; // 알림 발송 시간
     private Date createdAt; // 알림 생성 시간
     private String psName;
+    private String goodsName;
+    private String noticeTitle;
+    private String qnaTitle;
 
     // Getter, Setter, Constructor 등 추가
     @Override

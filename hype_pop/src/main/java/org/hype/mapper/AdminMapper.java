@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.hype.domain.Criteria;
+import org.hype.domain.exhImgVO;
+import org.hype.domain.exhVO;
+import org.hype.domain.gCatVO;
 import org.hype.domain.gImgVO;
 import org.hype.domain.goodsVO;
 import org.hype.domain.pCatVO;
@@ -40,16 +43,26 @@ public interface AdminMapper {
 	public int insertPsImage(pImgVO imgVo);  // 이미지 등록
 	public int insertPsCat(pCatVO cvo);  // 카테고리 등록
 	
+	// 팝업스토어 수정하기
+//	public int updatePopStores(popStoreVO pvo);
+	
 	// 굿즈 등록하기
-	public List<popStoreVO> getAllPopStores();	
+	public List<popStoreVO> getAllPopStores();	  // select box 모든 팝업스토어 출력
 	public int insertGoodsStore(goodsVO gvo);
-	public int insertGImage(gImgVO gImgVo);  // 이미지 등록
+	public int insertBannerImage(gImgVO gImgVo);  // 배너 이미지 등록
+	public int insertDetailImage(gImgVO gImgVo);  // 상세 이미지 등록
+	public int insertGcat(gCatVO gvo); 			  // 카테고리 등록
+	
+	// 전시회 등록하기
+	public int insertExhibition(exhVO evo);
+	public int insertExhBannerImage(exhImgVO exhImgVo);  // 배너 이미지 등록
+	public int insertExhDetailImage(exhImgVO exhImgVo);  // 상세 이미지 등록
 	
 	
 	// 관리자 문의 리스트 가져오기	
 	public List<qnaVO> getQnaListByType(@Param("qnaType") String qnaType, @Param("qnaAnswer") String qnaAnswer); 	
 //	public List<qnaVO> getQList(@Param("cri") Criteria cri, @Param("qnaType") String qnaType);  // 페이징O
-//	public int getQTotal(@Param("qnaType") String qnaType);
+//	public int getQTotal(String qnaType);
 	
 	// 상품 상태 조회 리스트 가져오기
 //	public int updatePurchaseList(payVO pvo);  

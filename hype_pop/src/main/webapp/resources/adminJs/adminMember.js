@@ -1,28 +1,3 @@
-// 권한 업다운 
-// 0이면 비활성화 유저, 1이면 활성유저
-document.addEventListener("DOMContentLoaded", function() {
-    // ↑ 버튼 클릭 시 auth 값을 2로 설정
-	// ROLE_USER
-    document.getElementById("upBtn").onclick = function() {
-        setAuthValue(2);
-    };
-    
-    // ↓ 버튼 클릭 시 auth 값을 1로 설정
-    // ROLE_ADMIN
-    document.getElementById("downBtn").onclick = function() {
-        setAuthValue(1);
-    };
-});
-
-function setAuthValue(value) {
-    var authField = document.getElementById("auth");
-    if (authField) {
-        authField.value = value;
-    } else {
-        console.error("권한 입력 필드를 찾을 수 없습니다.");
-    }
-}
-
 // 날짜 형식 변환
 function formatDate(dateString) {
     // 날짜 형식 변환

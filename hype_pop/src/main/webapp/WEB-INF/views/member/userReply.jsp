@@ -184,16 +184,16 @@
 </head>
 <body>
 <div class="header">
-    <a href="/" class="home-link">홈</a>
+    <a href="/home" class="home-link">홈</a>
 </div>
 
 <div class="container">
     <!-- 왼쪽 메뉴 -->
     <div class="left-menu">
-        	 <input type="hidden" value="2" name="userNo" id="userNo"> 
+            <input type="hidden" value="2" name="userNo" id="userNo"> 
         <ul>
             <li><a href="#" onclick="loadBoard('userInquiry')">1:1 문의 글</a></li>
-            <li><a href="#" onclick="loadBoard('popupComments')">팝업스토어></li>
+            <li><a href="#" onclick="loadBoard('popupComments')">팝업스토어</a></li>
             <li><a href="#" onclick="loadBoard('goodsComments')">굿즈 댓글</a></li>
         </ul>
     </div>
@@ -208,7 +208,7 @@
             </form>
         </div>
 
-     	<!-- 게시판 목록 -->
+        <!-- 게시판 목록 -->
         <div id="boardContainer">
             <!-- AJAX로 게시판 목록이 로드될 영역 -->
        <!--       <div id="inquiryList"></div>
@@ -232,7 +232,7 @@
 </div>
 
 
-	<script type="text/javascript" src="/resources/memberJs/myReply.js"></script>
+   <script type="text/javascript" src="/resources/memberJs/myReply.js"></script>
 
 </body>
 </html>

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
@@ -181,11 +180,11 @@ button:hover {
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
 	<div class="banner">여기는 게시판 메인 배너</div>
-
 	<div class="content">
 		<div class="info-section">
 			<div class="category">${vo.category}</div>
 			<div class="targetName">${vo.targetName}</div>
+			<div><span class="moveToDetail">>> 상세 페이지로 이동하기</span></div>
 		</div>
 		<div class="boardTitle">${vo.boardTitle}</div>
 		<div class="chat-title">실시간 채팅</div>

@@ -66,11 +66,11 @@ public class PurchaseController {
        log.info("결제 정보 불러오기.." + userNo);
        
        signInVO payInfo = pservice.getPayInfo(userNo);
-       int price = pservice.getPrice(userNo);
-       log.info("price...: " + price );
+       //int price = pservice.getPrice(userNo);
+       //log.info("price...: " + price );
        
        model.addAttribute("getPayInfo", payInfo);
-       model.addAttribute("price", price);
+       //model.addAttribute("price", price);
        
        return "/purchase/payInfoPage"; 
        
@@ -100,7 +100,7 @@ public class PurchaseController {
  
     
     
- // 내 결제 목록 가기
+    // 내가 결제한 상품 목록 가기
     @GetMapping("/getPayList")
     public String getPaymentList(@RequestParam("userNo") int userNo, Model model) {
         log.info("getPaymentList...: " + userNo); 
@@ -128,8 +128,11 @@ public class PurchaseController {
     }
     
     
-    
-    
+    //결제 성공 축하 짝짝짝
+    @GetMapping("/purchaseComplete")
+    public String purchaseComplete() {
+       return "/purchase/purchaseComplete";
+    }
     
     
     

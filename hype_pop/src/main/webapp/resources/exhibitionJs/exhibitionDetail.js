@@ -1,6 +1,11 @@
+// 섹션 전환 이벤트 리스너 설정
 document.getElementById('viewingInfoToggle').addEventListener('click', () => showSection('viewingInfo'));
 document.getElementById('viewingDetailToggle').addEventListener('click', () => showSection('detailsSection'));
 document.getElementById('replyToggle').addEventListener('click', () => showSection('replySection'));
+
+document.addEventListener("DOMContentLoaded", (event) => {
+	showSection('viewingInfo');
+});
 
 // 특정 섹션을 표시하고 나머지 섹션은 숨기기
 function showSection(visibleSectionId) {
@@ -12,7 +17,7 @@ function showSection(visibleSectionId) {
 
 document.addEventListener("DOMContentLoaded", function() {
     const exhNo = document.getElementById("exhNo").value;
-    const userNo = 2; // 현재 사용자 ID (실제로는 로그인한 사용자 ID로 설정해야 함)
+    const userNo = localStorage.getItem("userNo");
 
     // 좋아요 상태 확인 요청
     const xhrLikeStatus = new XMLHttpRequest();
@@ -50,7 +55,18 @@ document.addEventListener("DOMContentLoaded", function() {
 // 좋아요 표시 기능
 function toggleHeart(element) {
     const exhNo = document.getElementById("exhNo").value;
-    const userNo = 2; // 현재 사용자 ID (실제로는 로그인한 사용자 ID로 설정해야 함)
+    const userNo = localStorage.getItem("userNo");
+
+    // userNo가 없으면 confirm 창 띄우기
+    if (!userNo) {
+        const isConfirmed = confirm("로그인 후 이용해주세요. 로그인 페이지로 이동하시겠습니까?");
+        if (!isConfirmed) {
+            return; 
+        }
+        location.href = "/member/login"; // 로그인 페이지로 이동
+        return;
+    }
+
     const isActive = element.classList.toggle("active");
 
     const xhr = new XMLHttpRequest();
@@ -74,6 +90,7 @@ function toggleHeart(element) {
     const data = JSON.stringify({ exhNo: exhNo, userNo: userNo });
     xhr.send(data);
 }
+
 
 //별점 선택 함수
 document.addEventListener("DOMContentLoaded", () => {
@@ -101,12 +118,81 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-//댓글 등록 함수
+document.addEventListener("DOMContentLoaded", function() {
+    var exhNo = document.getElementById("exhNo").value;
+    var userNo = localStorage.getItem("userNo");
+
+    if (!userNo) {
+        // 유저가 로그인하지 않은 경우 처리
+        return;
+    }
+
+    // 유저가 이미 댓글을 작성했는지 확인하는 AJAX 요청
+    var xhrCheck = new XMLHttpRequest();
+    xhrCheck.open("GET", "/exhibition/checkUserReview?exhNo=" + exhNo + "&userNo=" + userNo, true);
+    xhrCheck.onreadystatechange = function() {
+        if (xhrCheck.readyState === 4) {
+            if (xhrCheck.status === 200) {
+                var response = JSON.parse(xhrCheck.responseText);
+                if (response.hasReview) {
+                    // 유저가 이미 댓글을 작성했으면 폼 숨기기
+                    document.getElementById("reviewForm").style.display = "none";
+                } else {
+                    // 유저가 댓글을 작성하지 않았다면 폼을 보여주기
+                    document.getElementById("reviewForm").style.display = "block";
+                }
+            } else {
+                alert("댓글 작성 여부 확인에 실패했습니다.");
+            }
+        }
+    };
+    xhrCheck.send();
+});
+
 document.getElementById("addReply").onclick = function() {
     var reviewText = document.getElementById("reviewText").value;
     var selectedRating = document.querySelector("#selectedRating span").textContent; // 선택한 별점 값을 가져옴
     var exhNo = document.getElementById("exhNo").value;
-    var userNo = 2; // 예시로 userNo를 1로 설정, 실제로는 로그인 사용자 ID로 대체
+    var userNo = localStorage.getItem("userNo"); 
+    var reviewForm = document.getElementById("reviewForm");
+
+    if (!userNo) {
+        const isConfirmed = confirm("로그인 후 이용해주세요. 로그인 페이지로 이동하시겠습니까?");
+        if (!isConfirmed) {
+            return; 
+        }
+        location.href = "/member/login"; // 로그인 페이지로 이동
+        return;
+    }
+
+    // 유저가 이미 댓글을 작성했는지 확인하는 AJAX 요청
+    var xhrCheck = new XMLHttpRequest();
+    xhrCheck.open("GET", "/exhibition/checkUserReview?exhNo=" + exhNo + "&userNo=" + userNo, true);
+    xhrCheck.onreadystatechange = function() {
+        if (xhrCheck.readyState === 4) {
+            if (xhrCheck.status === 200) {
+                var response = JSON.parse(xhrCheck.responseText);
+                if (response.hasReview) {
+                    reviewForm.style.display = "none";
+                    return;
+                }
+                // 댓글 등록
+                registerReview(); // 매개변수 없이 호출
+            } else {
+                alert("댓글 등록 여부 확인에 실패했습니다.");
+            }
+        }
+    };
+    xhrCheck.send();
+};
+
+// 댓글 등록 함수 (매개변수 없이 호출)
+function registerReview() {
+    var reviewText = document.getElementById("reviewText").value;
+    var selectedRating = document.querySelector("#selectedRating span").textContent;
+    var exhNo = document.getElementById("exhNo").value;
+    var userNo = localStorage.getItem("userNo");
+    var reviewForm = document.getElementById("reviewForm");
 
     // 유효성 검사
     if (!reviewText) {
@@ -127,8 +213,9 @@ document.getElementById("addReply").onclick = function() {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 alert("댓글이 등록되었습니다.");
-                resetReviewForm(); // 댓글 등록 후 폼 초기화
-                fetchAndDisplayReviews(); // 댓글 목록 새로 고침
+                reviewForm.style.display = "none";
+                resetReviewForm(); 
+                fetchAndDisplayReviews(); 
             } else {
                 alert("댓글 등록이 실패했습니다.");
             }
@@ -143,10 +230,13 @@ document.getElementById("addReply").onclick = function() {
     });
 
     xhr.send(data);
-};
-// 댓글 목록을 렌더링할 때 수정하기 버튼에 클릭 이벤트 추가
-function fetchAndDisplayReviews() {
-    fetch('/exhibition/userReviews')
+}
+
+function fetchAndDisplayReviews(exhNo) {
+    exhNo = document.getElementById("exhNo").value;
+    const userNo = localStorage.getItem("userNo");
+
+    fetch(`/exhibition/userReviews?exhNo=${exhNo}`)
         .then(response => response.json())
         .then(data => {
             const reviewsList = document.getElementById('reviewsList');
@@ -156,25 +246,41 @@ function fetchAndDisplayReviews() {
                     const listItem = document.createElement('li');
                     listItem.innerHTML = `
                         <div class="reply-container">
-                    		<div class="reply-header">
-                    			<input type="hidden" class="exhReplyNo" value="${reply.exhReplyNo}">
-                    			<strong class="user-no" id="user-no">유저번호: ${reply.userNo}</strong>
-                    			<div class="exh-score">
-                    			${generateStarIcons(reply.exhScore, true)}
-                    			<input type="hidden" class="score-value" value="${reply.exhScore}"> <!-- 별점 값을 저장하는 hidden input -->
-                    			</div>
-                    			<span class="exh-reg-date">등록 날짜: ${new Date(reply.exhRegDate).toLocaleDateString()}</span>               			
-                    		</div>
-                    		<textarea class="exh-comment" rows="10" cols="3" readonly>${reply.exhComment}</textarea>
-                    		<div class="button-container">
-                    			<input type="button" class="updateReply" value="수정하기"> <!-- 수정 -->
-                    			<input type="button" class="updateReplySend" value="수정완료" style="display: none">                    			
-                    			<input type="button" class="updateReplyCancel" value="수정취소" style="display: none">                    			
-                    			<input type="button" class="deleteReply" value="삭제하기">
-                    		</div>
-                    	</div>
+                            <div class="reply-header">
+                                <input type="hidden" class="exhReplyNo" value="${reply.exhReplyNo}">
+                                <input type="hidden" class="userNo" value="${reply.userNo}">
+                                <strong class="user-no" id="user-no">유저번호: ${reply.userNo}</strong>
+                                <div class="exh-score">
+                                    ${generateStarIcons(reply.exhScore, true)}
+                                    <input type="hidden" class="score-value" value="${reply.exhScore}">
+                                </div>
+                                <span class="exh-reg-date">등록 날짜: ${new Date(reply.exhRegDate).toLocaleDateString()}</span>
+                            </div>
+                            <textarea class="exh-comment" rows="10" cols="3" readonly>${reply.exhComment}</textarea>
+                            <div class="button-container">
+                                <input type="button" class="updateReply" value="수정하기">
+                                <input type="button" class="updateReplySend" value="수정완료" style="display: none">
+                                <input type="button" class="updateReplyCancel" value="수정취소" style="display: none">
+                                <input type="button" class="deleteReply" value="삭제하기">
+                            </div>
+                        </div>
                     `;
+                    
                     reviewsList.appendChild(listItem);
+                    
+                    const updateReplyBtn = listItem.querySelector('.updateReply');
+                    const updateReplySendBtn = listItem.querySelector('.updateReplySend');
+                    const updateReplyCancelBtn = listItem.querySelector('.updateReplyCancel');
+                    const deleteReplyBtn = listItem.querySelector('.deleteReply');
+                    const userNoInput = listItem.querySelector('.userNo'); // hidden input 요소 선택
+                    const replyUserNo = userNoInput.value; // userNo 값 가져오기
+
+                    if (userNo !== replyUserNo) {
+                        updateReplyBtn.style.display = 'none';
+                        updateReplySendBtn.style.display = 'none';
+                        updateReplyCancelBtn.style.display = 'none';
+                        deleteReplyBtn.style.display = 'none';
+                    }
                 });
             } else {
                 reviewsList.innerHTML = '<li>후기가 없습니다.</li>';
@@ -184,6 +290,7 @@ function fetchAndDisplayReviews() {
             console.error('데이터를 가져오는 중 오류 발생:', error);
         });
 }
+
 //이벤트 위임 설정
 document.getElementById('reviewsList').addEventListener('click', function(event) {
     if (event.target.classList.contains('updateReply')) {
@@ -306,8 +413,9 @@ function handleUpdateCancel(button) {
 
 function handleDeleteClick(button) {
     const replyContainer = button.closest('.reply-container');
-    const userNo = replyContainer.querySelector('.user-no').textContent.split(': ')[1]; // 유저번호 추출
-    const exhReplyNo = replyContainer.querySelector('.exhReplyNo').value; // 전시회 댓글 번호 추출
+    const userNo = replyContainer.querySelector('.user-no').textContent.split(': ')[1]; 
+    const exhReplyNo = replyContainer.querySelector('.exhReplyNo').value;
+    var reviewForm = document.getElementById("reviewForm");
 
     // 삭제 확인 대화상자 표시
     const isConfirmed = confirm('정말로 이 댓글을 삭제하시겠습니까?');
@@ -320,6 +428,7 @@ function handleDeleteClick(button) {
             if (response.ok) {
                 replyContainer.remove();
                 alert('댓글이 삭제되었습니다.');
+                reviewForm.style.display = "block";
             } else {
                 alert('댓글 삭제에 실패했습니다.');
             }

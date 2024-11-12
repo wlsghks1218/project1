@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import lombok.extern.log4j.Log4j;
 
 @Log4j
@@ -63,7 +62,35 @@ public class SupportController {
 
 	    return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@GetMapping(value = "/replyCheck", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> replyCheck(
+	    @RequestParam(defaultValue = "1") int pageNum,
+	    @RequestParam(defaultValue = "5") int amount,
+	    @RequestParam int userNo,
+	    @RequestParam(required = false) Boolean answered) { // Boolean으로 변경
 
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    List<qnaVO> inquiries;
+	    int totalCount;
+
+	    if (answered == null) {
+	        // 전체보기
+	        inquiries = noticeService.getInquiriesWithPaging(pageNum, amount, userNo); // 전체 조회 메서드 호출
+	        totalCount = noticeService.getTotalInquiryCount(userNo); // 전체 개수 조회 메서드 호출
+	    } else {
+	        // 답변 상태에 따라 조회
+	        inquiries = noticeService.replyCheckInquiries(pageNum, amount, userNo, answered);
+	        totalCount = noticeService.replyCheckCount(userNo, answered);
+	    }
+
+	    response.put("inquiries", inquiries);
+	    response.put("totalCount", totalCount); 
+
+	    return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 
 	// 공지사항 작성 페이지로 이동
@@ -190,7 +217,7 @@ public class SupportController {
 	        return "errorPage"; 
 	    }
 	}
-	   //특정 유저 1:1 문의글 가져오기(윤)
+	  //특정 유저 1:1 문의글 가져오기(윤)
     @GetMapping(value = "/userInquiry", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getUserInquiryList(
@@ -213,5 +240,13 @@ public class SupportController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    // 특정 유저 문의글 개수 가져오기
+    @GetMapping(value = "/getInquiryCounts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Integer> getInquiryCounts(@RequestParam int userNo) {
+        Map<String, Integer> inquiryCounts = noticeService.getInquiryCounts(userNo);
+        return inquiryCounts;
+    }
 
+    	
 }

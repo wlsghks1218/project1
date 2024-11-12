@@ -151,25 +151,54 @@ function popStoreRegister(e){
 
 
 //**** 팝업스토어 수정/삭제 페이지 영역 ****
-// 에러 발생 중이라 주석 처리
-//document.querySelector('#psDelete').addEventListener('click', popupDelete);
+// 수정하기 버튼 클릭 시 업데이트
+// 진행 중
+//document.querySelector('#psUpdate').addEventListener('click', popupUpdate);
 //
-//function popupDelete() {
-//	if (confirm('정말로 삭제하시겠습니까?')) {
-//		
-//		// 카테고리 정보를 가져오기 (예시)
-//        const psCat = document.querySelector('input[name="psCat"]').value;
-//
-//        // 카테고리 정보를 hidden input에 추가
-//        document.querySelector('input[name="psCat"]').value = psCat;
-//
-//        // 이미지 UUID를 가져와서 hidden input에 추가
-//        const imageUuid = document.querySelector('input[name="imageUuid"]').value;
-//
-//        // 제출할 폼에 추가 정보 설정
-//        document.querySelector('input[name="imageUuid"]').value = imageUuid;
-//
-//        // 폼 제출
-//        document.querySelector('#deleteForm').submit();
-//    }
+//function popupUpdate() {
+//	const f = document.forms[0];
+//	
+//	if(f.latitude.value == ''){
+//		alert('위도를 입력해주세요');
+//		return;
+//	}
+//	if(f.latitude.value == ''){
+//		alert('경도를 입력해주세요');
+//		return;		
+//	}
+//	if(f.psName.value == ''){
+//		alert('팝업스토어 이름을 입력해주세요');
+//		return;
+//	}
+//	if(f.psStartDate.value == ''){
+//		alert('시작일을 입력해주세요');
+//		return;
+//	}
+//	if(f.psEndDate.value == ''){
+//		alert('종료일을 입력해주세요');
+//		return;		
+//	}
+//	if(f.psAddress.value == ''){
+//		alert('주소를 입력해주세요');
+//		return;
+//	}
+//	if(f.snsAd.value == ''){
+//		alert('SNS주소를 입력해주세요');
+//		return;		
+//	}
+//	if(f.comInfo.value == ''){
+//		alert('주최사 정보를 입력해주세요');
+//		return;
+//	}
+//	if(f.transInfo.value == ''){
+//		alert('교통편을 입력해주세요');
+//		return;		
+//	}
+//	if(f.psExp.value == ''){
+//		alert('설명글을 입력해주세요');
+//		return;
+//	}
+//	
+//	f.action = '/admin/psUpdate';   // post방식 왜? servlet에서 postMapping 해놨기때문에 post로 작성
+//	f.submit();
 //}

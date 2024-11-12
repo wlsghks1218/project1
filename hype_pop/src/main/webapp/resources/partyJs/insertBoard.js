@@ -169,4 +169,3 @@ document.getElementById("submitBtn").addEventListener('click', (e) => {
     form.action = "/party/insertBoard";
     form.submit();
 });
-

@@ -51,7 +51,7 @@ document.getElementById('memberManage').addEventListener('click', function() {
     document.getElementById('registerBtn').style.visibility = 'hidden'; // 등록 버튼 보이기
 });
 
-//검색 박스와 버튼 보이기/숨기기 함수
+// 검색 박스와 버튼 보이기/숨기기 함수
 function toggleSearchBox(shouldShow) {
     const searchBox = document.getElementById('adminSearchBox');
     const searchButton = document.getElementById('searchBTN');
@@ -122,7 +122,6 @@ function loadPopUpStores(page = 1) {
 
 // 팝업스토어 관리하기 버튼 클릭 시 팝업 스토어 리스트 영역 출력
 function PopUpStoreLists(popUpStores) {
-//	console.log('PopUpStoreLists called with:', popUpStores);
     const popSList = document.querySelector('#AllList');
     const adminMain = document.querySelector('.adminMain');
     popSList.innerHTML = '';
@@ -136,22 +135,19 @@ function PopUpStoreLists(popUpStores) {
 //    popUpStores.sort((a, b) => a.psNo - b.psNo);
 
     popUpStores.forEach(store => {	
-    	// 팝업스토어 개별 div, p태그 적용
-    	const list = document.createElement('div');
-    	const psList = document.createElement('p');
-
-    	// 팝업스토어 이름 클릭 시 링크로 이동
+    	// 해당 팝업스토어 클릭 시 수정/삭제 페이지로 이동
         const link = document.createElement('a');
         link.href = `popUpUpdate?psNo=${store.psNo}`;
-        link.textContent = store.psName; // 팝업스토어 이름에만 링크 걸리게 설정
-        link.style.color = 'black'; // 링크 색상 변경
-        link.style.textDecoration = 'none'; // 밑줄 제거
+        link.style.color = 'black'; 
+        link.style.textDecoration = 'none'; 
+        link.style.display = 'block';
 
+        const psList = document.createElement('p');
         psList.appendChild(document.createTextNode(` ${store.psNo} `));
-        psList.appendChild(link); // p 태그에 a 태그 추가
+        psList.appendChild(document.createTextNode(store.psName));
         psList.appendChild(document.createTextNode(` ${new Date(store.psStartDate).toLocaleDateString()} ~ ${new Date(store.psEndDate).toLocaleDateString()}`));
-        list.appendChild(psList);
-        popSList.appendChild(list);
+        link.appendChild(psList);
+        popSList.appendChild(link);
     });
    
     const form = document.querySelector('form');
@@ -321,23 +317,19 @@ function GoodsLists(goods) {
     }
    
     goods.forEach(store => {	
-//    	console.log('Item:', store);
-    	// 굿즈(상품) 개별 div, p태그 적용
-    	const list = document.createElement('div');
-    	const gsList = document.createElement('p');
-
     	// 굿즈(상품) 이름 클릭 시 링크로 이동
         const link = document.createElement('a');
         link.href = `goodsUpdate?gNo=${store.gno}`;
-        link.textContent = store.gname; // 팝업스토어 이름에만 링크 걸리게 설정
-        link.style.color = 'black'; // 링크 색상 변경
-        link.style.textDecoration = 'none'; // 밑줄 제거
+        link.style.color = 'black'; 
+        link.style.textDecoration = 'none';
+        link.style.display = 'block';
 
+        const gsList = document.createElement('p');
         gsList.appendChild(document.createTextNode(` ${store.gno} `));
-        gsList.appendChild(link); // p 태그에 a 태그 추가
+        gsList.appendChild(document.createTextNode(store.gname));
         gsList.appendChild(document.createTextNode(` ${new Date(store.sellDate).toLocaleDateString()} ${store.gprice}`));
-        list.appendChild(gsList);
-        gList.appendChild(list);
+        link.appendChild(gsList);
+        gList.appendChild(link);
     });
    
     const form = document.querySelector('form');
@@ -386,7 +378,6 @@ function loadMembersStores(page = 1) {
 
 // 회원 관리하기 버튼 클릭 시 회원 리스트 출력
 function MemberLists(members) {
-//	console.log("회원 잘 받아오나요? : " + members);  // 확인용
 	const mList = document.querySelector('#AllList');
     const adminMain = document.querySelector('.adminMain');
     
@@ -403,28 +394,25 @@ function MemberLists(members) {
         return;
     }
 
-    members.forEach(member => {
-//    	console.log('회원:', member); // 각 member 객체 출력
-    	// 회원 개별 div, p태그 적용
-    	const list = document.createElement('div');
-    	const msList = document.createElement('p');
-       
+    members.forEach(member => {       
     	// 회원아이디 클릭 시 회원 정보 수정 페이지로 이동
         const link = document.createElement('a');
         link.href = `memberUpdate?userNo=${member.userNo}`;
-        link.textContent = member.userId; // 회원 아이디에만 링크 걸리게 설정
-        link.style.color = 'black'; // 링크 색상 변경	
-        link.style.textDecoration = 'none'; // 밑줄 제거
+        link.style.color = 'black'; 	
+        link.style.textDecoration = 'none'; 
+        link.style.display = 'block';
+
+        const msList = document.createElement('p');
        
         const formattedDate = member.lastLoginDate ?
         		new Date(member.lastLoginDate).toLocaleDateString('ko-KR') : '날짜 없음';
         		
 		msList.appendChild(document.createTextNode(` ${member.userNo} `));
-		msList.appendChild(link); // p 태그에 a 태그 추가
+		msList.appendChild(document.createTextNode(member.userId));
 		msList.appendChild(document.createTextNode(` ${member.userEmail} ${formattedDate} ${member.enabled} ${member.auth}`));
        
-        list.appendChild(msList);
-        mList.appendChild(list);
+		link.appendChild(msList);
+		mList.appendChild(link);
     });
     
     const form = document.querySelector('form');
@@ -458,7 +446,7 @@ if(goodsState !== null){
 	}	
 }
 
-// 등록하기 버튼 클릭 시 페이지 이동 함수
+// 등록 버튼 클릭 시 페이지 이동 함수
 function goToPage(url) {
 	window.location.href = url;
 }
@@ -473,6 +461,14 @@ if(registerBtn != null){
 			goToPage('/admin/goodsRegister'); // 쇼핑몰 관리 탭에서 버튼 클릭 시 상품(굿즈) 등록 페이지로 이동 (컨트롤러 경로)
 		}	
 	});	
+}
+
+// 전시회 등록하기 버튼 클릭 시 이동
+const registerExBtn = document.querySelector('#registerExBtn');
+if (registerExBtn) {
+    registerExBtn.addEventListener('click', () => {
+        goToPage('/admin/exhRegister'); // 전시회 등록 페이지로 이동
+    });
 }
 
 // AdminController의 (/admin)에서만 등록하기 버튼 보이기

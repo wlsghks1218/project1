@@ -15,4 +15,49 @@
         DELETE FROM notification_tbl
         WHERE notificationNo = #{notificationNo}
     </delete>
+    
+     <update id="updateNotificationReadStatus" parameterType="int">
+        UPDATE notification_tbl
+        SET isRead = 1
+        WHERE userNo = #{userNo} AND isRead = 0
+    </update>
+    
+ <!-- 유저가 좋아요한 팝업스토어들의 ID 조회 쿼리 -->
+  <select id="getLikedPopUpStoresByUser" resultType="int">
+    SELECT psNo
+    FROM like_list_tbl
+    WHERE userNo = #{userNo}
+    AND psNo IN (
+        SELECT PSNO
+        FROM pop_main_tbl
+        WHERE endDate = TRUNC(SYSDATE) + 5
+    )
+</select>
+    
+     <!-- 알림 삽입 쿼리 -->
+<insert id="insertPopUpNotification" parameterType="org.hype.domain.NotificationVO">
+    INSERT INTO notification_tbl
+    (
+        notificationNO,
+        userNo,
+        type,
+        referenceNo,
+        title,
+        message,
+        isRead,
+        notifyAt
+    )
+    VALUES
+    (
+        notification_seq.nextval,  
+        #{userNo},
+        #{type},
+        #{referenceNo},
+        #{title},
+        #{message},
+        0, 
+        sysdate  
+    )
+</insert>
+
 </mapper>

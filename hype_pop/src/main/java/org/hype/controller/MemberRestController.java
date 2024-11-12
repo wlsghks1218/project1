@@ -1,5 +1,12 @@
 package org.hype.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +20,9 @@ import org.hype.domain.mCatVO;
 import org.hype.domain.signInVO;
 import org.hype.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,26 +37,26 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/member/api")
 public class MemberRestController {
 
-	@Autowired
-	private MemberService memberService;
+   @Autowired
+   private MemberService memberService;
 
-	@Autowired
-	private JavaMailSenderImpl mailSender;
+   @Autowired
+   private JavaMailSenderImpl mailSender;
 
-	private static String authCode;
+   private static String authCode;
 
-	@GetMapping("/checkUserId")
-	public ResponseEntity<String> checkUserId(String userId) {
-		log.info("userId : " + userId);
-		boolean isDuplicate = memberService.checkDuplicateId(userId);
-		log.info("isDuplicate : " + isDuplicate);
+   @GetMapping("/checkUserId")
+   public ResponseEntity<String> checkUserId(String userId) {
+      log.info("userId : " + userId);
+      boolean isDuplicate = memberService.checkDuplicateId(userId);
+      log.info("isDuplicate : " + isDuplicate);
 
-		if (isDuplicate) {
-			return new ResponseEntity<>("no", HttpStatus.ACCEPTED);
-		} else {
-			return new ResponseEntity<>("ok", HttpStatus.OK);
-		}
-	}
+      if (isDuplicate) {
+         return new ResponseEntity<>("no", HttpStatus.ACCEPTED);
+      } else {
+         return new ResponseEntity<>("ok", HttpStatus.OK);
+      }
+   }
 
 
     @GetMapping("/getPolicyContent")
@@ -119,108 +129,204 @@ public class MemberRestController {
 
     
 
-	// 이메일로 인증코드 전송
-	@RequestMapping(value = "/sendMail/{userEmail}", method = RequestMethod.GET)
-	public ResponseEntity<String> sendMailTest(@PathVariable String userEmail) {
-		System.out.println("이메일 전송 요청 수신: " + userEmail); // 요청 로그
-		authCode = String.valueOf((int) (Math.random() * 900000) + 100000); // 랜덤 인증 코드 생성
-		String subject = "test 인증 코드";
-		String content = authCode;
-		String from = mailSender.getUsername(); // 보내는 이메일
-		//String to = userEmail;
-		String to = userEmail+ ".com"; // 받는 이메일 (수정: .com 제거)
-		System.out.println(to);
-		
-		try {
-			MimeMessage mail = mailSender.createMimeMessage();
-			MimeMessageHelper mailHelper = new MimeMessageHelper(mail, "UTF-8");
+   // 이메일로 인증코드 전송
+   @RequestMapping(value = "/sendMail/{userEmail}", method = RequestMethod.GET)
+   public ResponseEntity<String> sendMailTest(@PathVariable String userEmail) {
+      System.out.println("이메일 전송 요청 수신: " + userEmail); // 요청 로그
+      authCode = String.valueOf((int) (Math.random() * 900000) + 100000); // 랜덤 인증 코드 생성
+      String subject = "test 인증 코드";
+      String content = authCode;
+      String from = mailSender.getUsername(); // 보내는 이메일
+      //String to = userEmail;
+      String to = userEmail+ ".com"; // 받는 이메일 (수정: .com 제거)
+      System.out.println(to);
+      
+      try {
+         MimeMessage mail = mailSender.createMimeMessage();
+         MimeMessageHelper mailHelper = new MimeMessageHelper(mail, "UTF-8");
 
-			mailHelper.setFrom(from);
-			mailHelper.setTo(to);
-			mailHelper.setSubject(subject);
-			mailHelper.setText(content, false);
+         mailHelper.setFrom(from);
+         mailHelper.setTo(to);
+         mailHelper.setSubject(subject);
+         mailHelper.setText(content, false);
 
-			mailSender.send(mail);
-			return ResponseEntity.ok("ok");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-		}
-	}
+         mailSender.send(mail);
+         return ResponseEntity.ok("ok");
+      } catch (MessagingException e) {
+         e.printStackTrace();
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+      } catch (Exception e) {
+         e.printStackTrace();
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+      }
+   }
 
-	// 인증코드 확인
-	@GetMapping("/verifyCode")
-	public ResponseEntity<String> verifyEmailCode(@RequestParam String code) {
-		if (authCode != null && authCode.equals(code)) {
-			return ResponseEntity.ok("ok");
-		} else {
-			return ResponseEntity.ok("fail");
-		}
-	}
+   // 인증코드 확인
+   @GetMapping("/verifyCode")
+   public ResponseEntity<String> verifyEmailCode(@RequestParam String code) {
+      if (authCode != null && authCode.equals(code)) {
+         return ResponseEntity.ok("ok");
+      } else {
+         return ResponseEntity.ok("fail");
+      }
+   }
 
-	// 마이페이지 관심사 변경
-	@PostMapping("/updateUserInterests")
-	public ResponseEntity<String> updateUserInterests(@RequestParam("userNo") int userNo, mCatVO mcvo) {
+   // 마이페이지 관심사 변경
+   @PostMapping(value = "/updateUserInterests", produces = "application/json; charset=UTF-8")
+   public ResponseEntity<Map<String, Object>> updateUserInterests(@RequestParam("userNo") int userNo, @ModelAttribute mCatVO mcvo) {
+       log.warn("mcvo : " + mcvo.getGame());
+       log.warn("mcvo : " + mcvo.getCulture());
+       log.warn("mcvo : " + mcvo.getShopping());
 
-		log.warn("mcvo :" + mcvo.getGame());
-		log.warn("mcvo :" + mcvo.getCulture());
-		log.warn("mcvo :" + mcvo.getShopping());
+       Map<String, Object> response = new HashMap<>();
+       try {
+           // 서비스 메소드 호출로 관심사 변경
+           memberService.changeUserInterest(userNo, mcvo);
+           
+           // 변경된 관심사 조회
+           mCatVO updatedInterests = memberService.selectMyInterest(userNo);
 
-		try {
-			memberService.changeUserInterest(userNo, mcvo);
-			return ResponseEntity.ok("관심사가 성공적으로 업데이트되었습니다.");
-		} catch (Exception e) {
-			log.error("Error updating interests", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업데이트 중 문제가 발생했습니다.");
-		}
-	}
+           // 응답에 메시지와 함께 변경된 관심사 반환
+           response.put("message", "관심사가 성공적으로 업데이트되었습니다.");
+           response.put("updatedInterests", updatedInterests);  // 변경된 관심사를 응답에 추가
+           return ResponseEntity.ok(response);
+       } catch (Exception e) {
+           log.error("Error updating interests", e);
+           response.put("error", "업데이트 중 문제가 발생했습니다.");
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+       }
+   }
 
 
 
-	// 메소드 레벨에서 @DeleteMapping 사용
-	@DeleteMapping(value = "/removePopup/{psNo}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> removePopup(@PathVariable("psNo") int psNo, @RequestParam(value = "userNo") int userNo) {
-		log.info("psno,usno:" + userNo + psNo);
-		int deleted = memberService.pLikeListDelete(userNo,psNo);
+   // 메소드 레벨에서 @DeleteMapping 사용
+   @DeleteMapping(value = "/removePopup/{psNo}", produces = MediaType.TEXT_PLAIN_VALUE)
+   public ResponseEntity<String> removePopup(@PathVariable("psNo") int psNo, @RequestParam(value = "userNo") int userNo) {
+      log.info("psno,usno:" + userNo + psNo);
+      int deleted = memberService.pLikeListDelete(userNo,psNo);
 
-		if (deleted > 0) { // deleted가 0보다 크면 성공
-			return ResponseEntity.ok("ok");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail"); // 삭제할 데이터가 없는 경우
-		}
-	}
-	
-	
-	@DeleteMapping(value = "/removeGoods/{gno}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> removeGoods(@PathVariable("gno") int gno, @RequestParam(value = "userNo") int userNo) {
-		int deleted = memberService.gLikeListDelete(userNo,gno);
+      if (deleted > 0) { // deleted가 0보다 크면 성공
+         return ResponseEntity.ok("ok");
+      } else {
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail"); // 삭제할 데이터가 없는 경우
+      }
+   }
+   
+   
+   @DeleteMapping(value = "/removeGoods/{gno}", produces = MediaType.TEXT_PLAIN_VALUE)
+   public ResponseEntity<String> removeGoods(@PathVariable("gno") int gno, @RequestParam(value = "userNo") int userNo) {
+      int deleted = memberService.gLikeListDelete(userNo,gno);
 
-		if (deleted > 0) { // deleted가 0보다 크면 성공
-			return ResponseEntity.ok("ok");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail"); // 삭제할 데이터가 없는 경우
-		}
-	}
+      if (deleted > 0) { // deleted가 0보다 크면 성공
+         return ResponseEntity.ok("ok");
+      } else {
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail"); // 삭제할 데이터가 없는 경우
+      }
+   }
 
-	
-	//로그인
-	@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<Map<String, Object>> login(@RequestBody signInVO svo) {
-	    signInVO member = memberService.loginMember(svo);
+   
+   //로그인 아이디 찾기 이메일 일치 여부
+   @PostMapping("/checkEmail")
+   public ResponseEntity<String> checkEmail(@RequestBody signInVO svo) {
+      
+      log.info("signInVO svo : " + svo);
+      
+      if (svo == null || svo.getUserEmail() == null || svo.getUserName() == null) {
+         return ResponseEntity.badRequest().body("Invalid input");
+      }
+      boolean exists = memberService.checkEmail(svo);
+      
+      if (exists) {
+         return ResponseEntity.ok("exists");
+      } else {
+         return ResponseEntity.ok("not_exists");
+      }
+   }
+   
+   
+   
+   
+   @GetMapping("/confirmId")
+   public ResponseEntity<String> confirmId(@RequestParam String userId) {
+      
+      log.info("Searching for userId: " + userId); // 
+      
+      int result = memberService.searchId(userId);
+      
+      if(result>0) {
+         return ResponseEntity.ok()
+         .contentType(MediaType.APPLICATION_JSON_UTF8) // UTF-8로 설정
+            .body("아이디가 존재합니다");
+      } else {
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("fail");
+      }
+      
+      
+   }
+   
+   //로그인 비밀번호  찾기 이메일 일치 여부
+   @PostMapping("/checkEmailSeachPw")
+   public ResponseEntity<String> checkEmailPw(@RequestBody signInVO svo) {
+      
+      log.info("signInVO svo : " + svo);
+      log.info("Received request: userEmail = " + svo.getUserEmail() + ", userId = " + svo.getUserId());
 
-	    Map<String, Object> response = new HashMap<>();
-	    if (member != null) {
-	        response.put("status", "success");
-	        response.put("userNo", member.getUserNo()); // userNo를 응답에 포함
-	        return ResponseEntity.ok(response);
-	    } else {
-	        response.put("status", "error");
-	        response.put("message", "로그인 오류입니다.");
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-	    }
-	}
+      if (svo == null || svo.getUserEmail() == null || svo.getUserId() == null) {
+         return ResponseEntity.badRequest().body("Invalid input");
+      }
+      
+      
+      boolean exists = memberService.checkEmailPw(svo);
+      log.info("exists:" + exists);
+      
+      if (exists) {
+         return ResponseEntity.ok("exists");
+      } else {
+         return ResponseEntity.ok("not_exists");
+      }
+   }
+   
+   //로그인
+   @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+   @ResponseBody
+   public ResponseEntity<Map<String, Object>> login(@RequestBody signInVO svo) {
+       signInVO member = memberService.loginMember(svo);
+
+       Map<String, Object> response = new HashMap<>();
+       if (member != null) {
+           response.put("status", "success");
+           response.put("userNo", member.getUserNo()); // userNo를 응답에 포함
+           return ResponseEntity.ok(response);
+       } else {
+           response.put("status", "error");
+           response.put("message", "로그인 오류입니다.");
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+       }
+   }
+   
+   //마이페이지 좋아요한 팝업스토어 이미지 가져오기
+    @GetMapping("/images/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveImage(@PathVariable String fileName) throws MalformedURLException {
+       log.info(fileName);
+       
+       
+   
+       String imagePath = "\\\\192.168.0.129\\storeGoodsImg\\" + fileName;
+      
+        Path path = Paths.get(imagePath);  // Convert the image path to a Path object
+        
+        if (!Files.exists(path)) {
+            throw new RuntimeException("파일이 없어여: " + fileName);  // Handle case when file does not exist
+        }
+        if (!Files.isReadable(path)) {
+            throw new RuntimeException("파일을 읽을 수 없어요: " + fileName);  // Handle case when file is not readable
+        }
+        Resource file = new FileSystemResource(path.toFile());
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
+            .body(file);
+    }
+   
+
 }

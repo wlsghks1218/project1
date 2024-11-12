@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,12 +32,39 @@
 <body>
 
     <div class="navBar">
-        <a href="/hypePop/search/noData">�˾� ����� �˻�</a>
-        <a href="/goodsStore/goodsSearch">���� �˻�</a>
-        <a href="/#MapAPI">�� �ֺ�</a>
-        <a href="/hypePop/calendar">Ķ����</a>
-        <a href="/member/login">�α���</a>
+        <a href="/hypePop/search/noData">팝업 스토어 검색</a>
+        <a href="/goodsStore/goodsSearch">굿즈 검색</a>
+        <a href="/hypePop/popUpMain#MapAPI">내 주변</a>
+        <a href="/hypePop/calendar">캘린더</a>
+        <a href="/member/login">로그인</a>
+        <a href="#" onclick="logout()" >로그아웃</a>
+        <a href="/member/myPage?userNo=2">마이페이지</a>
+        
+        
+    <!--     익명 사용자의 경우(로그인을 하지 않은 경우도 해당) 
+      <sec:authorize access="isAnonymous()">
+         <a href="member/login">로그인</a>
+      </sec:authorize>
+      인증된 사용자 
+      <sec:authorize access="isAuthenticated()">
+         <a href="member/myPage">마이페이지</a>
+      </sec:authorize> -->
+        
+        
+        
+        
     </div>
+    
 
 </body>
+<script type="text/javascript">
+    function logout(){
+       // localStorage에서 userNo 삭제
+       localStorage.removeItem('userNo');
+       
+    // 페이지 리로드
+       location.reload();
+
+    }
+</script>
 </html>

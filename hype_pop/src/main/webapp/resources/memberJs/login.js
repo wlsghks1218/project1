@@ -11,7 +11,7 @@ document.getElementById("loginBtn").addEventListener("click", function(event) {
     const userPw = document.getElementById("userPw").value;
 
     fetch("/member/api/login", {
-        method: 'POST',
+        method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
@@ -28,7 +28,7 @@ document.getElementById("loginBtn").addEventListener("click", function(event) {
             // 로그인 성공 시 localStorage에 userNo 저장
             localStorage.setItem("userNo", data.userNo);
             alert("로그인 성공");
-            history.back();
+            window.location.href = "/"; // 메인 페이지로 이동
         } else {
             alert(data.message); // 오류 메시지 표시
         }
@@ -252,13 +252,7 @@ function submitPwChange() {
 
 document.getElementById('passwordChangeForm').onsubmit = submitPwChange;
 
-const userNo = localStorage.getItem("userNo");
-if (userNo) {
-    console.log("현재 사용자 번호:", userNo);
-    // 여기에 userNo를 사용하는 추가 로직 작성
-} else {
-    console.log("로그인되지 않았습니다.");
-}
+
 
 
 

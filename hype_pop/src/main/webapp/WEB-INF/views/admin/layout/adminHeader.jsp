@@ -59,6 +59,8 @@
         <span class="adminBox" id="askList">문의리스트 확인</span> 
       	<span class="adminBox" id="goodsState">상품 상태 조회</span>
       	<span class="adminBox" id="registerBtn">등록하기</span>
+      	<!-- 전시회 임시 버튼 생성 -->
+      	<span class="adminBox" id="registerExBtn">전시회 등록하기</span>
     </div>
 <div class="adminMain">  
 </body>

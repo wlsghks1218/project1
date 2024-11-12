@@ -216,7 +216,10 @@ thead th {
     font-size: 18px;         /* 현재 월 글자 크기 */
     margin: 0 20px;          /* 버튼과 현재 월 사이 간격 */
 }
-
+#currentDateMonth {
+    margin-left: auto; /* 오른쪽으로 밀기 */
+    margin-right: 38px; /* 오른쪽 여백 추가 */
+}
 .psImage {
     width: 100px; /* 이미지 너비 조정 */
     height: 100px; /* 이미지 높이 조정 */
@@ -251,7 +254,12 @@ thead th {
     text-decoration: none;
     cursor: pointer;
 }
-
+.checkbox-disabled {
+    pointer-events: none;
+    opacity: 0.5; /* 비활성화된 느낌을 위해 투명도를 낮춤 */
+    background-color: #d3d3d3; /* 회색 배경 */
+    border-color: #b0b0b0; /* 회색 테두리 */
+}
 </style>
 </head>
 <body>
@@ -285,10 +293,11 @@ thead th {
 
                 <br>
                 
-                <div class="monthChange">
+            <div class="monthChange">
                 <button id="prevMonth"> &lt; </button> <!-- 이전 달로 이동 -->
                 <span id="currentMonth">10월</span> <!-- 현재 달 표시 -->
                 <button id="nextMonth"> &gt; </button> <!-- 다음 달로 이동 -->
+                <button id="currentDateMonth">현재 날짜로 이동</button>
             </div>
 
                 
@@ -318,7 +327,6 @@ thead th {
     <br>
 
     <jsp:include page="layout/popUpFooter.jsp" />
-    <jsp:include page="layout/popUpNavBar.jsp" />
     <script type="text/javascript" src="/resources/popUpJs/popUpMain.js"></script>
     <script type="text/javascript" src="/resources/calendarJs/calendarMain.js"></script>
 </body>

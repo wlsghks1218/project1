@@ -1,4 +1,3 @@
-exhibitionDetailPage.jsp.txt
 <%@ page contentType="text/html; charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -357,7 +356,7 @@ ul {
 				</tr>
 				<tr>
 					<th>전시 기간</th>
-					<td>${exhibition.exhStartDate}~${exhibition.exhEndDate}</td>
+					<td>${exhibition.exhStartDate} ~ ${exhibition.exhEndDate}</td>
 				</tr>
 				<tr>
 					<th>관람 시간</th>
@@ -387,7 +386,7 @@ ul {
 		<h3 class="separator">|</h3>
 		<h3 id="viewingDetailToggle">상세정보</h3>
 		<h3 class="separator">|</h3>
-		<h3 id="replyToggle">후기작성</h3>
+		<h3 id="replyToggle">후기</h3>
 	</div>
 
 	<div class="viewing-info" id="viewingInfo">
@@ -400,7 +399,6 @@ ul {
 	</div>
 
 	<div class="reply-section" id="replySection">
-		후기작성
 		<div id="replyContainer">
 			<form id="reviewForm" method="post">
 				<div class="starRating" id="newReviewStars">
@@ -419,7 +417,7 @@ ul {
 			</form>
 			
 			<div>
-				<h2>후기들</h2>
+				<h2>후기 목록</h2>
 				<br><hr><br>
 				<ul id = "reviewsList">
 				
@@ -439,7 +437,6 @@ ul {
 	<hr>
 	<br>
 	
-	<jsp:include page="layout/popUpNavBar.jsp" />
 	<jsp:include page="layout/popUpFooter.jsp" />
 	<script type="text/javascript" src="/resources/popUpJs/popUpMain.js"></script>
 	<script type="text/javascript"

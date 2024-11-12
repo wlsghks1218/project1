@@ -4,6 +4,7 @@
   
 <mapper namespace="org.hype.mapper.ExhibitionMapper">
 	
+	<!-- 초기 로드 값 -->
      <select id="getExhibitionsByPage" resultType="org.hype.domain.exhVO">
       <![CDATA[
         SELECT * FROM (
@@ -18,9 +19,73 @@
         WHERE rnum > #{offset}
        ]]>
     </select>
-
-	<select id="getExhibitionByNo" parameterType="int" resultType="org.hype.domain.exhVO">
-    SELECT * FROM exh_main_tbl WHERE exhNo = #{exhNo}
+    
+    <!-- 시작일수 -->
+    <select id="getLatestExhibitions" resultType="org.hype.domain.exhVO">
+      <![CDATA[
+        SELECT * FROM (
+            SELECT a.*, ROWNUM rnum
+            FROM (
+                SELECT * 
+                FROM exh_main_tbl
+                ORDER BY exhStartDate asc
+            ) a 
+            WHERE ROWNUM <= #{offset} + #{pageSize}
+        )
+        WHERE rnum > #{offset}
+       ]]>
+    </select>
+    
+    <!-- 종료일순 -->
+    <select id="getDueSoonExhibitions" resultType="org.hype.domain.exhVO">
+      <![CDATA[
+        SELECT * FROM (
+            SELECT a.*, ROWNUM rnum
+            FROM (
+                SELECT * 
+                FROM exh_main_tbl
+                ORDER BY exhEndDate asc
+            ) a 
+            WHERE ROWNUM <= #{offset} + #{pageSize}
+        )
+        WHERE rnum > #{offset}
+       ]]>
+    </select>
+    
+    <!-- 가격순 -->
+    <select id="getExhibitionsOrderByPrice" resultType="org.hype.domain.exhVO">
+      <![CDATA[
+        SELECT * FROM (
+            SELECT a.*, ROWNUM rnum
+            FROM (
+                SELECT * 
+                FROM exh_main_tbl
+                ORDER BY exhPrice ${order}
+            ) a 
+            WHERE ROWNUM <= #{offset} + #{pageSize}
+        )
+        WHERE rnum > #{offset}
+       ]]>
+    </select>
+    
+     <!-- 얼리버드 전시회 -->
+    <select id="getEarlyBirdExhibitions" resultType="org.hype.domain.exhVO">
+      <![CDATA[
+        SELECT * FROM (
+            SELECT a.*, ROWNUM rnum
+            FROM (
+                SELECT * 
+                FROM exh_main_tbl
+                where exhName like '%얼리버드%' order by exhNo
+            ) a 
+            WHERE ROWNUM <= #{offset} + #{pageSize}
+        )
+        WHERE rnum > #{offset}
+       ]]>
+    </select>
+    
+    <select id="getExhibitionByNo" parameterType="int" resultType="org.hype.domain.exhVO">
+    SELECT * FROM exh_main_tbl WHERE exhNo = #{exhNo} 
 	</select>
 
 	<insert id="insertLike" parameterType="org.hype.domain.exhLikeVO">
@@ -42,13 +107,19 @@
    		SELECT COUNT(*) FROM exh_like_list_tbl WHERE exhNo = #{exhNo}
 	</select>	
 	
+	<select id="countReviewsByUser" parameterType="map" resultType="int">
+        SELECT COUNT(*) 
+        FROM exh_reply_tbl
+        WHERE exhNo = #{exhNo} AND userNo = #{userNo}
+    </select>
+	
 	<insert id="insertReply" parameterType="org.hype.domain.exhReplyVO">
-		INSERT INTO exh_reply_tbl (exhNo, userNo, exhComment, exhScore, exhRegDate)
-        VALUES (#{exhNo}, #{userNo}, #{exhComment}, #{exhScore}, sysdate)
+		INSERT INTO exh_reply_tbl (exhReplyNo, exhNo, userNo, exhComment, exhScore, exhRegDate)
+        VALUES (exh_reply_no_seq.NEXTVAL, #{exhNo}, #{userNo}, #{exhComment}, #{exhScore}, sysdate)
 	</insert>
 
 	<select id="getAllReplies" resultType="org.hype.domain.exhReplyVO">
-		select * from exh_reply_tbl order by exhRegDate desc
+		select * from exh_reply_tbl where exhNo = #{exhNo} order by exhRegDate desc
 	</select>
 
 	<update id="updateReview" parameterType= "org.hype.domain.exhReplyVO">

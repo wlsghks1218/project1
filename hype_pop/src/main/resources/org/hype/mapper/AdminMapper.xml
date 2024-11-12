@@ -100,8 +100,9 @@
 	</select>
     
     <!-- 특정 팝업스토어 조회 -->
+    <!-- 전체 컬럼 받아오기 (수정,삭제페이지 쿼리쪽이랑 연동)-->
 	<select id="getPopStoreById" parameterType="int" resultType="org.hype.domain.popStoreVO">
-   		SELECT psNo, psName, psStartDate, psEndDate FROM pop_main_tbl WHERE psNo = #{psNo}
+   		SELECT * FROM pop_main_tbl WHERE psNo = #{psNo}
 	</select>
 	
     <!-- 특정 상품(굿즈) 조회 -->
@@ -114,8 +115,7 @@
    		SELECT userNo, userId, userName, userNumber, regDate, userEmail, lastLoginDate, enabled, auth 
    		FROM sign_in_info_tbl 
    		WHERE userNo = #{userNo}
-	</select>
-	
+	</select>	
 	
 	<!-- 팝업스토어 등록하기 페이지 -->	
 	<insert id="insertPopStore" parameterType="org.hype.domain.popStoreVO">
@@ -132,8 +132,8 @@
 	</insert>
 	
 	<insert id="insertPsImage" parameterType="org.hype.domain.pImgVO">
-        INSERT INTO pop_img_tbl (psNo, uuid, uploadPath, filename)
-        VALUES (#{psNo}, #{uuid}, #{uploadPath}, #{filename})
+        INSERT INTO pop_img_tbl (psNo, uuid, uploadPath, fileName)
+        VALUES (#{psNo}, #{uuid}, #{uploadPath}, #{fileName})
     </insert>
     
     <insert id="insertPsCat" parameterType="org.hype.domain.pCatVO">
@@ -142,6 +142,27 @@
 	    VALUES 
 	    (#{psNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character}, #{experience}, #{collaboration}, #{entertainment})
 	</insert>
+	
+	<!-- 팝업스토어 수정/삭제 페이지 -->	
+	<!-- 수정 -->
+<!-- 	<update id="updatePopStores" parameterType="org.hype.domain.popStoreVO">
+		UPDATE pop_main_tbl
+		SET 
+			PSNAME = #{psName},
+			PSSTARTDATE = #{psStartDate},
+			PSENDDATE = #{psEndDate},
+			PSADDRESS = #{psAddress},
+			LONGITUDE = #{latitude},
+			LATITUDE = #{longitude},
+			PSEXP = #{psExp},
+			SNSAD = #{snsAd},
+			COMINFO = #{comInfo},
+			TRANSINFO = #{transInfo},
+			PARKINGINFO = #{parkingInfo}
+		WHERE 
+			psNo = #{psNo}
+	</update>	 -->
+	
 	
 	<!-- 상품(굿즈) 등록하기 페이지 -->
 	<select id="getAllPopStores" resultType="org.hype.domain.popStoreVO">
@@ -157,49 +178,81 @@
 	    INSERT INTO goods_info_tbl 
 	    (gno, psno, gname, gprice, sellDate, gexp)
 	    VALUES 
-	    (#{gno}, 999, #{gname}, #{gprice}, #{sellDate}, #{gexp})
+	    (#{gno}, #{psno}, #{gname}, #{gprice}, #{sellDate}, #{gexp})
 	</insert>
 	
-	<insert id="insertGImage" parameterType="org.hype.domain.gImgVO">
+	<insert id="insertBannerImage" parameterType="org.hype.domain.gImgVO">
 	    INSERT INTO goods_banner_img_tbl (gno, uuid, uploadPath, filename) 
 	    VALUES (#{gno}, #{uuid}, #{uploadPath}, #{fileName})
 	</insert>
-	<insert id="insertGImage2" parameterType="org.hype.domain.gImgVO">
+	
+	<insert id="insertDetailImage" parameterType="org.hype.domain.gImgVO">
 	    INSERT INTO goods_detail_img_tbl  (gno, uuid, uploadPath, filename) 
 	    VALUES (#{gno}, #{uuid}, #{uploadPath}, #{fileName})
 	</insert>
 	
-    
+	<insert id="insertGcat" parameterType="org.hype.domain.gCatVO">
+	    INSERT INTO goods_cat_tbl 
+	    (gno, healthBeauty, game, culture, shopping, supply, kids, design, foods, interior, policy, character, experience, collaboration, entertainment)
+	    VALUES 
+	    (#{gno}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character}, #{experience}, #{collaboration}, #{entertainment})
+	</insert>
 	
-    <!-- 문의 리스트 회원 페이지 -->	
-	<!-- 필터링된 Q&A 리스트 가져오기 -->
+	<!-- 전시회 등록하기 페이지 -->	
+    <insert id="insertExhibition" parameterType="org.hype.domain.exhVO">
+		<selectKey keyProperty="exhNo" resultType="int" order="BEFORE">
+         	SELECT exhno_seq.nextVal FROM dual
+      	</selectKey>
+      	
+	    INSERT INTO exh_main_tbl 
+	    (exhNo, exhName, exhLocation, exhStartDate, exhEndDate, 
+	    exhWatchTime, exhWatchAge, exhPrice, exhInfo)
+	    VALUES 
+	    (#{exhNo}, #{exhName}, #{exhLocation}, #{exhStartDate}, #{exhEndDate},
+	    #{exhWatchTime}, #{exhWatchAge}, #{exhPrice}, #{exhInfo})
+	</insert>
+	
+	<insert id="insertExhBannerImage" parameterType="org.hype.domain.exhImgVO">
+	    INSERT INTO exh_img_tbl (exhNo, uuid, uploadPath, filename) 
+	    VALUES (#{exhNo}, #{uuid}, #{uploadPath}, #{fileName})
+	</insert>
+	
+	<insert id="insertExhDetailImage" parameterType="org.hype.domain.exhImgVO">
+	    INSERT INTO exh_detail_img_tbl  (exhNo, uuid, uploadPath, filename) 
+	    VALUES (#{exhNo}, #{uuid}, #{uploadPath}, #{fileName})
+	</insert>
+	
+	<!-- 문의 리스트 회원 페이지 -->	
  	<select id="getQnaListByType" resultType="org.hype.domain.qnaVO">
 	    SELECT qnaNo, qnaType, qnaTitle, qnaRegDate, qnaAnswer
 	    FROM qna_tbl
-	    <!-- 문의 유형 선택  -->
-	    <if test="qnaType !='전체'">
-	    	where qnaType = #{qnaType}
-	    </if>
-	    <!-- 답변 여부 선택 -->
-	   <if test="qnaAnswer != null and qnaAnswer == '답변 완료'">
-	       <if test="qnaType == null or qnaType == '전체'">
-	           WHERE qnaAnswer IS NOT NULL
-	       </if>
-	       <if test="qnaType != null and qnaType != '전체'">
-	           AND qnaAnswer IS NOT NULL
-	       </if>
-	   </if>	   
-	   <if test="qnaAnswer != null and qnaAnswer == '답변 미완료'">
-	       <if test="qnaType == null or qnaType == '전체'">
-	           WHERE qnaAnswer IS NULL
-	       </if>
-	       <if test="qnaType != null and qnaType != '전체'">
-	           AND qnaAnswer IS NULL
-	       </if>
-	   </if>
+	    <where>
+	        <!-- 문의 유형 선택 -->
+	        <if test="qnaType != '전체'">
+	            qnaType = #{qnaType}
+	        </if>
+	        
+	        <!-- 답변 여부 선택 -->
+	        <if test="qnaAnswer == '답변 완료'">
+	            <if test="qnaType == '전체'">
+	                AND qnaAnswer IS NOT NULL
+	            </if>
+	            <if test="qnaType != '전체'">
+	                AND qnaAnswer IS NOT NULL
+	            </if>
+	        </if>
+	        
+	        <if test="qnaAnswer == '답변 미완료'">
+	            <if test="qnaType == '전체'">
+	                AND qnaAnswer IS NULL
+	            </if>
+	            <if test="qnaType != '전체'">
+	                AND qnaAnswer IS NULL
+	            </if>
+	        </if>
+	    </where>
 	    ORDER BY qnaRegDate DESC
 	</select>
-	
 	
 	<!-- 상품 상태 조회 페이지 -->
 	<!-- 상품 상태 조회 -->

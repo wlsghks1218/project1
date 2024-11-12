@@ -1,4 +1,5 @@
-
+let selectedInterests = [];
+const MIN_INTERESTS = 3;
 // 비밀번호 변경 모달 열기
 const newPasswordBtn = document.getElementById('newPasswordBtn');
 const foundUserPwModal = document.getElementById('foundUserPwModal');
@@ -9,7 +10,7 @@ newPasswordBtn.addEventListener('click', function() {
 
 function submitPwChange() {
     const f = document.getElementById('passwordChangeForm');
-    const userPw = f.oldPw.value;
+    // const userPw = f.oldPw.value;
     const newPw = f.newPw.value;
     const checkNewPw = f.checkNewPw.value;
 
@@ -137,7 +138,7 @@ newPhoneNumberBtn.addEventListener('click', function() {
 }); // 여기에 닫는 중괄호와 세미콜론 추가
 
 const f = document.getElementById('phoneNumberChange');
-const userPw = f.oldPw.value;
+// const userPw = f.oldPw.value;
 const newPw = f.newPw.value;
 const checkNewPw = f.checkNewPw.value;
 
@@ -260,50 +261,20 @@ function removeGoods(gno) {
 
 
 
-// 모달 열기
-document.getElementById('newInterestBtn').addEventListener('click', function() {
-    document.getElementById('userInterestModal').style.display = 'block';
-});
-
-// 모달 닫기
-function closeModal() {
-    document.getElementById('userInterestModal').style.display = 'none';
-}
-
-// 관심사 박스 클릭 시 색상 변경
-const interestBoxes = document.querySelectorAll('.interestBox');
-
-interestBoxes.forEach(box => {
-    box.addEventListener('click', function() {
-        // 선택된 박스에 클래스 토글
-        this.classList.toggle('selected');
-    });
-});
-
-// 확인 버튼 클릭 시 처리
-document.getElementById('confirmButton').addEventListener('click', function() {
-    const selectedInterests = Array.from(interestBoxes)
-        .filter(box => box.classList.contains('selected'))
-        .map(box => box.dataset.interest);
-
-    // 선택된 관심사로 처리할 로직 추가
-    console.log(selectedInterests);
-    closeModal(); // 모달 닫기
-});
 
 
-//내가 쓴 글 목록으로 가기
+// 내가 쓴 글 목록으로 가기
 function goToMyReply() {
    location.href="/member/userReply?userNo=2";
 }
 
-//장바구니 가기
-//document.getElementById('goCartBtn').addEventListener('click', function() {
-//    location.href = "member/purchase/goCart;" // 실제 장바구니 페이지 URL로 교체
-//});
+// 장바구니 가기
+// document.getElementById('goCartBtn').addEventListener('click', function() {
+// location.href = "member/purchase/goCart;" // 실제 장바구니 페이지 URL로 교체
+// });
 
 
-//장바구니로 가기
+// 장바구니로 가기
 function goToMyCart(){
    
    
@@ -311,12 +282,71 @@ function goToMyCart(){
 }
 
 
-//내 결제 목록 가기
+// 내 결제 목록 가기
 function getPayList(userNo){
    
    location.href=`/purchase/getPayList?userNo=${userNo}`;
 
 }
+
+// 마이페이지 굿즈 스토어 이미지 가져오기
+// function setBackgroundImage(item) {
+// const fileNameAndUuid = item.getAttribute('data-file-name'); // 각 아이템의
+// data-file-name에서 가져오기
+// const [uuid, fileName] = fileNameAndUuid.split('_');
+//    
+// console.log(`UUID: ${uuid}, File Name: ${fileName}`);
+//
+// // Use the uuid and fileName in the fetch URL
+// fetch(`/goodsStore/images/${encodeURIComponent(fileNameAndUuid)}`)
+// .then(response => response.blob())
+// .then(blob => {
+// const imageUrl = URL.createObjectURL(blob);
+// item.style.backgroundImage = `url(${imageUrl})`;
+// item.style.backgroundSize = "cover";
+// item.style.backgroundPosition = "center center";
+// item.style.backgroundRepeat = "no-repeat";
+// })
+// .catch(error => {
+// console.error("이미지를 불러오는 중 오류 발생: ", error);
+// });
+// }
+
+
+
+
+//이미지 배경을 fetch로 가져오기
+function setBackgroundImage(item) {
+    const fileNameAndUuid = item.getAttribute("data-file-name");
+
+       // 파일명과 UUID를 분리
+       const [uuid, fileName] = fileNameAndUuid.split('_');
+
+       // UUID와 파일명을 포함시켜 보낼 파일명 생성
+       const combinedFileName = `${uuid}_${fileName}`;
+
+       console.log(`UUID: ${uuid}, File Name: ${fileName}, Combined File Name: ${combinedFileName}`);
+
+       // 서버에서 이미지를 비동기적으로 불러오기
+       fetch(`/goodsStore/images/${encodeURIComponent(combinedFileName)}`)
+
+        .then(response => response.blob())  // 이미지를 Blob 형태로 받음
+        .then(blob => {
+            const imageUrl = URL.createObjectURL(blob);  // Blob을 URL로 변환
+            item.style.backgroundImage = `url(${imageUrl})`;  // 배경이미지로 설정
+            item.style.backgroundSize = "cover";  // 배경 이미지 사이즈 설정
+            item.style.backgroundPosition = "center center";  // 배경 이미지 위치 설정
+            item.style.backgroundRepeat = "no-repeat";  // 배경 이미지 반복 설정
+        })
+        .catch(error => {
+            console.error("이미지를 불러오는 중 오류 발생: ", error);
+        });
+}
+
+// 마이페이지 굿즈 이미지를 로드할 때 호출
+//document.querySelectorAll('.image-item').forEach(item => {
+//    setBackgroundImage(item.querySelector('.image'));  // 각 아이템에 대해 이미지 로드
+//});
 
 
 
@@ -328,3 +358,182 @@ function deleteId() {
     } else {
         alert("회원 탈퇴가 취소되었습니다.");
     }}
+
+// //최소 3개 선택을 확인하는 함수
+// function validateSelectedInterests() {
+// const checkboxes = document.querySelectorAll('.interestBox
+// input[type="checkbox"]');
+// const selectedCount = Array.from(checkboxes).filter(checkbox =>
+// checkbox.checked).length;
+//
+// if (selectedCount < 3) {
+// document.getElementById('limitMessage').style.display = 'block';
+// return false;
+// } else {
+// document.getElementById('limitMessage').style.display = 'none';
+// return true;
+// }
+// }
+
+// 관심사 선택 모달 열기
+function openInterestModal() {
+    document.getElementById('userInterest').style.display = 'block';
+}
+
+// 관심사 선택 모달 닫기
+function closeInterestModal() {
+    document.getElementById('userInterest').style.display = 'none';
+}
+function saveInterests() {
+      const formData = new FormData();
+
+       // 관심사 데이터 수집 후 FormData에 추가
+       formData.append("healthBeauty", document.querySelector('input[name="userInterest.healthBeauty"]').checked ? 1 : 0);
+       formData.append("game", document.querySelector('input[name="userInterest.game"]').checked ? 1 : 0);
+       formData.append("culture", document.querySelector('input[name="userInterest.culture"]').checked ? 1 : 0);
+       formData.append("shopping", document.querySelector('input[name="userInterest.shopping"]').checked ? 1 : 0);
+       formData.append("supply", document.querySelector('input[name="userInterest.supply"]').checked ? 1 : 0);
+       formData.append("kids", document.querySelector('input[name="userInterest.kids"]').checked ? 1 : 0);
+       formData.append("design", document.querySelector('input[name="userInterest.design"]').checked ? 1 : 0);
+       formData.append("foods", document.querySelector('input[name="userInterest.foods"]').checked ? 1 : 0);
+       formData.append("interior", document.querySelector('input[name="userInterest.interior"]').checked ? 1 : 0);
+       formData.append("policy", document.querySelector('input[name="userInterest.policy"]').checked ? 1 : 0);
+       formData.append("character", document.querySelector('input[name="userInterest.character"]').checked ? 1 : 0);
+       formData.append("experience", document.querySelector('input[name="userInterest.experience"]').checked ? 1 : 0);
+       formData.append("collaboration", document.querySelector('input[name="userInterest.collaboration"]').checked ? 1 : 0);
+       formData.append("entertainment", document.querySelector('input[name="userInterest.entertainment"]').checked ? 1 : 0);
+
+       
+       // 개별적으로 선택된 체크박스의 개수를 셈
+       let selectedCount = 0;
+       const interestNames = [
+           "healthBeauty", "game", "culture", "shopping", "supply", "kids", 
+           "design", "foods", "interior", "policy", "character", "experience", 
+           "collaboration", "entertainment"
+       ];
+
+       // 각 체크박스를 돌면서 선택된 개수를 셈
+       interestNames.forEach(name => {
+           const checkbox = document.querySelector(`input[name="userInterest.${name}"]`);
+           if (checkbox && checkbox.checked) {
+               selectedCount++;
+           }
+       });
+
+       // 선택된 체크박스가 3개가 아니면 전송하지 않음
+       if (selectedCount !== 3) {
+           alert("관심사 3개를 선택해주세요.");
+           return; // 서버로 전송하지 않음
+       }
+       
+       // 서버로 POST 요청
+       fetch('/member/api/updateUserInterests?userNo=2', {
+           method: 'POST',
+           body: formData
+       })
+       .then(response => response.json())
+       .then(data => {
+           console.log("관심사 업데이트 결과:", data);
+           
+        // 관심사 업데이트 후, 해당 HTML 요소를 업데이트
+           updateInterestDisplay(data.updatedInterests); 
+           alert('관심사를 변경하시겠습니까?');
+           closeInterestModal();
+           
+       })
+       .catch(error => {
+           console.error("업데이트 중 에러 발생:", error);
+       });
+   };
+   
+   
+// 관심사 항목을 HTML에 업데이트
+function updateInterestDisplay(updatedInterests) {
+       const interestList = [
+           { key: 'healthBeauty', label: '헬스/뷰티 ' },
+           { key: 'game', label: '게임 ' },
+           { key: 'culture', label: '문화 ' },
+           { key: 'shopping', label: '쇼핑 ' },
+           { key: 'supply', label: '문구 ' },
+           { key: 'kids', label: '키즈 ' },
+           { key: 'design', label: '디자인 ' },
+           { key: 'foods', label: '식품 ' },
+           { key: 'interior', label: '인테리어 ' },
+           { key: 'policy', label: '정책 ' },
+           { key: 'character', label: '캐릭터 ' },
+           { key: 'experience', label: '체험 ' },
+           { key: 'collaboration', label: '콜라보 ' },
+           { key: 'entertainment', label: '방송 ' }
+       ];
+
+
+       let updatedHTML = '';
+       interestList.forEach(interest => {
+           if (updatedInterests[interest.key] == 1) {
+               updatedHTML += `<span>${interest.label}</span>`;
+           }
+       });
+
+       // 관심사 영역에 업데이트된 HTML을 삽입
+       document.getElementById('userInterestDisplay').innerHTML = updatedHTML;
+   }
+
+
+
+// let selectedInterests = []; // 전역에서 배열을 정의
+// const MIN_INTERESTS = 3; // 최소 관심사 수
+//
+// // 모달 표시 함수
+// function openInterestModal() {
+// const interestModal = document.getElementById('userInterest');
+// interestModal.style.display = 'flex'; // 모달 표시
+// }
+//
+// // 모달 닫기 함수
+// function closeModal() {
+// const interestModal = document.getElementById('userInterest');
+// interestModal.style.display = 'none'; // 모달 숨기기
+// }
+//
+// // 관심사 선택 이벤트
+// document.querySelectorAll('.interestBox').forEach((box) => {
+// box.addEventListener('click', e => {
+// const interBox = e.currentTarget; // div 내에 속한 요소들을 눌러도 div 요소를 찾도록
+// const ckBox = interBox.querySelector('input[type="checkbox"]'); // div 요소 내의
+// checkbox 찾기
+//
+// // 최소 3개 이상 선택 체크
+// if (selectedInterests.length >= MIN_INTERESTS &&
+// !interBox.classList.contains('selectedBox')) {
+// alert("최소 3개를 선택해야 합니다.");
+// return;
+// }
+//
+// // 체크박스 상태 업데이트
+// if (!interBox.classList.contains('selectedBox')) {
+// interBox.classList.add('selectedBox'); // div 요소에 스타일 부여
+// ckBox.checked = true;
+// selectedInterests.push(ckBox.name); // 선택한 관심사 배열에 추가
+// } else {
+// interBox.classList.remove('selectedBox'); // div 요소에 스타일 해제
+// ckBox.checked = false;
+// selectedInterests = selectedInterests.filter(item => item !== ckBox.name); //
+// 선택한 관심사 제외
+// }
+//
+// console.log("현재 선택된 관심사:", selectedInterests); // 배열 상태 확인
+// });
+// });
+//
+// // 관심사 저장 함수
+// function saveInterests() {
+// if (selectedInterests.length < MIN_INTERESTS) {
+// document.getElementById('limitMessage').style.display = 'block'; // 최소 3개 선택
+// 메시지 표시
+// return;
+// }
+//
+// // 선택된 관심사 배열을 서버로 전송하는 로직
+// console.log("선택된 관심사:", selectedInterests);
+// closeModal(); // 모달 닫기
+// }

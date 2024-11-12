@@ -4,105 +4,119 @@
 
 <mapper namespace="org.hype.mapper.SupportMapper">
 
-   <select id="getNoticesWithPaging" resultType="org.hype.domain.noticeVO">
+	<select id="getNoticesWithPaging"
+		resultType="org.hype.domain.noticeVO">
       <![CDATA[
       SELECT * FROM (
          SELECT a.*, ROWNUM AS row_num
          FROM (
-            SELECT * FROM notice_tbl ORDER BY noticeNo DESC
+            SELECT * FROM notice_tbl ORDER BY noticeRegDate DESC
          ) a
          WHERE ROWNUM <= #{endRow}
       )
       WHERE row_num > #{startRow}
       ]]>
-   </select>
-   
-   <select id="getInquiriesWithPaging" resultType="org.hype.domain.qnaVO">
+	</select>
+
+	<select id="getInquiriesWithPaging"
+		resultType="org.hype.domain.qnaVO">
       <![CDATA[
       SELECT * FROM (
          SELECT a.*, ROWNUM AS row_num
          FROM (
-            SELECT * FROM qna_tbl ORDER BY qnaNo DESC
+            SELECT * FROM qna_tbl where userNo = #{userNo} order by qnaRegDate DESC
          ) a
          WHERE ROWNUM <= #{endRow}
       )
       WHERE row_num > #{startRow}
       ]]>
-   </select>
+	</select>
 
 
 
-   <!-- 공지 등록 -->
-   <insert id="insertNotice"
-      parameterType="org.hype.domain.noticeVO">
-      INSERT INTO notice_tbl (noticeTitle, noticeContent, noticeRegDate)
-      VALUES (#{noticeTitle}, #{noticeContent}, sysdate)
-   </insert>
+	<!-- 공지 등록 -->
+	<insert id="insertNotice"
+		parameterType="org.hype.domain.noticeVO">
+		INSERT INTO notice_tbl (noticeTitle, noticeContent,
+		noticeRegDate)
+		VALUES (#{noticeTitle}, #{noticeContent}, sysdate)
+	</insert>
 
-   <!-- 공지 상세 정보 -->
-   <select id="getNoticeInfo" resultType="org.hype.domain.noticeVO">
-      SELECT *
-      FROM notice_tbl where noticeNo = #{noticeNo}
-   </select>
+	<!-- 공지 상세 정보 -->
+	<select id="getNoticeInfo" resultType="org.hype.domain.noticeVO">
+		SELECT *
+		FROM notice_tbl
+		where noticeNo = #{noticeNo}
+	</select>
 
-   <!-- 공지 수정 -->
-   <update id="updateNotice"
-      parameterType="org.hype.domain.noticeVO">
-      UPDATE notice_tbl
-      SET
-      noticeTitle = #{noticeTitle},
-      noticeContent = #{noticeContent},
-      noticeRegDate = sysdate
-      WHERE
-      noticeNo = #{noticeNo}
-   </update>
+	<!-- 공지 수정 -->
+	<update id="updateNotice"
+		parameterType="org.hype.domain.noticeVO">
+		UPDATE notice_tbl
+		SET
+		noticeTitle = #{noticeTitle},
+		noticeContent = #{noticeContent},
+		noticeRegDate = sysdate
+		WHERE
+		noticeNo
+		= #{noticeNo}
+	</update>
 
-   <!-- 공지 삭제 -->
-   <delete id="deleteNotice" parameterType="int">
-      DELETE FROM notice_tbl
-      WHERE noticeNo = #{noticeNo}
-   </delete>
+	<!-- 공지 삭제 -->
+	<delete id="deleteNotice" parameterType="int">
+		DELETE FROM notice_tbl
+		WHERE noticeNo = #{noticeNo}
+	</delete>
 
-   <!-- 문의등록 -->
-   <insert id="insertQna" parameterType="org.hype.domain.qnaVO">
-      INSERT INTO qna_tbl (qnaTitle, qnaType, qnaRegDate, qnaContext, userNo)
-      VALUES (#{qnaTitle}, #{qnaType}, sysdate, #{qnaContext}, #{userNo})
-   </insert>
+	<!-- 문의등록 -->
+	<insert id="insertQna" parameterType="org.hype.domain.qnaVO">
+		INSERT INTO qna_tbl
+		(qnaTitle, qnaType, qnaRegDate, qnaContext, userNo)
+		VALUES
+		(#{qnaTitle}, #{qnaType}, sysdate, #{qnaContext}, #{userNo})
+	</insert>
 
-   <!-- 공지 상세 정보 -->
-   <select id="getInquiryInfo" resultType="org.hype.domain.qnaVO">
-      SELECT *
-      FROM qna_tbl where qnaNo = #{qnaNo}
-   </select>
+	<!-- 공지 상세 정보 -->
+	<select id="getInquiryInfo" resultType="org.hype.domain.qnaVO">
+		SELECT *
+		FROM qna_tbl
+		where qnaNo = #{qnaNo}
+	</select>
 
-   <!-- 문의 답변 -->
-   <update id="updateAnswer" parameterType="org.hype.domain.qnaVO">
-      UPDATE qna_tbl
-      SET
-      qnaAnswer = #{qnaAnswer}
-      WHERE qnaNo = #{qnaNo}
-   </update>
+	<!-- 문의 답변 -->
+	<update id="updateAnswer" parameterType="org.hype.domain.qnaVO">
+		UPDATE qna_tbl
+		SET
+		qnaAnswer = #{qnaAnswer}
+		WHERE qnaNo = #{qnaNo}
+	</update>
 
-   <!-- 문의 삭제 -->
-   <delete id="deleteInquiry" parameterType="int">
-      DELETE FROM qna_tbl
-      WHERE qnaNo = #{qnaNo}
-   </delete>
-   
-   <!-- 공지사항 개수 조회 -->
-    <select id="getTotalNoticeCount" resultType="int">
-        SELECT COUNT(*) FROM notice_tbl
-    </select>
+	<!-- 문의 삭제 -->
+	<delete id="deleteInquiry" parameterType="int">
+		DELETE FROM qna_tbl
+		WHERE qnaNo = #{qnaNo}
+	</delete>
 
-    <!-- 문의 개수 조회 -->
-    <select id="getTotalInquiryCount" resultType="int">
+	<!-- 공지사항 개수 조회 -->
+	<select id="getTotalNoticeCount" resultType="int">
+		SELECT COUNT(*) FROM
+		notice_tbl
+	</select>
+
+	<!-- 문의 개수 조회 -->
+	<select id="getTotalInquiryCount" resultType="int">
+		SELECT COUNT(*)
+		FROM qna_tbl where userNo = #{userNo}
+	</select>
+
+	<select id="getReplyCount" parameterType="int" resultType="int">
         SELECT COUNT(*) FROM qna_tbl
+        WHERE userNo = #{userNo} AND qnaAnswer IS NOT NULL
     </select>
-    
-    <!--추가  -->
-    
-    <!-- 특정 유저의 문의 글을 가져오는 쿼리 --> 
-    <select id="getUserInquiriesWithPaging" resultType="org.hype.domain.qnaVO">
+
+	<!-- 특정 유저의 문의 글을 가져오는 쿼리 -->
+	<select id="getUserInquiriesWithPaging"
+		resultType="org.hype.domain.qnaVO">
     <![CDATA[
     SELECT * FROM (
         SELECT a.*, ROWNUM AS row_num
@@ -115,18 +129,61 @@
     )
     WHERE row_num > #{startRow}
     ]]>
-    </select>
-    
-    <!--특정 유저의 문의 개수 조회 -->
-    <select id="getTotalInquiryCountByUser" resultType="int">
+	</select>
+
+	<!--특정 유저의 문의 개수 조회 -->
+	<select id="getTotalInquiryCountByUser" resultType="int">
     <![CDATA[
     SELECT COUNT(*) FROM qna_tbl 
     WHERE userNo = #{userNo}
     ]]>
-   </select>
-    
+	</select>
 
-    
+	<!-- 답변 완료된 문의 리스트 조회 쿼리 -->
+	<select id="replyCheckInquiries" parameterType="map"
+		resultType="org.hype.domain.qnaVO">
+	    <![CDATA[
+			SELECT * FROM (
+    			SELECT a.*, ROWNUM AS row_num
+    			FROM (
+        			SELECT * 
+        			FROM qna_tbl
+       			 WHERE userNo = #{userNo}
+		]]>
+		<if test="answered != null">
+			<if test="answered">
+    			<![CDATA[ AND qnaAnswer IS NOT NULL ]]>
+    		</if>
+			<if test="!answered">
+    			<![CDATA[ AND qnaAnswer IS NULL ]]>
+    		</if>
+		</if>
+		<![CDATA[
+        	ORDER BY qnaRegDate DESC
+    		) a
+    		WHERE ROWNUM <= #{endRow}
+			) 
+			WHERE row_num > #{startRow}
+		]]>
+	</select>
+
+	<!-- 답변 완료된 문의 수 조회 쿼리 -->
+	<select id="replyCheckCount" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM qna_tbl
+		WHERE userNo = #{userNo}
+		<if test="answered != null">
+			<if test="answered">
+    			<![CDATA[ AND qnaAnswer IS NOT NULL ]]>
+    		</if>
+			<if test="!answered">
+    			<![CDATA[ AND qnaAnswer IS NULL ]]>
+    		</if>
+		</if>
+	</select>
+
+
 
 
 </mapper>

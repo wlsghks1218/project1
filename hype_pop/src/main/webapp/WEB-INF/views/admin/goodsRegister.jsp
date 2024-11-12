@@ -65,6 +65,16 @@ input[type="date"] {
     text-align: center; /* 중앙 정렬 */
 }
 
+#gBannerImg, #gDetailImg {
+    display: inline-block;
+    padding: 10px 15px; /* 내부 여백 */
+    background-color: #007bff; /* 버튼 색상 */
+    color: white; /* 글자색 흰색 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer; /* 커서 변경 */
+    text-align: center; /* 중앙 정렬 */
+}
+
 #uploadedImages {
     margin-top: 5px; /* 상단 여백 */
     min-height: 70px; /* 최소 높이 */    
@@ -95,7 +105,7 @@ button:hover {
 	
 	<div id="AllList"></div>
 	
-	<select id="storeList">
+	<select id="storeList" onchange="setStorePsNo()">
         <option value="전체">전체</option>
 	    <c:forEach var="store" items="${popStores}">
 	        <option value="${store.psName}" data-psno="${store.psNo}">${store.psName}</option>
@@ -103,13 +113,34 @@ button:hover {
     </select>
         
 	<form id="gRegisterForm" method="POST" action="/admin/gRegister" enctype="multipart/form-data">
-	    <div id="gImg" style="cursor: pointer;">굿즈 이미지</div>
-	    <input type="file" id="gImageFile" name="imageFiles" multiple style="display: none;">
-	    <div id="uploadedGImages"></div>
+	    <div id="gBannerImg" style="cursor: pointer;">상품 배너 이미지</div>
+        <input type="file" id="gBannerImageFile" name="imageFiles[0]" style="display: none;">
+        <div id="uploadedBannerImages"></div>
+        
+	    <div id="gDetailImg" style="cursor: pointer;">상품 상세 이미지</div>
+        <input type="file" id="gDetailImageFile" name="imageFiles[1]" style="display: none;">
+        <div id="uploadedDetailImages"></div>
 	    
-	    
-	    <div id="pName">팝업스토어 이름 <input type="hidden" name="psno" ></div>
+	    <div id="pName">팝업스토어 번호 <input type="text" name="psno" readonly></div>
 	    <div id="gName">상품 이름 <input type="text" name="gname"></div>
+	    <div id="gCats">상품 카테고리
+          <div>
+             <input type="checkbox" name="gcat.healthBeauty" value="1">헬스/뷰티
+             <input type="checkbox" name="gcat.game" value="1">게임
+             <input type="checkbox" name="gcat.culture" value="1">문화
+             <input type="checkbox" name="gcat.shopping" value="1">쇼핑
+             <input type="checkbox" name="gcat.supply" value="1">문구
+             <input type="checkbox" name="gcat.kids" value="1">키즈
+             <input type="checkbox" name="gcat.design" value="1">디자인
+             <input type="checkbox" name="gcat.foods" value="1">식품
+             <input type="checkbox" name="gcat.interior" value="1">인테리어
+             <input type="checkbox" name="gcat.policy" value="1">정책
+             <input type="checkbox" name="gcat.character" value="1">캐릭터
+             <input type="checkbox" name="gcat.experience" value="1">체험
+             <input type="checkbox" name="gcat.collaboration" value="1">콜라보
+             <input type="checkbox" name="gcat.entertainment" value="1">방송
+          </div>
+      </div>
 	    <div id="gPrice">상품 가격 <input type="text" name="gprice"></div>
 	    
 	    <div id="gEndDate">상품 판매 종료일 <br>

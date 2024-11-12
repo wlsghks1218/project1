@@ -1,4 +1,4 @@
-// *** 상품 상태 조회 페이지 영역 ***
+// *** 상품 상태 조회 페이지 영역 *** 
 //function formatDate(dateString) {
 //    const date = new Date(dateString);
 //    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -52,56 +52,16 @@
 // *** 상품(굿즈) 등록 페이지 영역 ***
 // 등록하기 버튼 클릭 시 상품(굿즈) 등록
 // psNo 가져오기
-document.getElementById('storeList').addEventListener('change', updatePsNo);
+document.getElementById('storeList').addEventListener('change', setStorePsNo);
 
-function updatePsNo() {
+function setStorePsNo() {
     const storeList = document.getElementById("storeList");
     const selectedOption = storeList.options[storeList.selectedIndex];
     console.log('모든 팝업스토어 출력: ', selectedOption); // 선택된 psNo 출력
-    const psno = selectedOption.getAttribute("data-psno"); // data-psno 속성에서 psNo 가져오기
-    console.log('선택된 psNo 출력: ', psno); // 선택된 psNo 출력
-    document.querySelector('input[name="psno"]').value = psNo; // 가져온 psNo를 hidden input에 설정
+    const psNo = selectedOption.getAttribute("data-psno"); // data-psno 속성에서 psNo 가져오기
+    console.log('선택된 psNo 출력: ', psNo); // 선택된 psNo 출력
+    document.querySelector('input[name="psno"]').value = psNo;  // psNo를 readonly input에 설정
 }
-
-// 파일 미리보기
-document.querySelector('#gImageFile').addEventListener('input', function(event) {
-    const files = event.target.files;
-    const uploadedGImagesDiv = document.getElementById('uploadedGImages');
-
-    // 기존의 이미지 미리보기를 초기화
-    uploadedGImagesDiv.innerHTML = '';
-
-    let isFileSelected = files.length > 0;
-
-    if (isFileSelected) {
-        const formData = new FormData();
-
-        // 새로 선택한 파일만 미리보기 생성
-        Array.from(files).forEach(file => {
-            if (!checkFile(file.name, file.size)) {
-                return; // 파일 검증 실패 시 종료
-            }
-            formData.append('imageFiles', file); // 'imageFiles'로 변경
-
-            // 이미지 미리보기 생성
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result; // 파일의 Data URL
-                img.style.width = '300px'; // 이미지 크기 조절
-                img.style.marginRight = '10px'; // 간격 조정
-                uploadedGImagesDiv.appendChild(img); // 미리보기 div에 추가
-            };
-            reader.readAsDataURL(file); // 파일을 Data URL로 읽기
-        });
-
-        // AJAX 요청을 보내기 전에 FormData 확인
-        console.log(...formData.entries()); // FormData 내용 확인
-
-    } else {
-        console.error('파일이 선택되지 않았습니다.');
-    }
-});
 
 // 파일 검증
 const regex = new RegExp("(.*?)\\.(jpg|jpeg|png|gif)$");
@@ -119,27 +79,102 @@ function checkFile(fileName, fileSize) {
     return true;
 }
 
-// 상품(굿즈) 이미지 클릭 시 파일(이미지) 첨부 기능
-document.querySelector('#gImg').addEventListener('click', function() {
-    document.querySelector('#gImageFile').click(); // 클릭 시 파일 선택 창 열기
+// 배너 이미지 클릭 시 파일 선택
+document.querySelector('#gBannerImg').addEventListener('click', function() {
+    document.querySelector('#gBannerImageFile').click(); // 클릭 시 파일 선택 창 열기
+});
+
+// 상세 이미지 클릭 시 파일 선택
+document.querySelector('#gDetailImg').addEventListener('click', function() {
+    document.querySelector('#gDetailImageFile').click(); // 클릭 시 파일 선택 창 열기
+});
+
+// 배너 이미지 파일 미리보기 및 검증
+document.querySelector('#gBannerImageFile').addEventListener('input', function(event) {
+    const files = event.target.files;
+    const uploadedBannerImagesDiv = document.getElementById('uploadedBannerImages');
+
+    // 기존 이미지 미리보기를 초기화
+    uploadedBannerImagesDiv.innerHTML = '';
+
+    // 최대 한 개의 배너 이미지 파일만 선택하도록 제한
+    Array.from(files).slice(0, 1).forEach((file) => {
+        if (!checkFile(file.name, file.size)) {
+            return; // 파일 검증 실패 시 종료
+        }
+
+        // 이미지 미리보기 생성
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result; // 파일의 Data URL
+            img.style.width = '150px'; // 이미지 크기 조절
+            img.style.marginRight = '10px'; // 간격 조정
+            uploadedBannerImagesDiv.appendChild(img); // 미리보기 div에 추가
+        };
+        reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+    });
+});
+
+// 상세 이미지 파일 미리보기 및 검증
+document.querySelector('#gDetailImageFile').addEventListener('input', function(event) {
+    const files = event.target.files;
+    const uploadedDetailImagesDiv = document.getElementById('uploadedDetailImages');
+
+    // 기존 이미지 미리보기를 초기화
+    uploadedDetailImagesDiv.innerHTML = '';
+
+    // 최대 두 개의 상세 이미지 파일만 선택하도록 제한
+    Array.from(files).slice(0, 2).forEach((file) => {
+        if (!checkFile(file.name, file.size)) {
+            return; // 파일 검증 실패 시 종료
+        }
+
+        // 이미지 미리보기 생성
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result; // 파일의 Data URL
+            img.style.width = '150px'; // 이미지 크기 조절
+            img.style.marginRight = '10px'; // 간격 조정
+            uploadedDetailImagesDiv.appendChild(img); // 미리보기 div에 추가
+        };
+        reader.readAsDataURL(file); // 파일을 Data URL로 읽기
+    });
 });
 
 // 상품(굿즈) 등록 버튼 클릭 이벤트
-function goodsRegister(e) {
-    const form = document.forms[0];
-    
-    console.log("psNo: " + form.psno.value);
-    console.log("gname: " + form.gname.value);
-    console.log("gprice: " + form.gprice.value);
-    console.log("gexp: " + form.gexp.value);
-    const files = form.imageFiles.files;
-    console.log("imageFiles0: " + files[0].name);
-    console.log("imageFiles1: " + files[1].name);
-
-    // FormData 객체 생성
+function goodsRegister() {
+	const form = document.forms[0];
+	
+	// FormData 객체 생성
     const formData = new FormData(form);
 
     // 예외처리
+    // 체크박스
+    const checkboxes = form.querySelectorAll('input[type="checkbox"][name^="gcat"]');
+    const selectedCategories = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+    
+    const gBannerImageFile = document.getElementById('gBannerImageFile');
+    const gDetailImageFile = document.getElementById('gDetailImageFile');
+
+    
+    if (gBannerImageFile.files.length === 0) {
+    	alert('상품 배너 이미지를 입력해주세요');
+    	return;
+    }
+    if (gDetailImageFile.files.length === 0) {
+    	alert('상품 상세 이미지를 입력해주세요');
+    	return;
+    }
+    if (selectedCategories.length === 0) {
+        alert('최소 한 개의 카테고리를 선택해야 합니다.');
+        return;
+    }
+    if (selectedCategories.length > 3) {
+        alert('최대 세 개의 카테고리만 선택할 수 있습니다.');
+        return;
+    }
     if (!form.gname.value) {
         alert('상품 이름을 입력해주세요');
         return;
@@ -156,7 +191,8 @@ function goodsRegister(e) {
         alert('설명글을 입력해주세요');
         return;
     }
-
+	    
     // 폼 제출
     form.submit();
 }
+

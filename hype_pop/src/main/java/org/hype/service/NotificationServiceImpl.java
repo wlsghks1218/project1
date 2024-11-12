@@ -1,5 +1,6 @@
 package org.hype.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.hype.domain.NotificationVO;
@@ -48,4 +49,37 @@ public class NotificationServiceImpl implements NotificationService {
 
 	        return isDeleted;
 	    }
+	    @Override
+	    public boolean updateNotificationReadStatus(int userNo) {
+	        int result = mapper.updateNotificationReadStatus(userNo);
+	        boolean isUpdate = (result > 0); // result가 1 이상이면 삭제 성공
+
+	        if (isUpdate) {
+	            log.info("알림 삭제 성공, ID: " + userNo);
+	        } else {
+	            log.warn("알림 삭제 실패, ID: " + userNo);
+	        }
+
+	        return isUpdate;
+	    }
+	    @Override
+	    public List<Integer> getLikedPopUpStoresByUser(int userNo) {
+	        // 유저가 좋아요한 팝업스토어들의 ID를 반환
+	        List<Integer> likedStoreIds = mapper.getLikedPopUpStoresByUser(userNo);
+	        
+	        // 로깅
+	        if (likedStoreIds != null && !likedStoreIds.isEmpty()) {
+	            log.info("유저 " + userNo + "가 좋아요한 스토어 개수: " + likedStoreIds.size());
+	        } else {
+	            log.warn("유저 " + userNo + "가 좋아요한 스토어가 없습니다.");
+	        }
+
+	        return likedStoreIds;
+	    }
+	    @Override
+	    public void insertPopUpNotification(NotificationVO notification) {
+	    	  mapper.insertPopUpNotification(notification);
+	    
+	    }
+	  
 }

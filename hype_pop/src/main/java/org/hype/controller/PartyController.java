@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.hype.domain.ChatContentVO;
 import org.hype.domain.ChatRoomVO;
 import org.hype.domain.PartyBoardVO;
+import org.hype.domain.exhVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.signInVO;
 import org.hype.service.PartyService;
@@ -156,6 +157,12 @@ public class PartyController {
 	public String chkMaster(@PathVariable("bno") int bno, @PathVariable("userNo") int userNo) {
 		int result = service.chkMaster(bno, userNo);
 		return Integer.toString(result);
+	}
+	
+	@GetMapping(value="/findExhNo/{psExhName}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public exhVO findExhNo(@PathVariable("psExhName") String psExhName) {
+		return service.findExhNo(psExhName);
 	}
 }
 

@@ -42,6 +42,7 @@ public class GReplyServiceImpl implements GReplyService {
 	
 	@Override
 	public String chkReplied(int userNo, int gno) {
+    	log.warn("bbbbbbbbbbbb" + userNo + gno);
     	int result = gMapper.chkReplied(userNo, gno);
 		return String.valueOf(result);
 	}

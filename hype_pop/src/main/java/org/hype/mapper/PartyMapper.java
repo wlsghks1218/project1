@@ -31,4 +31,5 @@ public interface PartyMapper {
 	public int updateMinusMember(@Param("bno") int bno, @Param("userNo") int userNo);
 	public int deleteAllPartyMember(@Param("bno") int bno);
 	public List<exhVO> getExhName(String searchText);
+	public exhVO findExhNo(String exhName);
 }

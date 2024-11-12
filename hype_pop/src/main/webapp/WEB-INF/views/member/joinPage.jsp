@@ -67,6 +67,12 @@ header {
     border-radius: 4px;
     margin-right: 10px;
 }
+#idCardNum2{
+   margin-left : 10px;
+}
+.verified{
+   background-color: lightgray;
+}
 
 #interestBtn, #joinBtn, #duplicateCheckButton {
     background-color: #4CAF50;
@@ -322,6 +328,15 @@ input:checked + .slider:before {
             <label for="userNumber">전화번호</label> 
             <input type="tel" maxlength="13" id="userNumber" name="userNumber" placeholder="하이픈(-) 제외 숫자만">
          </div>
+         
+         <div class="input-group">
+            <label for="idCardNum">주민등록번호</label> 
+            <input type="text" maxlength="6" id="idCardNum" name="idCardNum" placeholder="생년월일(YYMMDD)">
+            -
+            <input type="password" maxlength="7" id="idCardNum2" name="idCardNum2" >
+            <button type="button" onclick="confirmIdCardNum()">검증</button>
+         </div>
+         
 
          <!-- 관심사 선택 버튼 -->
          <div>
@@ -336,7 +351,7 @@ input:checked + .slider:before {
             <div class="interestBoxContainer">
                <input type="checkbox" style="display: none;">
                <div>
-                  <p>관심사를 선택하세요(3개 필수)</p>
+                  <p>관심사를 선택하세요(최소 3개 선택)</p>
                </div>
                <!-- 관심사 박스 -->
                <div class="interestBox" data-interest="헬스/뷰티">
@@ -400,7 +415,6 @@ input:checked + .slider:before {
                   <label for="entertainment"><input type="checkbox"
                      name="userInterest.entertainment" value="1" > 방송</label>
                </div>
-               <button type="button" id="interestModalclose" onclick="interestModalclose()">확인</button>
             </div>
 
          </div>

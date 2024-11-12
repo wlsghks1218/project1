@@ -1,6 +1,7 @@
 package org.hype.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.hype.domain.noticeVO;
@@ -38,5 +39,12 @@ public interface NoticeService {
    public List<qnaVO> getUserInquiriesWithPaging(int userNo, int pageNum, int amount);
    
    public int getTotalInquiryCountByUser(@Param("userNo") int userNo);
+
+   public List<qnaVO> replyCheckInquiries(int pageNum, int amount, int userNo, boolean answered);
+
+   public int replyCheckCount(int userNo, boolean answered);
+
+   public Map<String, Integer> getInquiryCounts(int userNo);
+
    
 }

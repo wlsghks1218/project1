@@ -20,36 +20,44 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MemberService {
 
-	
-	//db�� ����
-	
-	public signInVO loginMember(signInVO svo);
+   
+   //db에 저장
+   
+   public signInVO loginMember(signInVO svo);
 
-	public int joinMember(signInVO svo, mCatVO mcvo);
-	
-	public boolean checkDuplicateId(String userId);
-	
-	public signInVO selectMyPageInfo(int userNo);
-	
-	public mCatVO selectMyInterest(int userNo);
-	
-	public int selectOldPw(int userNo,String oldPw);
-	
-	public int updateNewPw(String oldPw, String newPw,int userNo);
-	
-	public int updateNewEmail(String newEmail,int userNo);
+   public int joinMember(signInVO svo);
+   
+   public boolean checkDuplicateId(String userId);
+   
+   public signInVO selectMyPageInfo(int userNo);
+   
+   public mCatVO selectMyInterest(int userNo);
+   
+   public int selectOldPw(int userNo,String oldPw);
+   
+   public int updateNewPw(String oldPw, String newPw,int userNo);
+   
+   public int updateNewEmail(String newEmail,int userNo);
 
     public int selectOldPhoneNum(int userNo, String oldPhoneNumber);
     
-	public int updateNewPhoneNum(@Param("oldPhoneNumber") String oldPhoneNumber,@Param("newPhoneNumber") String newPhoneNumber,@Param("userNo") int userNo);
+   public int updateNewPhoneNum(@Param("oldPhoneNumber") String oldPhoneNumber,@Param("newPhoneNumber") String newPhoneNumber,@Param("userNo") int userNo);
 
-	public List<likedPopImgVO> pLikeList(@Param("userNo") int userNo);
-	
-	public List<likedGoodsImgVO> gLikeList(@Param("userNo") int userNo);
-	
-	public int pLikeListDelete(@Param("userNo") int userNo,@Param("psNo") int psNo);
-	
-	public int gLikeListDelete(@Param("userNo") int userNo,@Param("gno") int gno);
-	
-	public int changeUserInterest(@Param("userNo") int userNo,mCatVO mcvo);
+   public List<likedPopImgVO> pLikeList(@Param("userNo") int userNo);
+   
+   public List<likedGoodsImgVO> gLikeList(@Param("userNo") int userNo);
+   
+   public int pLikeListDelete(@Param("userNo") int userNo,@Param("psNo") int psNo);
+   
+   public int gLikeListDelete(@Param("userNo") int userNo,@Param("gno") int gno);
+   
+   public int changeUserInterest(@Param("userNo") int userNo,mCatVO mcvo);
+   
+   public boolean checkEmail(signInVO svo);
+   
+   public String checkMyId(@Param("userName") String userName,@Param("userEmail") String userEmail );
+   
+   public int searchId(String userId);
+   
+   public boolean checkEmailPw(signInVO svo);
 }

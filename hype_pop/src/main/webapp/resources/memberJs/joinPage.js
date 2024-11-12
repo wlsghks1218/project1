@@ -68,11 +68,6 @@ document.querySelectorAll('.interestBox').forEach((box) =>{
       const interBox = e.currentTarget; // div 내에 속한 요소들을 눌러도 div 요소를 찾도록
       const ckBox = interBox.querySelector('input[type="checkbox"]');   // div 요소 내의 checkbox 찾기
       
-      if (selectedInterests =  MIN_INTERESTS) {
-         alert("3개까지 선택 가능합니다.");
-         return;
-      }
-      
       if(!interBox.classList.contains('selectedBox')){
          interBox.classList.add('selectedBox'); // div 요소에 스타일 부여
          ckBox.checked = true;
@@ -159,16 +154,70 @@ function policyModal(type) {
         });
 }
 
+
+// 주민등록번호 입력 패턴 이벤트
+document.getElementById('idCardNum').addEventListener('input', function(e) {
+   // 숫자 외 데이터 방지
+   let val = e.target.value; 
+   val = val.replace(/[^0-9]/g, '');
+   if(val.length === 6) document.getElementById('idCardNum2').focus();
+   
+});
+document.getElementById('idCardNum2').addEventListener('input', function(e) {
+   // 숫자 외 데이터 방지
+   let val = e.target.value; 
+   val = val.replace(/[^0-9]/g, '');
+});
+let isVerifiedIdCard = false;  
+//주민등록번호 검증 클릭 이벤트
+function confirmIdCardNum(){
+   
+   const sn = f.idCardNum.value + f.idCardNum2.value;
+   
+   // 주민등록번호 형식을 확인
+    if (sn.length !== 13) {
+       alert("주민등록번호를 올바르게 입력하세요.");
+       return false;
+    }
+
+    // 가중치
+    const weight = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5];
+    let sum = 0;
+
+    // 앞 12자리와 가중치를 곱하여 합산
+    for (let i = 0; i < 12; i++) {
+        sum += parseInt(sn[i]) * weight[i];
+    }
+
+    // 검증 번호 계산
+    const checkDigit = (11 - (sum % 11)) % 10;
+
+    // 마지막 자리(검증 번호)와 비교
+    if(checkDigit === parseInt(sn[12])){
+       isVerifiedIdCard = true // submit 전 검증 완료 유무 판단
+       alert("검증이 완료되었습니다."); // 검증 완료 알림
+       f.idCardNum.value += f.idCardNum2.value.substr(0,1); // 던질 데이터 변경 앞 6자리 + 뒤 1자리
+       // 검증 후 주민등록번호 변경 불가 - readonly
+       f.idCardNum.setAttribute('readonly', 'readonly');
+       f.idCardNum.classList.add('verified');
+       f.idCardNum2.setAttribute('readonly', 'readonly');
+       f.idCardNum2.classList.add('verified');
+    }else{
+       alert("올바르지 않은 주민등록번호입니다.");
+       isVerifiedIdCard = false;
+    }
+}
+
+
 //회원가입 버튼 클릭 이벤트
 function formSubmit(){
-   // ** form 태그 내 프로퍼티와 값을 확인
-   
    const userId = f.userId.value;
    const userPw = f.userPw.value;
    const passwordCheck = f.passwordCheck.value;
    const userEmail = f.userEmail.value;
    const userName = f.userName.value;
    const userNumber = f.userNumber.value;
+   isVerifiedIdCard = true;
    
    if (!userId) {
       alert("아이디를 입력하세요!");
@@ -207,6 +256,10 @@ function formSubmit(){
    }
    if(isIdDuple){
       alert("아이디 중복 확인을 해주세요.");
+      return;
+   }
+   if(!isVerifiedIdCard){
+      alert("주민등록번호를 검증을 해주세요.");
       return;
    }
    

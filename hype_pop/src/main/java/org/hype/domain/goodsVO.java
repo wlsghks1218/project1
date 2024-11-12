@@ -27,6 +27,6 @@ public class goodsVO {
 	private gCatVO gcat; 
 	private List<gImgVO> attachList; 
 	private Date sellDate; 
-		
+	
 	private List<MultipartFile> imageFiles;
 }

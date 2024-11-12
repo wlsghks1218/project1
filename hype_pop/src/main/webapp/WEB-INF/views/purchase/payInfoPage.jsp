@@ -17,13 +17,20 @@
 .required {
    color: red;
 }
+
 .remember-checkbox {
-      
+   
 }
 </style>
 </head>
 <body>
 
+
+   <%
+      //전달된 파라미터
+   String totalPrice = request.getParameter("totalPrice");
+   String userNo = request.getParameter("userNo");   
+   %>
    <!-- 헤더 -->
    <header class="bg-light py-3">
       <div class="container">
@@ -34,9 +41,9 @@
 
    <div class="container my-4">
       <!-- 구매자 정보 테이블 -->
-       <div class="float-right">
-      <input type="checkbox" id="rememberAddress" > <label
-         for="rememberAddress">이 배송지 기억</label>
+      <div class="float-right">
+         <input type="checkbox" id="rememberAddress"> <label
+            for="rememberAddress">이 배송지 기억</label>
       </div>
       <table class="table table-bordered">
          <thead>
@@ -108,8 +115,9 @@
          <tbody>
             <tr>
                <td>가격</td>
-               <td><input type="number" class="form-control" id="cprice"
-                  value="${price}" readonly></td>
+               <td><input type="text" class="form-control" id="priceInput"
+                  value="<%= totalPrice %>" readonly></td>
+
             </tr>
             <tr>
                <td>배송비</td>
@@ -118,8 +126,8 @@
             </tr>
             <tr>
                <td>총 결제 금액</td>
-               <td><input type="number" class="form-control" id="cprice"
-                  value="${price}" readonly></td>
+               <td><input type="text" class="form-control" id="totalPrice"
+                  value="<%=totalPrice%> " readonly></td>
             </tr>
             <tr>
                <td>결제 수단</td>
@@ -129,46 +137,39 @@
                         for="bankTransfer">실시간 계좌이체</label> <select id="bankSelect"
                         class="form-control" style="display: none;">
                         <option value="">선택</option>
-                        <option value="우리은행">우리은행</option>
-                        <option value="신한은행">신한은행</option>
-                        <option value="국민은행">국민은행</option>
-                     </select> <span class="required">! 은행을 선택해주세요</span>
+                        <option value="우리은행">우리은행 (123-1234123-1-123 예금주:hypePop)</option>
+                        <option value="신한은행">신한은행 (110-112-123456  예금주:hypePop</option>
+                        <option value="국민은행">국민은행 (1234567-112-123456 예금주:hypePop)</option>
+                     </select> <span class="required"></span>
                   </div>
-                  <div>
-                     <input type="checkbox" id="creditCard"> <label
-                        for="creditCard">신용/체크카드</label>
-                  </div>
-                  <div>
-                     <input type="checkbox" id="mobilePayment"> <label
-                        for="mobilePayment">휴대폰</label>
-                  </div>
-                  <div>
-                     <input type="checkbox" id="virtualAccount"> <label
-                        for="virtualAccount">무통장입금(가상계좌)</label>
-                  </div>
-               <button class="btn btn-success" id="toss">토스페이</button>
-               <button class="btn btn-success" id="kakaopay">카카오페이</button>
+      
+                  <div><button class="btn btn-success" id="toss">토스페이&신용/체크카드</button></div><br>
+                  <button class="btn btn-success" id="kakaopay">카카오페이</button>
                </td>
             </tr>
          </tbody>
       </table>
-      
+
 
       <!-- 결제하기 버튼 -->
       <button class="btn btn-success" id="paymentButton">결제하기</button>
 
-        <button id="phone">휴대폰 결제</button>
+   
    </div>
 
 
    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+   <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+   <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="/resources/purchaseJs/payInfo.js"></script>
-   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+   <script
+      src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>-->
    <script type="text/javascript" src="/resources/purchaseJs/main.js"></script>
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.iamport.kr/v1/iamport.js"></script> <!-- 아임포트 JS SDK 추가 -->
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+   <!-- 아임포트 JS SDK 추가 -->
 </body>
 </html>

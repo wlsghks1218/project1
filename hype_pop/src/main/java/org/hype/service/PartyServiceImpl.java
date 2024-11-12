@@ -130,4 +130,9 @@ public class PartyServiceImpl implements PartyService {
 	public List<exhVO> getExhName(String searchText) {
 		return mapper.getExhName(searchText);
 	}
+	
+	@Override
+	public exhVO findExhNo(String exhName) {
+		return mapper.findExhNo(exhName);
+	}
 }

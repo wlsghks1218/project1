@@ -9,33 +9,39 @@ document.getElementById('bankTransfer').addEventListener('change', function() {
 });
 
 // 결제하기 버튼 클릭 이벤트
+//document.getElementById('paymentButton').addEventListener('click', function() {
+//   const buyerName = document.getElementById('userName').value;
+//   const buyerEmail = document.getElementById('userEmail').value;
+//   const buyerPhone = document.getElementById('userNumber').value;
+//   const deliveryAddress = document.getElementById('deliveryAddress').value;
+//   const detailedAddress = document.getElementById('detailedAddress').value;
+//   const deliveryRequest = document.getElementById('deliveryRequest').value;
+//
+//   const bankTransfer = document.getElementById('bankTransfer').checked;
+//   const creditCard = document.getElementById('creditCard').checked;
+//   const mobilePayment = document.getElementById('mobilePayment').checked;
+//   const virtualAccount = document.getElementById('virtualAccount').checked;
+//
+//   // 결제 정보 확인
+//   console.log("구매자 이름: ", userName);
+//   console.log("이메일: ", userEmail);
+//   console.log("전화번호: ", userNumber);
+//   console.log("배송지 주소: ", deliveryAddress);
+//   console.log("상세 주소: ", detailedAddress);
+//   console.log("배송 요청 사항: ", deliveryRequest);
+//   console.log("계좌이체: ", bankTransfer);
+//   console.log("신용/체크카드: ", creditCard);
+//   console.log("휴대폰: ", mobilePayment);
+//   console.log("무통장입금(가상계좌): ", virtualAccount);
+//
+//   alert("결제가 완료되었습니다!"); // 결제 완료 메시지
+//});
+
 document.getElementById('paymentButton').addEventListener('click', function() {
-   const buyerName = document.getElementById('userName').value;
-   const buyerEmail = document.getElementById('userEmail').value;
-   const buyerPhone = document.getElementById('userNumber').value;
-   const deliveryAddress = document.getElementById('deliveryAddress').value;
-   const detailedAddress = document.getElementById('detailedAddress').value;
-   const deliveryRequest = document.getElementById('deliveryRequest').value;
-
-   const bankTransfer = document.getElementById('bankTransfer').checked;
-   const creditCard = document.getElementById('creditCard').checked;
-   const mobilePayment = document.getElementById('mobilePayment').checked;
-   const virtualAccount = document.getElementById('virtualAccount').checked;
-
-   // 결제 정보 확인
-   console.log("구매자 이름: ", userName);
-   console.log("이메일: ", userEmail);
-   console.log("전화번호: ", userNumber);
-   console.log("배송지 주소: ", deliveryAddress);
-   console.log("상세 주소: ", detailedAddress);
-   console.log("배송 요청 사항: ", deliveryRequest);
-   console.log("계좌이체: ", bankTransfer);
-   console.log("신용/체크카드: ", creditCard);
-   console.log("휴대폰: ", mobilePayment);
-   console.log("무통장입금(가상계좌): ", virtualAccount);
-
-   alert("결제가 완료되었습니다!"); // 결제 완료 메시지
+   location.href="/purchase/purchaseComplete";
 });
+
+
 
 //배송지 주소 api
 function sample6_execDaumPostcode() {

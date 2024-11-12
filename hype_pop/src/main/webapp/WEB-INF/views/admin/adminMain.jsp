@@ -16,16 +16,19 @@
     margin: 20px 0; /* 상하 여백 */
 }
 
-#AllList div {
+#AllList a {
+    display: block; /* 링크 전체를 클릭 가능하게 함 */
     background-color: #f8f9fa; /* 연한 회색 배경 */
     padding: 15px; /* 내부 여백 */
     border-radius: 5px; /* 모서리 둥글게 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 미세한 그림자 */
     border: 1px solid rgba(0, 0, 0, 0.1); /* 은은한 테두리 */
+    color: black; /* 링크 글자색 */
+    text-decoration: none; /* 밑줄 제거 */
     transition: background-color 0.3s; /* 배경색 변경 시 애니메이션 */
 }
 
-#AllList div:hover {
+#AllList a:hover {
     background-color: #e2e6ea; /* 호버 시 색상 변화 */
 }
 

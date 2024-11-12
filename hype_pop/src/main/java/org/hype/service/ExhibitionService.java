@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ExhibitionService {
 	
-	public List<exhVO> getExhibitionsByPage(int page, int pageSize);
+	public List<exhVO> getExhibitionsByPage(int page, int pageSize, String filter);
 
 	public exhVO getExhibitionByNo(int exhNo);
 
@@ -18,9 +18,11 @@ public interface ExhibitionService {
 
 	public void removeExhLike(exhLikeVO exhLikeVO);
 
-	public void saveReview(exhReplyVO exhReplyVO);
+	public boolean hasUserReviewed(int exhNo, int userNo);
+	
+	public boolean saveReview(exhReplyVO exhReplyVO);
 
-	public List<exhReplyVO> getAllReplies();
+	public List<exhReplyVO> getAllReplies(int exhNo);
 
 	public boolean updateReview(exhReplyVO exhReplyVO);
 

@@ -10,7 +10,6 @@ public interface SupportMapper {
    public List<noticeVO> getNoticesWithPaging(@Param("startRow") int startRow, @Param("endRow") int endRow);
 
    public List<qnaVO> getInquiriesWithPaging(@Param("startRow") int startRow, @Param("endRow") int endRow, @Param("userNo") int userNo);
-
    
    public boolean insertNotice(noticeVO notice);
 
@@ -30,14 +29,18 @@ public interface SupportMapper {
 
    public int getTotalNoticeCount();
 
-   public int getTotalInquiryCount(int userNo);
+   public int getTotalInquiryCount(@Param("userNo")int userNo);
    
    //추가
    public List<qnaVO> getUserInquiriesWithPaging(@Param("userNo") int userNo, @Param("startRow") int startRow, @Param("endRow") int endRow);
 
    public int getTotalInquiryCountByUser(@Param("userNo") int userNo);
 
+   public List<qnaVO> replyCheckInquiries(@Param("startRow")int startRow, @Param("endRow")int endRow, @Param("userNo")int userNo, @Param("answered")boolean answered);
 
+   public int replyCheckCount(@Param("userNo")int userNo, @Param("answered")boolean answered);
+
+   public int getReplyCount(@Param("userNo") int userNo);
+	
    
-
 }

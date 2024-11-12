@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hype.domain.Criteria;
+import org.hype.domain.exhVO;
 import org.hype.domain.goodsVO;
 import org.hype.domain.pCatVO;
 import org.hype.domain.pImgVO;
@@ -39,12 +40,17 @@ public interface AdminService {
 	// 팝업스토어 등록하기
 	public int insertPopStore(popStoreVO pvo); 
 	
+	// 팝업스토어 수정하기
+//	public int updatePopStores(popStoreVO pvo);
+	
 	// 굿즈 등록하기 
 	// selectbox 모든 팝업스토어 가져오기
 	public List<popStoreVO> getAllPopStores();	
 	// 굿즈 insert
 	public int insertGoodsStore(goodsVO gvo);
 	
+	// 전시회 등록하기
+	public int insertExhibition(exhVO evo);
 	
 	// 문의 리스트 확인 페이지 영역
 	// 문의 리스트 가져오기	

@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentMonth = new Date().getMonth(); 
     let currentYear = new Date().getFullYear(); 
     const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-
+    const userNo = localStorage.getItem("userNo");
+    const interestCheckbox = document.getElementById('myInterest');
+    const likeCheckbox = document.getElementById('myLike');
+    
  // 달력 업데이트 함수
     function updateCalendar() {
         const monthLabel = document.getElementById('currentMonth');
@@ -30,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 오늘 날짜와 현재 날짜 비교하여 같은 경우 스타일 적용
             let todayClass = '';
             if (today.toDateString() === currentDate.toDateString()) {
-                todayClass = 'class="today"'; // 오늘 날짜에 적용할 CSS 클래스
+                todayClass = 'class="today"'; 
             }
             // 날짜를 달력에 추가
             calendarDays.insertAdjacentHTML('beforeend', `<td ${dayClass} ${todayClass} class="monthDate">${i}</td>`);
@@ -48,6 +51,30 @@ document.addEventListener('DOMContentLoaded', function() {
             return; 
         }
 
+        // 유저 넘버가 없을 때 체크박스 비활성화 및 클릭 시 로그인 확인
+        if (!userNo) {
+        	interestCheckbox.classList.add('checkbox-disabled');
+            likeCheckbox.classList.add('checkbox-disabled');
+        	
+            interestCheckbox.addEventListener('click', (event) => {
+                event.preventDefault(); // 체크박스 선택 방지
+                if (confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+                    location.href = '/member/login'; // 로그인 페이지로 이동
+                }
+            });
+
+            likeCheckbox.addEventListener('click', (event) => {
+                event.preventDefault(); // 체크박스 선택 방지
+                if (confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+                    location.href = '/member/login'; // 로그인 페이지로 이동
+                }
+            });
+        } else {
+            // userNo가 있을 때 체크박스 이벤트 설정
+        	interestCheckbox.classList.remove('checkbox-disabled');
+            likeCheckbox.classList.remove('checkbox-disabled');
+        }
+        
         // 팝업스토어 정보 가져오기
         fetch(`/hypePop/calendarData?year=${currentYear}&month=${currentMonth + 1}`)
             .then(response => { 
@@ -65,32 +92,38 @@ document.addEventListener('DOMContentLoaded', function() {
                         return { storeData, categoryData }; 
                     });
                 });
-            }).then(({storeData, categoryData}) => {
-                return fetch('/hypePop/userInterest?userNo=2').then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json().then(userInterest => {
-                        return { storeData, categoryData, userInterest }; 
+            })
+            .then(({storeData, categoryData}) => {
+                if (userNo) {
+                    // 유저 넘버가 있을 때만 관심사와 좋아요 데이터를 fetch
+                    return fetch(`/hypePop/userInterest?userNo=${userNo}`).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json().then(userInterest => {
+                            return { storeData, categoryData, userInterest }; 
+                        });
+                    }).then(({storeData, categoryData, userInterest}) => {
+                        return fetch(`/hypePop/userLike?userNo=${userNo}`).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json().then(userLike => {
+                                return { storeData, categoryData, userInterest, userLike }; 
+                            });
+                        });
                     });
-                });
-            }).then(({storeData, categoryData, userInterest}) => {
-                return fetch('/hypePop/userLike?userNo=2').then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json().then(userLike => {
-                       console.log(userLike);
-                        return { storeData, categoryData, userInterest, userLike }; 
-                    });
-                });
-            }).then(({ storeData, categoryData, userInterest, userLike}) => {
+                } else {
+                    return { storeData, categoryData, userInterest: null, userLike: null };
+                }
+            })
+            .then(({ storeData, categoryData, userInterest, userLike }) => {
                 const calendarBody = document.getElementById('calendar-body');
                 const popUpList = document.getElementById('popUpList');  
                 calendarBody.innerHTML = ''; 
                 popUpList.innerHTML = ''; 
 
-                const userInterests = userInterest[0]; 
+                const userInterests = userInterest ? userInterest[0] : null; 
 
                 // 필터링된 팝업스토어 가져오기
                 const filteredStores = storeData.filter(store => {
@@ -100,25 +133,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     );
 
                     // 관심사 체크박스가 선택된 경우
-                    const matchesInterest = isInterestChecked && Object.keys(userInterests).some(interestKey => {
-                        return userInterests[interestKey] === 1 && 
-                            categories.some(category => category[interestKey] === 1); // 관심사와
-                                                                  // 카테고리
-                                                                  // 매칭
-                    });
+                    const matchesInterest = userNo && isInterestChecked && userInterests && 
+                        Object.keys(userInterests).some(interestKey => {
+                            return userInterests[interestKey] === 1 && 
+                                categories.some(category => category[interestKey] === 1);                                                      
+                        });
 
                     // like 체크박스가 선택된 경우
-                    const matchesLike = isLikeChecked && userLike.some(like => like.psNo === store.psNo);
+                    const matchesLike = userNo && isLikeChecked && userLike && userLike.some(like => like.psNo === store.psNo);
 
                     // 조건 결합
                     return matchesCategory || matchesInterest || matchesLike;
                 });
 
-
                 filteredStores.forEach(item => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td class="psName" onclick="location.href='/hypePop/popUpDetails?storeName=${item.psName}'">${item.psName}</td>`;
-   
+           
                     const startDate = new Date(item.psStartDate);
                     const endDate = new Date(item.psEndDate);
                     let schedule = false;
@@ -167,14 +198,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching data:', error));
     }
 
-    // 체크박스 상태 저장 및 복원
-    function saveCheckboxState() {
-        const checkboxStates = {};
-        checkboxes.forEach(checkbox => {
-            checkboxStates[checkbox.value] = checkbox.checked;
-        });
-        localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
-    }
+// // 체크박스 상태 저장 및 복원
+// function saveCheckboxState() {
+// const checkboxStates = {};
+// checkboxes.forEach(checkbox => {
+// checkboxStates[checkbox.value] = checkbox.checked;
+// });
+// localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
+// }
 
     function loadCheckboxState() {
         const checkboxStates = JSON.parse(localStorage.getItem('checkboxStates'));
@@ -205,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkboxes.forEach(checkbox => {
             checkbox.checked = isChecked; // 전체보기 체크박스 상태에 따라 모두 체크하거나 해제
         });
-        saveCheckboxState(); 
+// saveCheckboxState();
         updateCalendar(); 
     });
 
@@ -214,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', function() {
             const allChecked = Array.from(checkboxes).every(cb => cb.checked);
             selectAllCheckbox.checked = allChecked; 
-            saveCheckboxState(); 
+// saveCheckboxState();
             updateCalendar(); 
         });
     });
@@ -237,6 +268,14 @@ document.addEventListener('DOMContentLoaded', function() {
             currentYear++;
         }
         updateCalendar(); 
+    });
+    
+ // 현재 날짜가 포함하는 달로 이동
+    document.getElementById('currentDateMonth').addEventListener('click', function() {
+        const today = new Date(); 
+        currentMonth = today.getMonth(); 
+        currentYear = today.getFullYear();
+        updateCalendar();
     });
     
  // 캘린더에서 이름에 마우스를 가져다 대면 오른쪽 리스트에 표시하기

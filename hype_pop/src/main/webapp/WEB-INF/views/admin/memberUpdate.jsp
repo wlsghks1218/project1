@@ -155,12 +155,12 @@ button:hover {
 		<div id="mName">회원 이름 <input type="text" name="userName" value="${svo.userName}"></div>
 		<div id="mEmail">회원 이메일 <input type="text" name="userEmail" value="${svo.userEmail}"></div>
 		<div id="mPhone">회원 전화번호 <input type="number" name="userNumber" value="${svo.userNumber}"></div>
-		<div id="authority">권한 <input type="number" id="auth" name="auth" value="${svo.auth}" readonly> 
-		    <button type="button" id="upBtn">↑</button>
-		    <button type="button" id="downBtn">↓</button>			
+		<div id="authority">권한 
+			<label><input type="radio" name="auth" value="1" ${svo.auth == 1 ? 'checked' : ''}> 유저</label>
+            <label><input type="radio" name="auth" value="2" ${svo.auth == 2 ? 'checked' : ''}> 관리자</label>	
 		</div>
 		<div id="joinDate">가입일 <input type="text" name="regDate" value="${svo.regDate}" readonly></div>
-		<div id="updateLogin">최신 로그인 날짜 <input type="text" name="lastLoginDate" value="${svo.lastLoginDate}"></div>
+		<div id="updateLogin">최신 로그인 날짜 <input type="text" name="lastLoginDate" value="${svo.lastLoginDate}" readonly></div>
 	</form>
 	
     <button type="button" id="mCancel" onclick="backtoMList()">취소 및 리스트로 돌아가기</button>	

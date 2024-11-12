@@ -1,6 +1,9 @@
 package org.hype.domain;
 
 import java.sql.Date;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,4 +18,6 @@ public class exhVO {
 	private int exhNo, exhWatchTime, exhPrice;
 	private String exhName, exhLocation, exhWatchAge, exhInfo;
 	private Date exhStartDate, exhEndDate;
+	private List<exhImgVO> attachExhList; 	
+	private List<MultipartFile> imageExhFiles;
 }

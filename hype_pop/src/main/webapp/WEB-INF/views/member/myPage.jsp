@@ -267,65 +267,110 @@ nav a {
 .right {
    right: 10px; /* 우측 화살표 위치 */
 }
-.userInterest {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    padding: 20px;
-}
 
+/* 모달 배경 */
 .modal-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.5);
+   z-index: 999;
 }
 
+.userInterest {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   background-color: white;
+   border-radius: 8px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+   z-index: 1000;
+   padding: 20px;
+   width: 80%;
+   max-width: 600px;
+   overflow-y: auto;
+   text-align: center; /* 추가: 내용 가운데 정렬 */
+}
+
+.interestBoxContainer {
+   text-align: center; /* 확인 버튼을 가운데 정렬 */
+}
+
+/* 관심사 박스 스타일 */
 .interestBox {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin: 5px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+   padding: 10px;
+   border: 1px solid #ccc;
+   display: inline-block;
+   cursor: pointer;
+   margin: 5px;
+   border-radius: 4px;
+   transition: background-color 0.3s ease;
+   width: calc(33% - 10px); /* 세 개씩 가로로 나열 */
+   text-align: center;
 }
 
 .interestBox.selected {
-    background-color: #007bff; /* 선택된 박스 색상 */
-    color: white; /* 선택된 박스 텍스트 색상 */
+   background-color: #007bff;
+   color: #fff;
+   border: 1px solid #007bff;
 }
 
+.interestBox:hover {
+   background-color: #f0f0f0;
+}
+
+/* 확인 버튼 */
 .confirm-button {
-    background-color: #007bff; /* 확인 버튼 색상 */
-    color: white; /* 확인 버튼 텍스트 색상 */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+   background-color: #007bff;
+   color: white;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+   margin-top: 10px;
+   transition: background-color 0.3s ease;
 }
 
 .confirm-button:hover {
-    background-color: #0056b3; /* 확인 버튼 호버 색상 */
+   background-color: #0056b3;
+}
+
+/* 닫기 버튼 */
+.close {
+   color: #aaa;
+   font-size: 28px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.close:hover, .close:focus {
+   color: black;
+}
+
+/* 체크박스 레이블 스타일 */
+.interestBox label {
+   cursor: pointer;
+}
+
+/* 관심사 선택 3개 제한 메시지 */
+.limitMessage {
+   color: red;
+   font-size: 14px;
+}
+
+#userInterestDisplay {
+   white-space: nowrap; /* 한 줄로 표시되고 공백을 유지 */
+   display: inline-block; /* 인라인 요소처럼 처리 */
 }
 </style>
 
 </head>
 <body>
    <header>
-      <button class="home-btn">홈</button>
-      <div class="search-bar">
-         <input type="text" placeholder="검색">
-      </div>
-      <button class="search-btn">검색</button>
+      <jsp:include page="layout/popUpHeader.jsp" />
    </header>
 
    <div class="form-section">
@@ -362,7 +407,7 @@ nav a {
          <button type="button" class="btn btn-sec" id="newPhoneNumberBtn">전화번호
             변경</button>
       </div>
-      
+
 
       <!--관심사 배열  -->
       <%--       <%
@@ -389,73 +434,173 @@ nav a {
 
       <div class="form-item">
          <label for="userInterest">관심사</label>
-         <c:if test="${userInterests.healthBeauty == 1}">
-            <span>헬스/뷰티</span>
-         </c:if>
-         <c:if test="${userInterests.game == 1}">
-            <span>게임</span>
-         </c:if>
-         <c:if test="${userInterests.culture == 1}">
-            <span>문화</span>
-         </c:if>
-         <c:if test="${userInterests.shopping == 1}">
-            <span>쇼핑</span>
-         </c:if>
-         <c:if test="${userInterests.supply == 1}">
-            <span>문구</span>
-         </c:if>
-         <c:if test="${userInterests.kids == 1}">
-            <span>키즈</span>
-         </c:if>
-         <c:if test="${userInterests.design == 1}">
-            <span>디자인</span>
-         </c:if>
-         <c:if test="${userInterests.foods == 1}">
-            <span>식품</span>
-         </c:if>
-         <c:if test="${userInterests.interior == 1}">
-            <span>인테리어</span>
-         </c:if>
-         <c:if test="${userInterests.policy == 1}">
-            <span>정책</span>
-         </c:if>
-         <c:if test="${userInterests.character == 1}">
-            <span>캐릭터</span>
-         </c:if>
-         <c:if test="${userInterests.experience == 1}">
-            <span>체험</span>
-         </c:if>
-         <c:if test="${userInterests.collaboration == 1}">
-            <span>콜라보</span>
-         </c:if>
-         <c:if test="${userInterests.entertainment == 1}">
-            <span>방송</span>
-         </c:if>
-         <button type="button" class="btn btn-sec" id="newInterestBtn">관심사
-            변경</button>
+         <div class="interest-container">
+            <div id="userInterestDisplay">
+               <!-- JavaScript로 업데이트된 관심사들이 여기에 표시됩니다 -->
+
+               <c:if test="${userInterests.healthBeauty == 1}">
+                  <span>헬스/뷰티 </span>
+               </c:if>
+               <c:if test="${userInterests.game == 1}">
+                  <span>게임 </span>
+               </c:if>
+               <c:if test="${userInterests.culture == 1}">
+                  <span>문화 </span>
+               </c:if>
+               <c:if test="${userInterests.shopping == 1}">
+                  <span>쇼핑 </span>
+               </c:if>
+               <c:if test="${userInterests.supply == 1}">
+                  <span>문구 </span>
+               </c:if>
+               <c:if test="${userInterests.kids == 1}">
+                  <span>키즈 </span>
+               </c:if>
+               <c:if test="${userInterests.design == 1}">
+                  <span>디자인 </span>
+               </c:if>
+               <c:if test="${userInterests.foods == 1}">
+                  <span>식품 </span>
+               </c:if>
+               <c:if test="${userInterests.interior == 1}">
+                  <span>인테리어 </span>
+               </c:if>
+               <c:if test="${userInterests.policy == 1}">
+                  <span>정책 </span>
+               </c:if>
+               <c:if test="${userInterests.character == 1}">
+                  <span>캐릭터 </span>
+               </c:if>
+               <c:if test="${userInterests.experience == 1}">
+                  <span>체험 </span>
+               </c:if>
+               <c:if test="${userInterests.collaboration == 1}">
+                  <span>콜라보 </span>
+               </c:if>
+               <c:if test="${userInterests.entertainment == 1}">
+                  <span>방송 </span>
+               </c:if>
+            </div>
+            <button type="button" class="btn btn-sec" id="newInterestBtn"
+               onclick="openInterestModal()">관심사 변경</button>
+         </div>
+      </div>
+
+      <!-- 모달 창  -->
+      <div id="userInterest" class="interestModal" style="display: none;">
+         <!-- <div class="modal-background" onclick="closeModal()"></div>-->
+         <!-- 배경 클릭 시 모달 닫기 -->
+         <div class="interestBoxContainer">
+            <p>관심사를 선택하세요(3개를 선택해주세요)</p>
+
+            <form id="interestForm">
+               <!-- 관심사 박스 -->
+               <div class="interestBox" data-interest="헬스/뷰티">
+                  <label> <input type="checkbox"
+                     name="userInterest.healthBeauty" value="1"> 헬스/뷰티
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="게임">
+                  <label> <input type="checkbox" name="userInterest.game"
+                     value="1"> 게임
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="문화">
+                  <label> <input type="checkbox" name="userInterest.culture"
+                     value="1"> 문화
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="쇼핑">
+                  <label> <input type="checkbox"
+                     name="userInterest.shopping" value="1"> 쇼핑
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="문구">
+                  <label> <input type="checkbox" name="userInterest.supply"
+                     value="1"> 문구
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="키즈">
+                  <label> <input type="checkbox" name="userInterest.kids"
+                     value="1"> 키즈
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="디자인">
+                  <label> <input type="checkbox" name="userInterest.design"
+                     value="1"> 디자인
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="식품">
+                  <label> <input type="checkbox" name="userInterest.foods"
+                     value="1"> 식품
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="인테리어">
+                  <label> <input type="checkbox"
+                     name="userInterest.interior" value="1"> 인테리어
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="정책">
+                  <label> <input type="checkbox" name="userInterest.policy"
+                     value="1"> 정책
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="캐릭터">
+                  <label> <input type="checkbox"
+                     name="userInterest.character" value="1"> 캐릭터
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="체험">
+                  <label> <input type="checkbox"
+                     name="userInterest.experience" value="1"> 체험
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="콜라보">
+                  <label> <input type="checkbox"
+                     name="userInterest.collaboration" value="1"> 콜라보
+                  </label>
+               </div>
+               <div class="interestBox" data-interest="방송">
+                  <label> <input type="checkbox"
+                     name="userInterest.entertainment" value="1"> 방송
+                  </label>
+               </div>
+
+               <p id="limitMessage" class="limitMessage" style="display: none;">최소
+                  3개를 선택해 주세요.</p>
+
+
+
+            </form>
+            <button class="confirm-button" onclick="saveInterests()">확인</button>
+
+         </div>
 
       </div>
+
+
 
       <div class="comment-btn">
-         <button type="button" class="btn btn-sec" id="userReplyBtn" onclick="goToMyReply()" >내
-            댓글 보기</button>
+         <button type="button" class="btn btn-sec" id="userReplyBtn"
+            onclick="goToMyReply()">내 댓글 보기</button>
       </div>
-<!--       <button type="button" class="btn btn-sec" id="goCartBtn" onclick="goToMyCart">장바구니</button>
- -->      
+      <!--       <button type="button" class="btn btn-sec" id="goCartBtn" onclick="goToMyCart">장바구니</button>
+ -->
 
    </div>
 
 
    <div class="form-section">
       <h3>좋아요한 팝업스토어</h3>
-      <input type="hidden" value="2" name="userNo" id="userNo"> 
+      <input type="hidden" value="2" name="userNo" id="userNo">
       <div class="slider-container">
          <button class="arrow left" onclick="slideLeft('popupSlider')">❮</button>
          <div class="image-grid" id="popupSlider">
             <c:forEach var="popup" items="${pLikeList}">
-               <div class="image-item" id="popup-${popup.psNo}">
-                  <img src="${popup.uploadPath}/${popup.uuid}_${popup.fileName}"
-                     alt="${popup.psName}" onclick="goToPopupDetail(${popup.psNo})">
+               <div class="image-item" id="popup-${popup.psNo}"
+                  data-file-name="${popup.fileName}"
+                  onclick="setBackgroundImage(this)">
+
                   <button onclick="removePopup(${popup.psNo})">X</button>
                </div>
             </c:forEach>
@@ -465,29 +610,36 @@ nav a {
 
       <h3>좋아요한 굿즈</h3>
       <div class="slider-container">
-      <input type="hidden" value="2" name="userNo" id="userNo"> 
+         <input type="hidden" value="2" name="userNo" id="userNo">
          <button class="arrow left" onclick="slideLeft('goodsSlider')">❮</button>
          <div class="image-grid" id="goodsSlider">
             <c:forEach var="goods" items="${gLikeList}">
-               <div class="image-item" id="goods-${goods.gno}">
+               <div class="image-item" id="goods-${goods.gno}"
+                  data-file-name="${goods.uuid}_${goods.fileName}">
                   <c:if test="${not empty goods.gname}">
-                     <img src="${goods.uploadPath}/${goods.uuid}_${goods.fileName}"
-                        alt="${goods.gname}" onclick="goToPopupDetail(${goods.gno})">
+                     <img src="/images/${goods.uuid}_${goods.fileName}"
+                        alt="${goods.gname}">
                   </c:if>
                   <button onclick="removeGoods(${goods.gno})">X</button>
                </div>
             </c:forEach>
+            <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
+
          </div>
-         <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
       </div>
-      <div class="btn-section">
-          <button type="button" class="btn btn-sec" id="goCartBtn" onclick="goToMyCart()">장바구니</button>
-            <input type="hidden" value="2" name="userNo" id="userNo">     
-            <button type="button" class="btn btn-sec" id="paymentListBtn" onclick="getPayList(userNo)">내결제 목록</button>            
-         <button type="button" class="btn btn-sec" id="deleteIdBtn"
-            style="background-color: red; color: white;">회원 탈퇴</button>
-      </div>
+
+
    </div>
+   <div class="btn-section">
+      <button type="button" class="btn btn-sec" id="goCartBtn"
+         onclick="goToMyCart()">장바구니</button>
+      <input type="hidden" value="2" name="userNo" id="userNo">
+      <button type="button" class="btn btn-sec" id="paymentListBtn"
+         onclick="getPayList(userNo)">내결제 목록</button>
+      <button type="button" class="btn btn-sec" id="deleteIdBtn"
+         style="background-color: red; color: white;">회원 탈퇴</button>
+   </div>
+
 
    <!--    <div class="image-item">
             <img src="popup1.jpg" alt="팝업스토어1" onclick="goToPopupDetail(1)">
@@ -525,13 +677,13 @@ nav a {
             <button onclick="removeGoods(4)">X</button>
          </div> -->
 
-   <!-- 관심사 변경  -->
 
 
 
+   <!-- 푸터 포함 -->
+   <jsp:include page="layout/popUpFooter.jsp" />
+   <jsp:include page="layout/popUpNavBar.jsp" />
 
-
-   <footer>footer</footer>
 
    <nav>
       <a href="#">팝업스토어 검색</a> <a href="#">굿즈 검색</a> <a href="#">내 주변</a> <a
@@ -651,59 +803,6 @@ nav a {
    </div>
 
 
-<div id="userInterestModal"  class="userInterest" style="display: none;">
-    <div class="modal-background" onclick="closeModal()"></div>
-    <div class="interestBoxContainer">
-        <div>
-            <p>관심사를 선택하세요(최소 3개 선택)</p>
-        </div>
-        <div class="interestBox" data-interest="헬스/뷰티">
-            <label>헬스/뷰티</label>
-        </div>
-        <div class="interestBox" data-interest="게임">
-            <label>게임</label>
-        </div>
-        <div class="interestBox" data-interest="문화">
-            <label>문화</label>
-        </div>
-        <div class="interestBox" data-interest="쇼핑">
-            <label>쇼핑</label>
-        </div>
-        <div class="interestBox" data-interest="문구">
-            <label>문구</label>
-        </div>
-        <div class="interestBox" data-interest="키즈">
-            <label>키즈</label>
-        </div>
-        <div class="interestBox" data-interest="디자인">
-            <label>디자인</label>
-        </div>
-        <div class="interestBox" data-interest="식품">
-            <label>식품</label>
-        </div>
-        <div class="interestBox" data-interest="인테리어">
-            <label>인테리어</label>
-        </div>
-        <div class="interestBox" data-interest="정책">
-            <label>정책</label>
-        </div>
-        <div class="interestBox" data-interest="캐릭터">
-            <label>캐릭터</label>
-        </div>
-        <div class="interestBox" data-interest="체험">
-            <label>체험</label>
-        </div>
-        <div class="interestBox" data-interest="콜라보">
-            <label>콜라보</label>
-        </div>
-        <div class="interestBox" data-interest="방송">
-            <label>방송</label>
-        </div>
-        <div>
-            <button id="confirmButton" class="confirm-button" >확인</button>
-        </div>
-    </div>
-</div>
 
 
    <script type="text/javascript" src="/resources/memberJs/myPage.js"></script>
@@ -711,5 +810,6 @@ nav a {
 
 
 </body>
+
 
 </html>

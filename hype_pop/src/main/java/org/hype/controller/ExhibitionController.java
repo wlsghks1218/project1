@@ -34,23 +34,28 @@ public class ExhibitionController {
 
     // 초기 페이지 요청 시 첫 번째 페이지 데이터만 가져오기
     @GetMapping("/exhibitionMain")
-    public String exhibitionMain(Model model) {
+    public String exhibitionMain(Model model,
+                                 @RequestParam(value = "filter", defaultValue = "latest") String filter) { // 기본값으로 "latest" 사용
         int pageSize = 5; // 한 페이지에 표시할 전시 개수
-        List<exhVO> exhibitions = exhibitionService.getExhibitionsByPage(1, pageSize); // 첫 페이지만 가져오기
-        log.info("Exhibitions retrieved for page 1: " + exhibitions.size());
+        List<exhVO> exhibitions = exhibitionService.getExhibitionsByPage(1, pageSize, filter); // 첫 페이지만 가져오기
+        log.info("Exhibitions retrieved for page 1 with filter '" + filter + "': " + exhibitions.size());
         model.addAttribute("exhibitions", exhibitions);
-        return "/popUpExhibition/exhibitionMainPage";
+        model.addAttribute("selectedFilter", filter); // 선택된 필터를 모델에 추가
+        return "/exhibition/exhibitionMainPage";
     }
 
     // "더보기" 요청 시 추가 페이지 데이터 가져오기
     @GetMapping(value = "/exhibitionPage", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<exhVO> getExhibitionPage(@RequestParam("page") int page) {
-        int pageSize = 5;
-        List<exhVO> exhibitions = exhibitionService.getExhibitionsByPage(page, pageSize);
-        log.info("Exhibitions retrieved for page " + page + ": " + exhibitions.size());
+    public List<exhVO> getExhibitionPage(
+            @RequestParam("page") int page,
+            @RequestParam(value = "filter", defaultValue = "all") String filter) { 
+        int pageSize = 5; // 페이지당 항목 수
+        List<exhVO> exhibitions = exhibitionService.getExhibitionsByPage(page, pageSize, filter);
+        log.info("Exhibitions retrieved for page " + page + " with filter '" + filter + "': " + exhibitions.size());
         return exhibitions;
     }
+
     
     @GetMapping("/exhibitionDetail")
     public String exhibitionDetail(@RequestParam("exhNo") int exhNo, Model model) {
@@ -63,7 +68,7 @@ public class ExhibitionController {
             log.warn("No exhibition found with exhNo: " + exhNo);
             model.addAttribute("errorMessage", "전시회를 찾을 수 없습니다.");
         }
-        return "/popUpExhibition/exhibitionDetailPage"; 
+        return "/exhibition/exhibitionDetailPage"; 
     }
 
     @ResponseBody
@@ -104,22 +109,33 @@ public class ExhibitionController {
         return ResponseEntity.ok(count);
     }
     
+    @GetMapping(value = "/checkUserReview", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> checkUserReview(@RequestParam int exhNo, @RequestParam int userNo) {
+    	boolean hasReview = exhibitionService.hasUserReviewed(exhNo, userNo);
+    	Map<String, Object> response = new HashMap<>();
+    	response.put("hasReview", hasReview);
+    	
+    	return ResponseEntity.ok(response); 
+    }
     
     @ResponseBody
     @PostMapping("/addReview")
     public ResponseEntity<String> addReview(@RequestBody exhReplyVO exhReplyVO) {
-        try {
-
-            exhibitionService.saveReview(exhReplyVO);
-            return ResponseEntity.ok("후기가 등록되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("후기 등록 실패: " + e.getMessage());
+    	
+    	boolean success = exhibitionService.saveReview(exhReplyVO);
+        if (success) {
+            return ResponseEntity.ok("댓글이 등록되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 등록에 실패했습니다.");
         }
-    }
+
+    }   
+        
     @ResponseBody
     @GetMapping(value = "/userReviews", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<exhReplyVO> getUserReviews() {
-        return exhibitionService.getAllReplies(); 
+    public List<exhReplyVO> getUserReviews(@RequestParam("exhNo") int exhNo) {
+        return exhibitionService.getAllReplies(exhNo); 
     }
     
     @PutMapping("/updateReview")

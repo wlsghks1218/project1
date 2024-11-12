@@ -120,7 +120,7 @@ button:hover {
              <input type="checkbox" name="psCat.collaboration" value="1">콜라보
              <input type="checkbox" name="psCat.entertainment" value="1">방송
           </div>
-      </div>
+      	</div>
 	    <div id="startDate">시작일 <br><input type="date" name="psStartDate"></div>
 	    <div id="endDate">종료일 <br><input type="date" name="psEndDate"></div>
 	    

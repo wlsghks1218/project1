@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +17,7 @@
         position: fixed;
         bottom: 0;
         width: 100%;
-        z-index: 100; /* ¿øÇÏ´Â ¿ì¼±¼øÀ§ °ªÀ¸·Î ¼³Á¤ */
+        z-index: 100; /* ì›í•˜ëŠ” ìš°ì„ ìˆœìœ„ ê°’ìœ¼ë¡œ ì„¤ì • */
     }
         .navBar a {
             color: white;
@@ -35,23 +34,13 @@
 <body>
 
     <div class="navBar">
-        <a href="/hypePop/search/noData">ÆË¾÷ ½ºÅä¾î ÀüÃ¼ º¸±â</a>
-        <a href="/goodsStore/goodsSearch">±ÂÁî ÀüÃ¼ º¸±â</a>
-        <a href="/#map">³» ÁÖº¯</a>
-        <a href="/hypePop/calendar">Ä¶¸°´õ</a>
-        <a href="/member/login">·Î±×ÀÎ</a>
-        <a href="/member/myPage?userNo=2">¸¶ÀÌÆäÀÌÁö</a>
+        <a href="/hypePop/search/noData">íŒì—… ìŠ¤í† ì–´ ì „ì²´ ë³´ê¸°</a>
+        <a href="/goodsStore/goodsSearch">êµ¿ì¦ˆ ì „ì²´ ë³´ê¸°</a>
+        <a href="/#map">ë‚´ ì£¼ë³€</a>
+        <a href="/hypePop/calendar">ìº˜ë¦°ë”</a>
+        <a href="/member/login">ë¡œê·¸ì¸</a>
+        <a href="/member/myPage?userNo=2">ë§ˆì´íŽ˜ì´ì§€</a>
     </div>
 
 </body>
-<script type="text/javascript">
-    function logout(){
-       // localStorage¿¡¼­ userNo »èÁ¦
-       localStorage.removeItem('userNo');
-       
-         // ÆäÀÌÁö ¸®·Îµå
-       location.reload();
-
-    }
-</script>
 </html>

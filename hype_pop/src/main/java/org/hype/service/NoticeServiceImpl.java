@@ -1,6 +1,8 @@
 package org.hype.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.hype.domain.noticeVO;
@@ -109,6 +111,35 @@ public class NoticeServiceImpl implements NoticeService{
       return supportmapper.getTotalInquiryCountByUser(userNo);
    }
 
-   
+
+@Override
+public List<qnaVO> replyCheckInquiries(int pageNum, int amount, int userNo, boolean answered) {
+	
+	int startRow = (pageNum - 1) * amount;
+    int endRow = pageNum * amount; 
+	return supportmapper.replyCheckInquiries(startRow, endRow, userNo, answered);
+}
+
+
+@Override
+public int replyCheckCount(int userNo, boolean answered) {
+
+	return supportmapper.replyCheckCount(userNo, answered);
+}
+
+
+@Override
+public Map<String, Integer> getInquiryCounts(int userNo) {
+    int totalCount = supportmapper.getTotalInquiryCount(userNo);
+    int replyCount = supportmapper.getReplyCount(userNo);
+    int noReplyCount = totalCount - replyCount;
+
+    Map<String, Integer> counts = new HashMap<>();
+    counts.put("totalCount", totalCount);
+    counts.put("replyCount", replyCount);
+    counts.put("noReplyCount", noReplyCount);
+
+    return counts;
+}
    
 }

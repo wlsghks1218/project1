@@ -272,10 +272,8 @@ document.getElementById("leavePartyBtn").addEventListener('click', () => {
         .then(text => {
             const parsedText = parseInt(text);
             if (text == "0") {
-                // 일반 유저일 경우 바로 떠나기
                 location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
             } else if (text == "1") {
-                // 방장일 경우 확인 창 띄우기
                 const isConfirmed = confirm("당신은 방장입니다. 방이 삭제됩니다. 계속하시겠습니까?");
                 if (isConfirmed) {
                     location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
@@ -283,6 +281,22 @@ document.getElementById("leavePartyBtn").addEventListener('click', () => {
             }
         });
 });
+
+const psExhName = document.querySelector(".targetName").textContent;
+const category = document.querySelector(".category").textContent;
+document.querySelector(".moveToDetail").addEventListener('click', () => {
+	if(category == "popup"){
+		location.href = `/hypePop/popUpDetails?storeName=${psExhName}`;
+	}else if(category == "exhibition"){
+		fetch(`/party/findExhNo/${psExhName}`)
+		.then(response => response.json())
+		.then(data => 
+		location.href = `/exhibition/exhibitionDetail/exhNo=${data.exhNo}`);
+	}
+})
+console.log(psExhName);
+console.log(category);
+
 
 // 날짜와 시간을 초 단위까지 포맷하는 함수
 function getFormattedTime() {
