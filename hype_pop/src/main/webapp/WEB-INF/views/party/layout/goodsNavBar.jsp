@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,10 +37,14 @@
         <a href="/goodsStore/goodsSearch" id="searchReset">굿즈 전체 보기</a>
         <a href="/goodsStore/goodsMain">굿즈 메인페이지</a>
         <a href="/hypePop/calendar">캘린더</a>
+        <sec:authorize access="!isAuthenticated()">
         <a href="/member/login">로그인</a>
+        </sec:authorize>
+        <sec:authorize access="isAuthenticated()">
+        <a href="/logout">로그아웃</a>
+        </sec:authorize>
         <a href="/member/myPage?userNo=1">마이페이지</a>
         <a href="/party/partyBoard">파티구하기</a>
-        <a id="logout">로그아웃</a>
     </div>
 </body>
 </html>

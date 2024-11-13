@@ -287,23 +287,23 @@ public class MemberRestController {
    }
    
    //로그인
-   @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-   @ResponseBody
-   public ResponseEntity<Map<String, Object>> login(@RequestBody signInVO svo) {
-       signInVO member = memberService.loginMember(svo);
-
-       Map<String, Object> response = new HashMap<>();
-       if (member != null) {
-           response.put("status", "success");
-           response.put("userNo", member.getUserNo()); // userNo를 응답에 포함
-           return ResponseEntity.ok(response);
-       } else {
-           response.put("status", "error");
-           response.put("message", "로그인 오류입니다.");
-           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-       }
-   }
-   
+//   @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+//   @ResponseBody
+//   public ResponseEntity<Map<String, Object>> login(@RequestBody signInVO svo) {
+//       signInVO member = memberService.loginMember(svo);
+//
+//       Map<String, Object> response = new HashMap<>();
+//       if (member != null) {
+//           response.put("status", "success");
+//           response.put("userNo", member.getUserNo()); // userNo를 응답에 포함
+//           return ResponseEntity.ok(response);
+//       } else {
+//           response.put("status", "error");
+//           response.put("message", "로그인 오류입니다.");
+//           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//       }
+//   }
+//   
    //마이페이지 좋아요한 팝업스토어 이미지 가져오기
     @GetMapping("/images/{fileName:.+}")
     @ResponseBody

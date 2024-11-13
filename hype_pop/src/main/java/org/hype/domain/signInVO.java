@@ -20,6 +20,7 @@ public class signInVO {
    private String userName; //  씠由 
    private String userNumber; //  쟾 솕踰덊샇
    private mCatVO userInterest; // 愿  떖 궗
+   private String idCardNum;   // 주민등록번호
    
    private int userNo; //  쉶 썝 踰덊샇
    private Date regDate; // 媛  엯 씪

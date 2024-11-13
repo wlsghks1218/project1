@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="EUC-KR">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
     <style>
         body {
@@ -36,6 +36,7 @@
         <a href="/goodsStore/goodsSearch" id="searchReset">굿즈 전체 보기</a>
         <a href="/goodsStore/goodsMain">굿즈 메인페이지</a>
         <a href="/hypePop/calendar">캘린더</a>
+        
         <a href="/member/login">로그인</a>
         <a href="/member/myPage?userNo=1">마이페이지</a>
         <a href="/party/partyBoard">파티구하기</a>

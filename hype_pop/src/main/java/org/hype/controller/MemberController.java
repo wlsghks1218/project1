@@ -36,6 +36,9 @@ public class MemberController {
 
    @Autowired
    private MemberService mservice;
+   
+   @Autowired
+   private PasswordEncoder pwencoder;
 
    // 로그인페이지로 이동
    @GetMapping("/login")
@@ -44,19 +47,19 @@ public class MemberController {
       return "member/login";
    }
 
-   // 로그인 처리
-   @PostMapping("/login")
-   public String login(signInVO svo, Model model) {
-
-      signInVO member = mservice.loginMember(svo);
-
-      if (member != null) {
-         return "popUp/popUpMain";
-      } else {
-         model.addAttribute("error", "로그인을 오류입니다.");
-         return "member/login";
-      }
-   }
+//   // 로그인 처리
+//   @PostMapping("/login")
+//   public String login(signInVO svo, Model model) {
+//
+//      signInVO member = mservice.loginMember(svo);
+//
+//      if (member != null) {
+//         return "popUp/popUpMain";
+//      } else {
+//         model.addAttribute("error", "로그인을 오류입니다.");
+//         return "member/login";
+//      }
+//   }
 
    // 회원가입
    @GetMapping("/join")
@@ -68,6 +71,7 @@ public class MemberController {
    // 회원가입 처리
    @PostMapping("/join")
    public String join(@ModelAttribute signInVO svo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	   svo.setUserPw(pwencoder.encode(svo.getUserPw()));
       log.warn("join!!!!!!!!!!!!!!!");
       
       // bean 내부의 필드 값 확인 코드 
@@ -93,9 +97,7 @@ public class MemberController {
        
        // 회원 가입
       mservice.joinMember(svo);
-
-      return "popUp/popUpMain";
-
+      return "redirect:/hypePop/popUpMain";
    }
 
    // 마이페이지

@@ -288,7 +288,7 @@ input:checked + .slider:before {
 <body>
 
    <header>
-      <a href="/home" class="home-link">홈으로</a>
+      <a href="/" class="home-link">홈으로</a>
       <!-- 홈으로 가는 링크 -->
       <h1>회원가입</h1>
    </header>

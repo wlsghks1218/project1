@@ -48,11 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-    // 사용 예
     setBackgroundImage(goodsBanner, "goodsStore/goodsBannerImages", fileNameBanner);
     setBackgroundImage(goodsDetailImg, "goodsStore/goodsDetailImages", fileNameDetail);
 
-    // 수량 조절
     const decreaseBtn = document.getElementById('decreaseBtn');
     const increaseBtn = document.getElementById('increaseBtn');
     const quantityInput = document.getElementById('quantity');
@@ -443,6 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(likeCount => {
                 document.querySelector("#goodsLike").textContent = `좋아요: ${likeCount}회`;
+                likeBtnChange();
             })
             .catch(err => console.error('Error:', err));
     });

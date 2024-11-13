@@ -4,40 +4,40 @@ const customAlert = document.getElementById('customAlert');
 const sendEmailBtn = document.getElementById('sendEmailBtn');
 
 //로그인 처리 (storage에 저장)
-document.getElementById("loginBtn").addEventListener("click", function(event) {
-    event.preventDefault(); // 기본 제출 동작 방지
-
-    const userId = document.getElementById("userId").value;
-    const userPw = document.getElementById("userPw").value;
-
-    fetch("/member/api/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId, userPw })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json(); // JSON으로 변환
-    })
-    .then(data => {
-        if (data.status === "success") {
-            // 로그인 성공 시 localStorage에 userNo 저장
-            localStorage.setItem("userNo", data.userNo);
-            alert("로그인 성공");
-            window.location.href = "/"; // 메인 페이지로 이동
-        } else {
-            alert(data.message); // 오류 메시지 표시
-        }
-    })
-    .catch(error => {
-        console.error("로그인 요청 중 오류 발생: ", error);
-        alert("로그인 요청 중 오류가 발생했습니다.");
-    });
-});
+//document.getElementById("loginBtn").addEventListener("click", function(event) {
+//    event.preventDefault(); // 기본 제출 동작 방지
+//
+//    const userId = document.getElementById("userId").value;
+//    const userPw = document.getElementById("userPw").value;
+//
+//    fetch("/member/api/login", {
+//        method: "POST",
+//        headers: {
+//            "Content-Type": "application/json"
+//        },
+//        body: JSON.stringify({ userId, userPw })
+//    })
+//    .then(response => {
+//        if (!response.ok) {
+//            throw new Error('Network response was not ok');
+//        }
+//        return response.json(); // JSON으로 변환
+//    })
+//    .then(data => {
+//        if (data.status === "success") {
+//            // 로그인 성공 시 localStorage에 userNo 저장
+//            localStorage.setItem("userNo", data.userNo);
+//            alert("로그인 성공");
+//            window.location.href = "/"; // 메인 페이지로 이동
+//        } else {
+//            alert(data.message); // 오류 메시지 표시
+//        }
+//    })
+//    .catch(error => {
+//        console.error("로그인 요청 중 오류 발생: ", error);
+//        alert("로그인 요청 중 오류가 발생했습니다.");
+//    });
+//});
 
 
 // 로그페이지 아이디 찾기 버튼 클릭

@@ -1,30 +1,37 @@
-partyBoard.js
 let dataList = [];
 let currentPage = 1;
 const itemsPerPage = 10;
 let userNo = localStorage.getItem('userNo');
 
-document.getElementById("goInsertBoard").addEventListener('click', () => {
-    location.href = "/party/boardInsert";
-});
+// goInsertBoard 버튼 요소를 찾고 존재할 경우에만 이벤트 리스너를 추가
+const goInsertBoardBtn = document.getElementById("goInsertBoard");
+if (goInsertBoardBtn) {
+    goInsertBoardBtn.addEventListener('click', () => {
+        location.href = "/party/boardInsert";
+    });
+}
 
 fetch('/party/getAllParty')
     .then(response => response.json())
     .then(data => {
-    	dataList = data.sort((a, b) => new Date(b.regDate) - new Date(a.regDate));
-        renderTable();
-        renderPagination();
+        if (data.length === 0) {
+            displayNoPartyMessage();
+        } else {
+            dataList = data.sort((a, b) => new Date(b.regDate) - new Date(a.regDate));
+            renderTable();
+            renderPagination();
+        }
     })
     .catch(error => console.error("Error fetching data:", error));
 
 function renderTable() {
-    let msg = "";  // HTML 문자열을 누적할 변수
+    let msg = "";
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const pageData = dataList.slice(startIndex, endIndex);
-    
+
     pageData.forEach(vo => {
-    	const formattedDate = formatDate(vo.regDate);
+        const formattedDate = formatDate(vo.regDate);
         msg += `
             <tr class="partyTr" data-bno="${vo.bno}" data-current="${vo.currentUser}" data-max="${vo.maxUser}">
                 <td>${vo.category}</td>
@@ -36,17 +43,16 @@ function renderTable() {
         `;
     });
 
-    // 테이블 전체 행을 초기화하고 새로운 데이터를 추가
     const tableBody = document.querySelector("table tbody");
-    tableBody.innerHTML = "";  // 기존 행 모두 제거
+    tableBody.innerHTML = "";
     tableBody.insertAdjacentHTML("beforeend", msg);
-    
+
     document.querySelectorAll(".partyTr").forEach(row => {
         row.addEventListener('click', (e) => {
             const currentBno = e.currentTarget.getAttribute("data-bno");
             const currentUser = parseInt(e.currentTarget.getAttribute("data-current"));
             const maxUser = parseInt(e.currentTarget.getAttribute("data-max"));
-            
+
             fetch(`/party/chkJoinedOrNot/${currentBno}`)
                 .then(response => response.json())
                 .then(data => {
@@ -88,5 +94,18 @@ function formatDate(dateString) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;  // YYYY-MM-DD 형식
+    return `${year}-${month}-${day}`;
+}
+
+// 데이터가 없는 경우 표시할 메시지 함수
+function displayNoPartyMessage() {
+    const tableBody = document.querySelector("table tbody");
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="5" style="text-align: center; font-weight: bold;">함께 갈 파티를 구해봐요</td>
+        </tr>
+    `;
+
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = ""; // 페이지네이션 숨김
 }
