@@ -2,9 +2,12 @@ let name;
 let ws;
 const bno = new URLSearchParams(location.search).get('bno');
 const url = `ws://192.168.0.121:9010/chatserver.do?bno=${bno}`;
-const userNo = localStorage.getItem("userNo");
+const userNoElement = document.getElementById("userNo");
+const userIdElement = document.getElementById("userId");
+const userNo = userNoElement ? userNoElement.value : null;
+const userId = userIdElement ? userIdElement.value : null;
 console.log(userNo);
-const userId = "user3";
+console.log(userId);
 const userMap = {}; // userNo와 userId를 매핑하여 저장할 객체
 console.log(userMap);
 

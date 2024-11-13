@@ -1,7 +1,9 @@
 let dataList = [];
 let currentPage = 1;
 const itemsPerPage = 10;
-let userNo = localStorage.getItem('userNo');
+let userNoElement = document.getElementById("userNo");
+let userNo = userNoElement ? userNoElement.value : null;
+console.log(userNo);
 
 // goInsertBoard 버튼 요소를 찾고 존재할 경우에만 이벤트 리스너를 추가
 const goInsertBoardBtn = document.getElementById("goInsertBoard");
