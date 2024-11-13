@@ -51,16 +51,17 @@
     <div class="adminHeader"> 
         <span class="adminBox" id="popUpManage">팝업스토어 관리하기</span> 
         <span class="adminBox" id="storeManage">쇼핑몰 관리하기</span>
+        <span class="adminBox" id="exhManage">전시회 관리하기</span> 
         <span class="adminBox" id="memberManage">회원 관리하기</span> 
         <br>
         <input type="text" id="adminSearchBox" style="display: none;"> 
         <span id="searchBTN" style="display: none;">검색</span>
         <br>
         <span class="adminBox" id="askList">문의리스트 확인</span> 
-      	<span class="adminBox" id="goodsState">상품 상태 조회</span>
-      	<span class="adminBox" id="registerBtn">등록하기</span>
-      	<!-- 전시회 임시 버튼 생성 -->
-      	<span class="adminBox" id="registerExBtn">전시회 등록하기</span>
+         <span class="adminBox" id="goodsState">상품 상태 조회</span>
+         <span class="adminBox" id="registerBtn">등록하기</span>
+         <!-- 전시회 임시 버튼 생성 -->
+         <span class="adminBox" id="registerExBtn">전시회 등록하기</span>
     </div>
 <div class="adminMain">  
 </body>

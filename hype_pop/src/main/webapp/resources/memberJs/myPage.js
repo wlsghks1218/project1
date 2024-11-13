@@ -8,6 +8,38 @@ newPasswordBtn.addEventListener('click', function() {
     foundUserPwModal.style.display = 'block';
 });
 
+////이미지 배경을 fetch로 가져오기
+//const item1 = document.getElementById('goodsBannerImg');
+//setBackgroundImage(item1);
+
+document.querySelectorAll('.image-goodsItem').forEach(item => {
+    // data-file-name 속성에서 파일 이름을 가져옴
+    const fileName = item.getAttribute('data-file-name');
+    console.log(fileName);
+    const imgElement = item.querySelector('img'); // 각 image-goodsItem 내부의 img 요소를 찾음
+
+    // 이미지 파일이 존재할 경우에만 요청 수행
+    if (fileName && imgElement) {
+        fetch(`/goodsStore/goodsBannerImages/${encodeURIComponent(fileName)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("이미지를 불러오는 데 실패했습니다.");
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const imageUrl = URL.createObjectURL(blob); // Blob을 URL로 변환
+                imgElement.src = imageUrl; // img 태그의 src로 설정
+                imgElement.style.width = "100px"; // 너비 설정
+                imgElement.style.height = "100px"; // 높이 설정
+            })
+            .catch(error => {
+                console.error("이미지 불러오기 오류:", error);
+            });
+    }
+});
+
+
 function submitPwChange() {
     const f = document.getElementById('passwordChangeForm');
     // const userPw = f.oldPw.value;
@@ -35,20 +67,46 @@ function closePwModal() {
 const newEmailBtn = document.getElementById('newEmailBtn');
 const customAlert = document.getElementById('customAlert');
 const newEmailModal = document.getElementById('changeUserEmailModal');
+const sendEmailBtn = document.getElementById('sendEmailBtn');
 
-// 클릭 이벤트를 중복으로 등록하지 않도록 함수로 감싸기
+
+//이메일 변경 모달 열기
 newEmailBtn.addEventListener('click', function() {
+    newEmailModal.style.display = 'block'; // 모달 표시
+});
+
+//이메일 전송 함수
+sendEmailBtn.addEventListener('click', function() {
+    const userEmail = document.getElementById('userEmail').value;
+
+    if (!userEmail) {
+        alert("이메일을 입력하세요.");
+        return;
+    }
+
+    // 이메일 전송 함수 호출
+    sendEmail(userEmail);
+    
    customAlert.style.display = 'block';
    
    setTimeout(function(){
       customAlert.style.display = 'none';
    }, 2000);
-   
-   newEmailModal.style.display = 'block';
-   
-   // 이메일 전송 함수 호출
-   sendEmail();
 });
+
+//클릭 이벤트를 중복으로 등록하지 않도록 함수로 감싸기
+//newEmailBtn.addEventListener('click', function() {
+//   customAlert.style.display = 'block';
+//   
+//   setTimeout(function(){
+//      customAlert.style.display = 'none';
+//   }, 2000);
+//   
+//   newEmailModal.style.display = 'block';
+//   
+//   // 이메일 전송 함수 호출
+//   sendEmail();
+//});
 
 function sendEmail() {
     const userEmail = document.getElementById('userEmail').value;
@@ -123,6 +181,9 @@ function submitEmailChange() {
 
 function closeEmailModal() {
     const modal = document.getElementById('changeUserEmailModal');
+    
+    alert('이메일 변경을 취소하시겠습니까?');
+    
     modal.style.display = 'none'; // 모달 숨기기
     // 마이페이지 이메일변경 버튼 클릭
     const newEmailBtn = document.getElementById('newEmailBtn');
@@ -315,39 +376,49 @@ function getPayList(userNo){
 
 
 
-//이미지 배경을 fetch로 가져오기
-function setBackgroundImage(item) {
-    const fileNameAndUuid = item.getAttribute("data-file-name");
 
-       // 파일명과 UUID를 분리
-       const [uuid, fileName] = fileNameAndUuid.split('_');
 
-       // UUID와 파일명을 포함시켜 보낼 파일명 생성
-       const combinedFileName = `${uuid}_${fileName}`;
-
-       console.log(`UUID: ${uuid}, File Name: ${fileName}, Combined File Name: ${combinedFileName}`);
-
-       // 서버에서 이미지를 비동기적으로 불러오기
-       fetch(`/goodsStore/images/${encodeURIComponent(combinedFileName)}`)
-
-        .then(response => response.blob())  // 이미지를 Blob 형태로 받음
-        .then(blob => {
-            const imageUrl = URL.createObjectURL(blob);  // Blob을 URL로 변환
-            item.style.backgroundImage = `url(${imageUrl})`;  // 배경이미지로 설정
-            item.style.backgroundSize = "cover";  // 배경 이미지 사이즈 설정
-            item.style.backgroundPosition = "center center";  // 배경 이미지 위치 설정
-            item.style.backgroundRepeat = "no-repeat";  // 배경 이미지 반복 설정
-        })
-        .catch(error => {
-            console.error("이미지를 불러오는 중 오류 발생: ", error);
-        });
-}
-
+//function setBackgroundImage(item) {
+//   console.log("hi")
+//    const fileNameAndUuid = item.getAttribute("data-file-name");
+//   const fileName123 = document.getElementById("goodsImageFileName").value;
+//   console.log(fileName123);
+////    const [uuid, fileName] = fileNameAndUuid.split('_');
+////    const combinedFileName = `${uuid}_${fileName}`;
+////    console.log(combinedFileName);
+//
+////    console.log(`UUID: ${uuid}, File Name: ${fileName}, Combined File Name: ${combinedFileName}`);
+//
+//    // 서버에서 이미지를 비동기적으로 불러오기
+//    fetch(`/member/api/goodsBannerImages/${encodeURIComponent(fileName123)}`)
+//        .then(response => {
+//            if (!response.ok) {
+//                throw new Error("이미지를 불러오는 데 실패했습니다.");
+//            }
+//            return response.blob();
+//        })
+//        .then(blob => {
+//            const imageUrl = URL.createObjectURL(blob); // Blob을 URL로 변환
+//            console.log(imageUrl); 
+//            item.src =  imageUrl; // 배경이미지 설정
+//            console.log(item.src);
+//
+//        })
+//        .catch(error => {
+//            console.error("이미지 불러오기 오류:", error);
+//        });
+//}
+//여러 이미지 요소를 처리하는 부분
+document.querySelectorAll('.image-goodsItem').forEach(item => {
+    const imgElement = item.querySelector('img'); // 각 image-goodsItem 내부의 img 요소를 찾음
+    if (imgElement) {
+        setBackgroundImage(imgElement); // 각 이미지에 대해 배경 이미지를 설정
+    }
+});
 // 마이페이지 굿즈 이미지를 로드할 때 호출
-//document.querySelectorAll('.image-item').forEach(item => {
-//    setBackgroundImage(item.querySelector('.image'));  // 각 아이템에 대해 이미지 로드
+//document.getElementById('goodsBannerImg').forEach(imgElement => {
+//    setBackgroundImage(imgElement); // 각 이미지에 대해 배경 이미지를 설정
 //});
-
 
 
 
@@ -378,13 +449,49 @@ function deleteId() {
 // 관심사 선택 모달 열기
 function openInterestModal() {
     document.getElementById('userInterest').style.display = 'block';
+    
+ // 현재 선택된 관심사를 JavaScript에서 확인합니다.
+    const selectedInterests = document.querySelectorAll('#userInterestDisplay span');
+    const selectedInterestNames = Array.from(selectedInterests).map(span => span.textContent.trim());
+
+ // 각 체크박스를 확인하여 선택된 관심사에 포함되면 checked 상태로 만듭니다.
+    document.querySelectorAll('.interestBox input[type="checkbox"]').forEach(checkbox => {
+        const interestName = checkbox.closest('.interestBox').getAttribute('data-interest');
+        checkbox.checked = selectedInterestNames.includes(interestName);
+    });
+    
+    // 알림 메시지 숨기기
+    document.getElementById('limitMessage').style.display = 'none';
+    
 }
+
+
 
 // 관심사 선택 모달 닫기
 function closeInterestModal() {
     document.getElementById('userInterest').style.display = 'none';
 }
+
+
+//관심사 선택 제한 체크 함수
+function checkInterestLimit() {
+    const selectedCount = document.querySelectorAll('.interestBox input[type="checkbox"]:checked').length;
+    const limitMessage = document.getElementById('limitMessage');
+
+    if (selectedCount > 3) {
+        limitMessage.style.display = 'block';
+        limitMessage.textContent = '관심사는 최대 3개만 선택 가능합니다.';
+    } else {
+        limitMessage.style.display = 'none';
+    }
+}
+
+
 function saveInterests() {
+   
+   
+   
+      
       const formData = new FormData();
 
        // 관심사 데이터 수집 후 FormData에 추가
@@ -422,9 +529,12 @@ function saveInterests() {
 
        // 선택된 체크박스가 3개가 아니면 전송하지 않음
        if (selectedCount !== 3) {
-           alert("관심사 3개를 선택해주세요.");
+          
+           document.getElementById('limitMessage').style.display = 'block';
            return; // 서버로 전송하지 않음
        }
+       
+
        
        // 서버로 POST 요청
        fetch('/member/api/updateUserInterests?userNo=2', {
@@ -477,6 +587,8 @@ function updateInterestDisplay(updatedInterests) {
        // 관심사 영역에 업데이트된 HTML을 삽입
        document.getElementById('userInterestDisplay').innerHTML = updatedHTML;
    }
+
+
 
 
 

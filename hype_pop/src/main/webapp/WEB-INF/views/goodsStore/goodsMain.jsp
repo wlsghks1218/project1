@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -143,6 +144,10 @@ h1, h2 {
 </head>
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo"/>
+   		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
 	<h1>현재 인기있는 굿즈</h1>
 	<div id="hotGoods">
 		<button id="prevBtn1">◀</button>
@@ -161,6 +166,7 @@ h1, h2 {
 		</div>
 		<button id="nextBtn1">▶</button>
 	</div>
+    <sec:authorize access="!isAuthenticated()">
 	<h1>관심사별 인기 목록</h1>
 	<h2>
 		<c:choose>
@@ -267,9 +273,8 @@ h1, h2 {
 		</div>
 		<button id="nextBtn4">▶</button>
 	</div>
-	
-	<br><hr><br>
-	
+    </sec:authorize>	
+    <sec:authorize access="isAuthenticated()">
 	<h1>관심사별 인기 목록</h1>
 	<h2>
 		<c:choose>
@@ -292,7 +297,7 @@ h1, h2 {
 	<div id="interestGoods4">
 		<button id="prevBtn5">◀</button>
 		<div class="goodsContainer5" id="goodsContainer5">
-			<c:forEach var="vo" items="${interestOneNotLogin}">
+			<c:forEach var="vo" items="${interestOneLogined}">
 			
 				<div class="goodsItem5">
 					<input type="hidden" value="${vo.gno}">
@@ -328,7 +333,7 @@ h1, h2 {
 	<div id="interestGoods5">
 		<button id="prevBtn6">◀</button>
 		<div class="goodsContainer6" id="goodsContainer6">
-			<c:forEach var="vo" items="${interestTwoNotLogin}">
+			<c:forEach var="vo" items="${interestTwoLogined}">
 				<div class="goodsItem6">
 					<input type="hidden" value="${vo.gno}">
 					<input type="hidden" value="${vo.attachList[0].uuid}_${vo.attachList[0].fileName}" id="fileName">
@@ -363,7 +368,7 @@ h1, h2 {
 	<div id="interestGoods6">
 		<button id="prevBtn7">◀</button>
 		<div class="goodsContainer7" id="goodsContainer7">
-			<c:forEach var="vo" items="${interestThreeNotLogin}">
+			<c:forEach var="vo" items="${interestThreeLogined}">
 				<div class="goodsItem7">
 					<input type="hidden" value="${vo.gno}">
 					<input type="hidden" value="${vo.attachList[0].uuid}_${vo.attachList[0].fileName}" id="fileName">
@@ -377,6 +382,7 @@ h1, h2 {
 		</div>
 		<button id="nextBtn7">▶</button>
 	</div>
+    </sec:authorize>	
 	<jsp:include page="layout/popUpFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>

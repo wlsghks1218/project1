@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+	let userNoElement = document.getElementById("userNo");
+	let userNo = userNoElement ? parseInt(userNoElement.value) : null;
+	
     const categorySelect = document.getElementById("categorySelect");
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
@@ -127,7 +130,7 @@ document.getElementById("goBack").addEventListener('click', () => {
 	location.href = "/party/partyBoard";
 });
 
-const userNo = 1;
+
 document.getElementById("submitBtn").addEventListener('click', (e) => {
 	
     const categorySelect = document.getElementById("categorySelect");
@@ -158,7 +161,6 @@ document.getElementById("submitBtn").addEventListener('click', (e) => {
 		return;
 	}
 
-    // userNo 값을 가진 hidden input 추가
     let userNoInput = document.createElement("input");
     userNoInput.type = "hidden";
     userNoInput.name = "userNo";

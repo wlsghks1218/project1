@@ -2,6 +2,7 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -224,6 +225,10 @@ body {
 </head>
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo"/>
+   		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
 	
 <div id="goodsSearchResult">
 	<div class="searchCategory">

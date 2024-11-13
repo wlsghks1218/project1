@@ -12,7 +12,9 @@ import javax.servlet.http.HttpSession;
 import org.hype.domain.gImgVO;
 import org.hype.domain.goodsVO;
 import org.hype.service.GoodsService;
+import org.joonzis.security.domain.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,96 +58,102 @@ public class GoodsController {
 	    return "/goodsStore/goodsDetails";
 	}
  
-    @GetMapping("/goodsMain")
-    public String goodsMain(Model model, HttpServletRequest request) {
-        List<goodsVO> vo1 = gService.getListByLikeCount();
-        for(goodsVO vo : vo1){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        model.addAttribute("likeGoods", vo1);
-        
-        // 로그인하지 않은 경우 관심사 3개에 대한 goodsVO 가져오기
-        Map<String, Object> result1 = gService.getListByInterestOneNotLogin();
-        String category1 = (String) result1.get("category");
-        List<goodsVO> interestOneNotLogin = (List<goodsVO>) result1.get("goodsList");
-        for(goodsVO vo : interestOneNotLogin){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        Map<String, Object> result2 = gService.getListByInterestTwoNotLogin();
-        String category2 = (String) result2.get("category");
-        List<goodsVO> interestTwoNotLogin = (List<goodsVO>) result2.get("goodsList");
-        for(goodsVO vo : interestTwoNotLogin){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        Map<String, Object> result3 = gService.getListByInterestThreeNotLogin();
-        String category3 = (String) result3.get("category");
-        List<goodsVO> interestThreeNotLogin = (List<goodsVO>) result3.get("goodsList");
-        for(goodsVO vo : interestThreeNotLogin){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        HttpSession session = request.getSession();
-        session.setAttribute("open", "null");
-        
-        model.addAttribute("categoryOne", category1);
-        model.addAttribute("categoryTwo", category2);
-        model.addAttribute("categoryThree", category3);
-        model.addAttribute("interestOneNotLogin", interestOneNotLogin);
-        model.addAttribute("interestTwoNotLogin", interestTwoNotLogin);
-        model.addAttribute("interestThreeNotLogin", interestThreeNotLogin);
-        
-//        @AuthenticationPrincipal CustomUser customUser
-//        customUser.userNo로 가져오던가 해야함
-        
-        int userNo = 3;
-        //로그인한 경우 관심사 3개에 대한 goodVO 가져오기
-        List<String> mcat = gService.getUserInfo(userNo);
-        List<goodsVO> interestOneLogined = gService.getListByInterestOneLogined(mcat.get(0));
-        for(goodsVO vo : interestOneLogined){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        List<goodsVO> interestTwoLogined = gService.getListByInterestOneLogined(mcat.get(1));
-        for(goodsVO vo : interestTwoLogined){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        List<goodsVO> interestThreeLogined = gService.getListByInterestOneLogined(mcat.get(2));
-        for(goodsVO vo : interestThreeLogined){
-        	List<gImgVO> imgVo = new ArrayList<gImgVO>();
-        	gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
-            imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
-        };
-        
-        model.addAttribute("categoryFour", mcat.get(0));
-        model.addAttribute("categoryFive", mcat.get(1));
-        model.addAttribute("categorySix", mcat.get(2));
-        model.addAttribute("interstOneLogined", interestOneLogined);
-        model.addAttribute("interestTwoLogined", interestTwoLogined);
-        model.addAttribute("interestThreeLogined", interestThreeLogined);
-        return "/goodsStore/goodsMain";
-    }
+	@GetMapping("/goodsMain")
+	public String goodsMain(@RequestParam(value = "userNo", required = false) Integer userNo, Model model, HttpServletRequest request) {
+		log.warn("유저번호" +userNo);
+	    List<goodsVO> vo1 = gService.getListByLikeCount();
+	    for (goodsVO vo : vo1) {
+	        List<gImgVO> imgVo = new ArrayList<>();
+	        gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	        imgVo.add(imgVo1);
+	        vo.setAttachList(imgVo);
+	    }
+	    model.addAttribute("likeGoods", vo1);
+
+	    HttpSession session = request.getSession();
+	    session.setAttribute("open", "null");
+
+	    if (userNo == null) { // 비로그인 상태
+	        Map<String, Object> result1 = gService.getListByInterestOneNotLogin();
+	        String category1 = (String) result1.get("category");
+	        List<goodsVO> interestOneNotLogin = (List<goodsVO>) result1.get("goodsList");
+	        for (goodsVO vo : interestOneNotLogin) {
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        Map<String, Object> result2 = gService.getListByInterestTwoNotLogin();
+	        String category2 = (String) result2.get("category");
+	        List<goodsVO> interestTwoNotLogin = (List<goodsVO>) result2.get("goodsList");
+	        for (goodsVO vo : interestTwoNotLogin) {
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        Map<String, Object> result3 = gService.getListByInterestThreeNotLogin();
+	        String category3 = (String) result3.get("category");
+	        List<goodsVO> interestThreeNotLogin = (List<goodsVO>) result3.get("goodsList");
+	        for (goodsVO vo : interestThreeNotLogin) {
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        model.addAttribute("categoryOne", category1);
+	        model.addAttribute("categoryTwo", category2);
+	        model.addAttribute("categoryThree", category3);
+	        model.addAttribute("interestOneNotLogin", interestOneNotLogin);
+	        model.addAttribute("interestTwoNotLogin", interestTwoNotLogin);
+	        model.addAttribute("interestThreeNotLogin", interestThreeNotLogin);
+	    } else { // 로그인 상태
+	        List<String> mcat = gService.getUserInfo(userNo);
+	        
+	        
+	        log.info("관심 카테고리: " + mcat);
+
+	        List<goodsVO> interestOneLogined = gService.getListByInterestOneLogined(mcat.get(0));
+	        for (goodsVO vo : interestOneLogined) {
+	            log.info("InterestOneLogined 상품: " + vo.getGno() + ", " + vo.getGname());
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        List<goodsVO> interestTwoLogined = gService.getListByInterestOneLogined(mcat.get(1));
+	        for (goodsVO vo : interestTwoLogined) {
+	            log.info("InterestTwoLogined 상품: " + vo.getGno() + ", " + vo.getGname());
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        List<goodsVO> interestThreeLogined = gService.getListByInterestOneLogined(mcat.get(2));
+	        for (goodsVO vo : interestThreeLogined) {
+	            log.info("InterestThreeLogined 상품: " + vo.getGno() + ", " + vo.getGname());
+	            List<gImgVO> imgVo = new ArrayList<>();
+	            gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
+	            imgVo.add(imgVo1);
+	            vo.setAttachList(imgVo);
+	        }
+
+	        model.addAttribute("categoryFour", mcat.get(0));
+	        model.addAttribute("categoryFive", mcat.get(1));
+	        model.addAttribute("categorySix", mcat.get(2));
+	        model.addAttribute("interestOneLogined", interestOneLogined);
+	        model.addAttribute("interestTwoLogined", interestTwoLogined);
+	        model.addAttribute("interestThreeLogined", interestThreeLogined);
+	    }
+
+	    return "/goodsStore/goodsMain";
+	}
+
 
     @GetMapping("/goodsSearch")
     public String goodsSearch() {

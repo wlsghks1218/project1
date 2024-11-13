@@ -1,3 +1,7 @@
+let userNoElement = document.getElementById("userNo");
+let userNo = userNoElement ? userNoElement.value : null;
+console.log(userNo);
+
 document.getElementById('searchBTN').addEventListener('click', function() {
     performSearch();
 });
@@ -31,12 +35,16 @@ document.querySelectorAll('div').forEach(btn =>{
 		case "mainLogoDiv":
 			location.href = "/";
 			break;
-		case "goodsMainLogoDiv":
-		    const searchedText = document.getElementById('goodsSearchBox');
-		    localStorage.setItem('searchText', '');
-		    searchedText.placeholder = '검색할 굿즈 이름을 입력하세요';
-			location.href = "/goodsStore/goodsMain";
-			break;
+        case "goodsMainLogoDiv":
+            const searchedText = document.getElementById('goodsSearchBox');
+            localStorage.setItem('searchText', '');
+            searchedText.placeholder = '검색할 굿즈 이름을 입력하세요';
+            if (userNo) {
+                location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
+            } else {
+                location.href = "/goodsStore/goodsMain";
+            }
+            break;
 		case "hamburgerDiv":
 		    const menu = document.querySelector("#hamburgerList ul");
 		    

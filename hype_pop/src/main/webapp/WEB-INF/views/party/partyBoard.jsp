@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <title>Party Board</title>
 <style>
-/* 전체 배경과 텍스트 색상 설정 */
 body {
 	font-family: Arial, sans-serif;
 	background-color: #141414;
@@ -123,7 +122,6 @@ tr:hover {
 	<div class="buttonArea">
 		<button id="goInsertBoard">게시글 작성</button>
 	</div>
-
 	<jsp:include page="layout/popUpFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>

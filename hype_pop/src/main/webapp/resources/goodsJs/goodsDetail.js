@@ -111,7 +111,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function chkReplied() {
-        const userNo = 1;
         const gno = new URLSearchParams(location.search).get('gno');
         fetch(`/gReply/chkReplied/${userNo}/${gno}`)
             .then(response => response.text())
@@ -169,11 +168,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const reviewText = document.getElementById('reviewText').value;
         const gno = new URLSearchParams(location.search).get('gno');
         const userId = "유저ID입니다.";
-        const userNo = 1;
-
         rs.add({
             gno: gno,
-            userNo: 1,
+            userNo: userNo,
             gcomment: reviewText,
             gscore: rating,
             userId: userId
@@ -189,8 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showReplyList(page) {
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
         rs.getList(gno, userNo, currentPage, pageSize, function (data) {
             const replyUlMine = document.querySelector(".myChat");
             const replyUlAll = document.querySelector(".allChat");
@@ -317,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         body: JSON.stringify({
                             gno: new URLSearchParams(location.search).get('gno'),
-                            userNo: 1,
+                            userNo: userNo,
                             gcomment: newComment,
                             gscore : newGscore
                         }),
@@ -340,8 +335,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.deleteBtn').forEach(deleteBtn => {
             deleteBtn.addEventListener('click', function () {
                 const gno = new URLSearchParams(location.search).get('gno');
-                const userNo = 1;
-
                 fetch(`/gReply/deleteReply/${gno}/${userNo}`, { method: 'DELETE' })
                     .then(response => response.json())
                     .then(result => {
@@ -419,8 +412,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function likeBtnChange() {
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
         fetch(`/goodsStore/chkLike/${gno}/${userNo}`)
             .then(response => response.json())
             .then(result => {
@@ -432,8 +423,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelector("#chkLike").addEventListener('click', () => {
         const gno = new URLSearchParams(location.search).get('gno');
-        const userNo = 1;
-
         fetch(`/goodsStore/changeLike/${gno}/${userNo}`)
             .then(response => response.json())
             .then(() => likeBtnChange())

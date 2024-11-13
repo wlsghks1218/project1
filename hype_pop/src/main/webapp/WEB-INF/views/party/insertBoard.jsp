@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -143,7 +143,10 @@ footer, nav {
 </head>
 <body>
 	<jsp:include page="layout/popUpHeader.jsp" />
-
+	<sec:authorize access="isAuthenticated()">
+		<sec:authentication property="principal" var="pinfo"/>
+   		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+	</sec:authorize>
 	<div class="container">
 		<div class="mainBanner">
 			<h2>여기는 게시판 메인 배너</h2>
@@ -151,6 +154,7 @@ footer, nav {
 
 		<div class="inputGroup">
 			<form id="boardForm" method="post">
+		   		<input type="hidden" name="userNo" value="${pinfo.member.userNo}">
 				<div class="categorySelectGroup">
 					<label for="categorySelect">카테고리 선택</label>
 					<select name="category"	id="categorySelect" class="inputField">
