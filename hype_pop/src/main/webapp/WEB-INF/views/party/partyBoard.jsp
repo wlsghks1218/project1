@@ -97,6 +97,60 @@ tr:hover {
 	color: #ffffff;
 	font-weight: bold;
 }
+.modal {
+   display: none;
+   position: fixed;
+   z-index: 1000;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+   background-color: #222;
+   color: white;
+   margin: 15% auto;
+   padding: 20px;
+   border-radius: 8px;
+   width: 300px;
+   text-align: center;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content p {
+   font-size: 18px;
+   margin-bottom: 20px;
+}
+
+.modal-content button {
+   padding: 10px 20px;
+   background-color: #e50914;
+   color: white;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   border-radius: 5px;
+   transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+   background-color: #c3070a;
+}
+
+.close {
+   color: #aaa;
+   float: right;
+   font-size: 28px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+   color: #fff;
+}
 </style>
 </head>
 <body>
@@ -121,6 +175,13 @@ tr:hover {
 	<div id="pagination" class="pagination"></div>
 	<div class="buttonArea">
 		<button id="goInsertBoard">게시글 작성</button>
+	</div>
+	<div id="loginModal" class="modal">
+	   <div class="modal-content">
+	      <span class="close">&times;</span>
+	      <p>로그인이 필요한 기능입니다.</p>
+	      <button id="goToLogin" onclick="location.href='/member/login'">로그인하러 가기</button>
+	   </div>
 	</div>
 	<jsp:include page="layout/popUpFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />

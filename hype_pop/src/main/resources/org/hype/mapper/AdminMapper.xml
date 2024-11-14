@@ -167,7 +167,7 @@
 	<!-- 상품(굿즈) 등록하기 페이지 -->
 	<select id="getAllPopStores" resultType="org.hype.domain.popStoreVO">
 	    SELECT psNo, psName 
-	    FROM pop_main_tbl
+	    FROM pop_main_tbl order by psname
 	</select>
 	
 	<insert id="insertGoodsStore" parameterType="org.hype.domain.goodsVO">

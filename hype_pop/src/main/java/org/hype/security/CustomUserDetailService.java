@@ -2,7 +2,7 @@ package org.hype.security;
 
 import org.hype.domain.signInVO;
 import org.hype.mapper.SecurityMapper;
-import org.joonzis.security.domain.CustomUser;
+import org.hype.security.domain.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

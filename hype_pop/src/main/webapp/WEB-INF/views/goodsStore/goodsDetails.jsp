@@ -267,6 +267,7 @@ h1, h2, p, span {
    padding: 10px;
    margin-bottom: 15px;
    font-size: 16px;
+   resize:none;
 }
 
 #addReply {
@@ -362,6 +363,94 @@ h1, h2, p, span {
 .pagination button:hover {
     background-color: #f44336;
 }
+
+/* 모달 스타일 */
+.modal {
+   display: none;
+   position: fixed;
+   z-index: 1000;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+   background-color: #222;
+   color: white;
+   margin: 15% auto;
+   padding: 20px;
+   border-radius: 8px;
+   width: 300px;
+   text-align: center;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content p {
+   font-size: 18px;
+   margin-bottom: 20px;
+}
+
+.modal-content button {
+   padding: 10px 20px;
+   background-color: #e50914;
+   color: white;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   border-radius: 5px;
+   transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+   background-color: #c3070a;
+}
+
+.close {
+   color: #aaa;
+   float: right;
+   font-size: 28px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+   color: #fff;
+}
+
+.scroll-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    z-index: 20;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.scroll-btn button {
+    background-color: #e50914;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 </style>
 </head>
 <body>
@@ -424,6 +513,18 @@ h1, h2, p, span {
       </ul>
    </div>
    <div class="pagination"></div>
+   
+	<div id="loginModal" class="modal">
+	   <div class="modal-content">
+	      <span class="close">&times;</span>
+	      <p>로그인이 필요한 기능입니다.</p>
+	      <button id="goToLogin" onclick="location.href='/member/login'">로그인하러 가기</button>
+	   </div>
+	</div>
+	<div class="scroll-btn">
+    <button id="scrollUp">위로</button>
+    <button id="scrollDown">아래로</button>
+</div>
    <jsp:include page="layout/popUpFooter.jsp" />
    <jsp:include page="layout/goodsNavBar.jsp" />
 </body>
@@ -431,10 +532,3 @@ h1, h2, p, span {
 <script type="text/javascript" src="/resources/goodsJs/goodsDetail.js"></script>
 <script type="text/javascript" src="/resources/goodsJs/goodsHeader.js"></script>
 <script type="text/javascript" src="/resources/goodsJs/goodsNav.js"></script>
-<!--추가(윤) -->
-<script type="text/javascript" src="/resources/purchaseJs/myCart.js"></script>
-<script>
-    var goodsPrice = ${goods.gprice};
-    console.log(goodsPrice);
-</script>
-</html>

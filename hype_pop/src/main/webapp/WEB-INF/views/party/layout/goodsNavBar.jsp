@@ -42,8 +42,8 @@
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
         <a href="/logout">로그아웃</a>
-        </sec:authorize>
         <a href="/member/myPage?userNo=1">마이페이지</a>
+        </sec:authorize>
         <a href="/party/partyBoard">파티구하기</a>
     </div>
 </body>

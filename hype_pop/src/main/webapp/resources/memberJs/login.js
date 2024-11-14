@@ -3,6 +3,12 @@ const searchIdBtn = document.getElementById('searchId');
 const customAlert = document.getElementById('customAlert');
 const sendEmailBtn = document.getElementById('sendEmailBtn');
 
+// 추가 by 진환
+document.getElementById('redirect').value = document.referrer;
+console.log(document.getElementById('redirect').value);
+
+document.getElementById('passwordChangeForm').onsubmit = submitPwChange;
+
 //로그인 처리 (storage에 저장)
 //document.getElementById("loginBtn").addEventListener("click", function(event) {
 //    event.preventDefault(); // 기본 제출 동작 방지
@@ -249,9 +255,6 @@ function submitPwChange() {
     }
     return true; // 성공
 }
-
-document.getElementById('passwordChangeForm').onsubmit = submitPwChange;
-
 
 
 

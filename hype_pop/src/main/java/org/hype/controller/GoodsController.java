@@ -11,8 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hype.domain.gImgVO;
 import org.hype.domain.goodsVO;
+import org.hype.security.domain.CustomUser;
 import org.hype.service.GoodsService;
-import org.joonzis.security.domain.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -60,7 +60,7 @@ public class GoodsController {
  
 	@GetMapping("/goodsMain")
 	public String goodsMain(@RequestParam(value = "userNo", required = false) Integer userNo, Model model, HttpServletRequest request) {
-		log.warn("유저번호" +userNo);
+		log.warn("유저번호" + userNo);
 	    List<goodsVO> vo1 = gService.getListByLikeCount();
 	    for (goodsVO vo : vo1) {
 	        List<gImgVO> imgVo = new ArrayList<>();
@@ -115,7 +115,9 @@ public class GoodsController {
 	        
 	        
 	        log.info("관심 카테고리: " + mcat);
-
+	        log.info("관심 카테고리 1: " + mcat.get(0));
+	        log.info("관심 카테고리 2: " + mcat.get(1));
+	        log.info("관심 카테고리 3: " + mcat.get(2));
 	        List<goodsVO> interestOneLogined = gService.getListByInterestOneLogined(mcat.get(0));
 	        for (goodsVO vo : interestOneLogined) {
 	            log.info("InterestOneLogined 상품: " + vo.getGno() + ", " + vo.getGname());

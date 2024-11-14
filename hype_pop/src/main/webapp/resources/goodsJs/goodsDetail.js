@@ -14,7 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showReplyList(currentPage);
     displayAvgStars();
+    if (userNo){
     chkReplied();
+    }
     
     function displayAvgStars() {
         const avgStarsContainer = document.getElementById('avgStarsContainer');
@@ -164,29 +166,35 @@ document.addEventListener("DOMContentLoaded", function () {
     
     document.getElementById('addReply').addEventListener('click', function (event) {
         event.preventDefault();
-        const rating = document.getElementById('rating').value;
-        const reviewText = document.getElementById('reviewText').value;
-        const gno = new URLSearchParams(location.search).get('gno');
-        const userId = "유저ID입니다.";
-        rs.add({
-            gno: gno,
-            userNo: userNo,
-            gcomment: reviewText,
-            gscore: rating,
-            userId: userId
-        }, function (result) {
-            if (result === "success") {
-                showReplyList(currentPage);
-                chkReplied();
-            } else {
-                alert("댓글 등록 실패");
-            }
-        })
+        if (userNo) {
+            const rating = document.getElementById('rating').value;
+            const reviewText = document.getElementById('reviewText').value;
+            const gno = new URLSearchParams(location.search).get('gno');
+            const userId = "유저ID입니다.";
+            rs.add({
+                gno: gno,
+                userNo: userNo,
+                gcomment: reviewText,
+                gscore: rating,
+                userId: userId
+            }, function (result) {
+                if (result === "success") {
+                    showReplyList(currentPage);
+                    chkReplied();
+                } else {
+                    alert("댓글 등록 실패");
+                }
+            });
+        } else {
+            document.getElementById("loginModal").style.display = "block";
+        }
     });
 
     function showReplyList(page) {
         const gno = new URLSearchParams(location.search).get('gno');
-        rs.getList(gno, userNo, currentPage, pageSize, function (data) {
+        const currentUserNo = userNo || 0; // userNo가 없을 경우 0 사용
+        
+        rs.getList(gno, currentUserNo, currentPage, pageSize, function (data) {
             const replyUlMine = document.querySelector(".myChat");
             const replyUlAll = document.querySelector(".allChat");
             replyUlMine.innerHTML = "";
@@ -196,9 +204,9 @@ document.addEventListener("DOMContentLoaded", function () {
             let myReplyMsg = '';
             let allReplyMsg = '';
 
-            // 내 댓글 추가
-            const myReply = data.myReply;
-            if (myReply) {
+            // 내 댓글 추가 (로그인한 사용자만)
+            if (userNo && data.myReply) { // userNo가 있을 때만 myReply 사용
+                const myReply = data.myReply;
                 myReplyMsg += `<li dataRno=${myReply.greplyNo} class="myChat">`;
                 myReplyMsg += `<div class="chatHeader">`;
                 myReplyMsg += `<div class="userRating"></div>`;
@@ -229,12 +237,13 @@ document.addEventListener("DOMContentLoaded", function () {
             replyUlAll.innerHTML = allReplyMsg;
 
             displayPagingButtons(data.totalReplies);
-            displayStarsForReplies(myReply, allReplies);
+            displayStarsForReplies(data.myReply, allReplies);
             bindEditDeleteEvents();
             bindKebabMenuEvents();
             displayAvgStars();
         });
     }
+
 
     function bindEditDeleteEvents() {
         // 수정 버튼 이벤트
@@ -422,6 +431,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelector("#chkLike").addEventListener('click', () => {
+    	if(userNo){
         const gno = new URLSearchParams(location.search).get('gno');
         fetch(`/goodsStore/changeLike/${gno}/${userNo}`)
             .then(response => response.json())
@@ -433,11 +443,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 likeBtnChange();
             })
             .catch(err => console.error('Error:', err));
+    	}else{
+            document.getElementById("loginModal").style.display = "block";
+    	}
     });
-    likeBtnChange();
+    
+    if (userNo) {
+        likeBtnChange();
+    }
     
     document.getElementById("moveToStore").addEventListener('click', ()=>{
         const gno = new URLSearchParams(location.search).get('gno');
     	location.href=`/goodsStore/goodsToPopup?gno=${gno}`;
     })
+    
+    document.querySelector(".close").onclick = function() {
+        document.getElementById("loginModal").style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById("loginModal")) {
+            document.getElementById("loginModal").style.display = "none";
+        }
+    };
+    
+    const scrollUpButton = document.getElementById("scrollUp");
+    const scrollDownButton = document.getElementById("scrollDown");
+
+    // 최상단으로 스크롤
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 최하단으로 스크롤
+    function scrollToBottom() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // 스크롤 상태에 따라 버튼 보이기/숨기기 설정
+    function checkScrollPosition() {
+        if (window.scrollY === 0) {
+            scrollUpButton.disabled = true;
+            scrollDownButton.disabled = false;
+        } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            scrollUpButton.disabled = false;
+            scrollDownButton.disabled = true;
+        } else {
+            scrollUpButton.disabled = false;
+            scrollDownButton.disabled = false;
+        }
+    }
+
+    // 버튼에 클릭 이벤트 리스너 추가
+    scrollUpButton.addEventListener("click", scrollToTop);
+    scrollDownButton.addEventListener("click", scrollToBottom);
+
+    // 페이지 로드 및 스크롤 시 버튼 상태 업데이트
+    window.addEventListener("scroll", checkScrollPosition);
+    checkScrollPosition(); // 초기 로딩 시 상태 설정
 });

@@ -1,4 +1,4 @@
-package org.joonzis.security.domain;
+package org.hype.security.domain;
 
 import java.util.Collection;
 import java.util.List;

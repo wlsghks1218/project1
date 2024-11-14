@@ -5,11 +5,14 @@ let userNoElement = document.getElementById("userNo");
 let userNo = userNoElement ? userNoElement.value : null;
 console.log(userNo);
 
-// goInsertBoard 버튼 요소를 찾고 존재할 경우에만 이벤트 리스너를 추가
 const goInsertBoardBtn = document.getElementById("goInsertBoard");
 if (goInsertBoardBtn) {
     goInsertBoardBtn.addEventListener('click', () => {
-        location.href = "/party/boardInsert";
+        if (userNo) {
+            location.href = "/party/boardInsert";
+        } else {
+            document.getElementById("loginModal").style.display = "block";
+        }
     });
 }
 
@@ -51,6 +54,7 @@ function renderTable() {
 
     document.querySelectorAll(".partyTr").forEach(row => {
         row.addEventListener('click', (e) => {
+        	if(userNo){
             const currentBno = e.currentTarget.getAttribute("data-bno");
             const currentUser = parseInt(e.currentTarget.getAttribute("data-current"));
             const maxUser = parseInt(e.currentTarget.getAttribute("data-max"));
@@ -67,6 +71,9 @@ function renderTable() {
                     location.href = `/party/boardDetail?bno=${currentBno}`;
                 })
                 .catch(error => console.error("Error checking room status:", error));
+        	}else{
+                document.getElementById("loginModal").style.display = "block";
+        	}
         });
     });
 }
@@ -111,3 +118,13 @@ function displayNoPartyMessage() {
     const pagination = document.getElementById("pagination");
     pagination.innerHTML = ""; // 페이지네이션 숨김
 }
+
+document.querySelector(".close").onclick = function() {
+    document.getElementById("loginModal").style.display = "none";
+};
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("loginModal")) {
+        document.getElementById("loginModal").style.display = "none";
+    }
+};
