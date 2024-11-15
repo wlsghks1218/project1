@@ -11,7 +11,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #141414; /* 어두운 배경 */
-    color: #ffffff; /* 텍스트 흰색 */
+    color: #000000; /* 텍스트 검은색 */
     margin: 0;
     padding: 0;
 }
@@ -29,29 +29,29 @@ table {
     margin: 20px auto;
     border-collapse: collapse;
     background-color: #333; /* 테이블 배경색 */
-    color: #ffffff; /* 기본 텍스트 색상 */
-    border: 2px solid #ffffff; /* 테이블 전체 테두리 흰색 */
+    color: #000000; /* 기본 텍스트 색상 검은색 */
+    border: 2px solid #000000; /* 테이블 전체 테두리 검은색 */
 }
 
 th, td {
     padding: 15px;
     text-align: center;
-    border-bottom: 1px solid #ffffff; /* 행 간 구분선 흰색 */
+    border-bottom: 1px solid #000000; /* 행 간 구분선 검은색 */
 }
 
 th {
     background-color: #add8e6; /* 연한 하늘색 */
     font-weight: bold;
-    color: #ffffff; /* 흰색 텍스트 */
+    color: #000000; /* 검은색 텍스트 */
 }
 
 td {
-    background-color: #00aff0; /* 진한 하늘색 */
-    color: #ffffff; /* 흰색 텍스트 */
+    background-color: #ffffff; /* 흰색 배경 */
+    color: #000000; /* 검은색 텍스트 */
 }
 
 tr:hover td {
-    background-color: #5dade2; /* 강조 색상 */
+    background-color: #cce7ff; /* 강조 색상 연한 하늘색 */
 }
 
 /* 버튼 영역 */
@@ -62,8 +62,8 @@ tr:hover td {
 
 /* #goInsertBoard 버튼 스타일 */
 #goInsertBoard {
-    background-color: #00aff0; /* 연한 하늘색 */
-    color: #ffffff; /* 텍스트 흰색 */
+    background-color: #add8e6; /* 연한 하늘색 */
+    color: #000000; /* 텍스트 검은색 */
     padding: 10px 20px; /* 내부 여백 */
     font-size: 16px; /* 글자 크기 */
     border: none; /* 테두리 제거 */
@@ -73,7 +73,7 @@ tr:hover td {
 }
 
 #goInsertBoard:hover {
-    background-color: #5dade2; /* 호버 시 더 진한 하늘색 */
+    background-color: #cce7ff; /* 호버 시 더 연한 하늘색 */
     transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
@@ -86,24 +86,24 @@ tr:hover td {
 
 .pageItem {
     display: inline-block;
-    background-color: #00aff0; /* 연한 하늘색 */
-    color: #ffffff; /* 텍스트 흰색 */
+    background-color: #add8e6; /* 연한 하늘색 */
+    color: #000000; /* 텍스트 검은색 */
     padding: 10px 15px;
     margin: 0 5px;
-    border: 1px solid #ffffff; /* 테두리 흰색 */
+    border: 1px solid #000000; /* 테두리 검은색 */
     border-radius: 4px;
     cursor: pointer; /* 클릭 가능한 포인터 */
     transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
 }
 
 .pageItem:hover {
-    background-color: #5dade2; /* 호버 시 더 진한 하늘색 */
+    background-color: #cce7ff; /* 호버 시 더 연한 하늘색 */
     transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 .pageItem.active {
-    background-color: #5dade2; /* 활성화된 버튼 색상 */
-    color: #ffffff; /* 텍스트 흰색 */
+    background-color: #cce7ff; /* 활성화된 버튼 색상 */
+    color: #000000; /* 텍스트 검은색 */
     font-weight: bold;
 }
 
@@ -120,8 +120,8 @@ tr:hover td {
 }
 
 .modal-content {
-    background-color: #222; /* 모달 배경 */
-    color: white;
+    background-color: #ffffff; /* 모달 배경 흰색 */
+    color: #000000; /* 텍스트 검은색 */
     margin: 15% auto;
     padding: 20px;
     border-radius: 8px;
@@ -136,8 +136,8 @@ tr:hover td {
 }
 
 .modal-content button {
-    background-color: #e50914; /* 기본 배경 */
-    color: white; /* 텍스트 색상 */
+    background-color: #add8e6; /* 기본 배경 */
+    color: #000000; /* 텍스트 검은색 */
     padding: 10px 20px; /* 내부 여백 */
     font-size: 16px; /* 글자 크기 */
     border: none; /* 테두리 제거 */
@@ -147,12 +147,12 @@ tr:hover td {
 }
 
 .modal-content button:hover {
-    background-color: #c3070a; /* 호버 색상 */
+    background-color: #cce7ff; /* 호버 색상 */
     transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 .close {
-    color: #aaa;
+    color: #000000; /* 닫기 버튼 검은색 */
     float: right;
     font-size: 28px;
     font-weight: bold;
@@ -161,7 +161,7 @@ tr:hover td {
 
 .close:hover,
 .close:focus {
-    color: #fff; /* 호버 시 흰색 */
+    color: #555; /* 호버 시 밝은 검은색 */
 }
 
 </style>

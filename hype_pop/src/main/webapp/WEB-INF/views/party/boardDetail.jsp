@@ -32,7 +32,7 @@ body {
 	max-width: 800px;
 	margin: 0 auto;
 	padding: 20px;
-	background-color: #005f99; /* 콘텐츠 배경색 */
+	background-color: #00Aff0; /* 콘텐츠 배경색 */
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 그림자 효과 추가 */
 	color: #ffffff; /* 텍스트 흰색 */
@@ -42,7 +42,7 @@ body {
 .info-section {
 	margin-bottom: 15px;
 	padding: 15px;
-	background-color: #007acc; /* 정보 섹션 배경 */
+	background-color: #ffffff; /* 정보 섹션 배경 */
 	border-radius: 5px;
 	display: flex;
 	align-items: center;
@@ -52,7 +52,7 @@ body {
 	flex: 0 0 20%;
 	font-size: 1em;
 	font-weight: bold;
-	color: #ffffff; /* 카테고리 텍스트 흰색 */
+	color: #000000; /* 카테고리 텍스트 흰색 */
 	margin-right: 10px;
 	text-transform: uppercase; /* 텍스트 대문자 */
 }
@@ -60,14 +60,14 @@ body {
 .targetName {
 	flex: 1;
 	font-size: 1em;
-	color: #ffffff;
+	color: #000000;
 	opacity: 0.9; /* 약간의 투명도 */
 }
 
 /* 게시글 제목 스타일 */
 .boardTitle {
 	font-size: 1.4em; /* 텍스트 크기 조정 */
-	color: #ffffff; /* 텍스트 흰색 */
+	color: #000000; /* 텍스트 흰색 */
 	font-weight: bold;
 	margin-top: 15px;
 	border-bottom: 2px solid #0088cc; /* 하단 경계선 */
@@ -77,18 +77,21 @@ body {
 /* 실시간 채팅 제목 */
 .chat-title {
 	font-size: 1.5em;
-	color: #ffffff; /* 텍스트 흰색 */
+	color: #000000; /* 텍스트 흰색 */
 	margin: 20px 0;
 	text-align: center;
 }
 
 /* 채팅 영역 스타일 */
 #chatArea {
-	max-height: 400px;
-	overflow-y: auto;
-	padding: 10px;
-	background-color: #005f99; /* 채팅 영역 배경색 */
-	border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 400px; /* 고정 높이 설정 */
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 10px; /* 입력창과의 간격 */
 }
 
 /* 채팅 입력 영역 스타일 */
@@ -107,7 +110,7 @@ body {
 /* 버튼 스타일 */
 #sendButton, #leavePartyBtn, #scrollToBottomButton {
 	background-color: #0088cc; /* 버튼 배경색 */
-	color: #ffffff; /* 버튼 텍스트 흰색 */
+	color: #ffffff;
 	padding: 10px;
 	width: 100%;
 	font-size: 1em;
@@ -116,11 +119,11 @@ body {
 	border-radius: 4px;
 	cursor: pointer;
 	transition: background-color 0.3s ease, transform 0.2s ease;
+	margin-top : 10px;
 }
 
 #sendButton:hover, #leavePartyBtn:hover, #scrollToBottomButton:hover {
-	background-color: #005f99; /* 버튼 호버 시 색상 */
-	transform: scale(1.05); /* 약간 커지는 효과 */
+	background-color: #000000;
 }
 
 /* 버튼 영역 스타일 */
@@ -133,7 +136,7 @@ body {
 #chatArea .message {
 	display: flex;
 	margin: 5px 0;
-	max-width: 80%; /* 채팅창 너비를 화면의 80%로 제한 */
+	max-width: 100%; /* 채팅창 너비를 화면의 80%로 제한 */
 }
 
 .my-message {
@@ -141,13 +144,14 @@ body {
 }
 
 .my-message .name {
-    color: #ffffff; /* 내 이름 흰색 */
+    color: #000000; /* 내 이름 흰색 */
     margin-left: 8px;
+    padding: 5px 10px;
 }
 
 .my-message .content {
-    background-color: #004080; /* 내 메시지 배경색 */
-    color: #ffffff;
+    background-color: #00Aff0; /* 내 메시지 배경색 */
+    color: #000000;
     padding: 5px 10px;
     border-radius: 8px;
     margin-right: 5px;
@@ -158,13 +162,14 @@ body {
 }
 
 .other-message .name {
-    color: #ffe600; /* 다른 유저 이름 노란색 */
+    color: #000000; /* 다른 유저 이름 노란색 */
     margin-right: 8px;
+    padding: 5px 10px;
 }
 
 .other-message .content {
-    background-color: #003366; /* 다른 유저 메시지 배경색 */
-    color: #ffffff;
+    background-color: #fee7ed; /* 다른 유저 메시지 배경색 */
+    color: #000000;
     padding: 5px 10px;
     border-radius: 8px;
     margin-left: 5px;
@@ -173,11 +178,54 @@ body {
 /* 상태 메시지 (중앙 정렬) */
 .state-message {
     text-align: center;
-    color: #ffffff; /* 상태 메시지 텍스트 흰색 */
+    color: #000000; /* 상태 메시지 텍스트 흰색 */
     font-size: 0.9em;
     margin: 10px 0; /* 위아래 여백 추가 */
 }
+.moveToDetail{
+	color: #000000;
+}
+.memberCount {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px auto;
+    text-align: center;
+    background-color: #ffffff; /* 흰색 배경 */
+    color: #000000; /* 검은색 텍스트 */
+    padding: 10px;
+    border: 2px solid #000000; /* 검은색 테두리 */
+    border-radius: 8px;
+    max-width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+}
 
+/* joinMember 스타일 */
+.joinMember {
+    font-size: 1em;
+    color: #000000; /* 텍스트 검은색 */
+    background-color: #ffffff; /* 흰색 배경 */
+    padding: 15px;
+    margin: 15px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    border: 2px solid #000000; /* 검은색 테두리 */
+    max-width: 300px;
+}
+
+.joinMember h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #000000; /* 제목 검은색 */
+}
+
+.joinMember div {
+    padding: 5px;
+    border-bottom: 1px solid #cccccc; /* 경계선 */
+}
+
+.joinMember div:last-child {
+    border-bottom: none; /* 마지막 요소 경계선 제거 */
+}
 </style>
 </head>
 <body>
@@ -195,8 +243,10 @@ body {
 		</div>
 		<div class="boardTitle">${vo.boardTitle}</div>
 		<div class="chat-title">실시간 채팅</div>
-		<div class="memberCount"></div>
-		<div class="joinMember"></div>
+		<div id="chatUserInfo">
+			<div class="memberCount"></div>
+			<div class="joinMember"></div>
+		</div>
 
 		<div id="chatArea"></div>
 		<button id="scrollToBottomButton" style="display:none;">채팅 하단으로 이동</button>

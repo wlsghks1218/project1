@@ -40,21 +40,105 @@ function fetchPartyUserCount(){
     });
 }
 
-// sign_in_info_tbl(유저 정보 VO)를 받아오는 곳
 function fetchPartyUserList() {
-    fetch(`/party/getPartyUser/${bno}`)
+    return fetch(`/party/getPartyUser/${bno}`)
         .then(response => response.json())
         .then(data => {
             const joinMemberDiv = document.querySelector('.joinMember');
             joinMemberDiv.innerHTML = '<h3>참여 유저 목록:</h3>';
             data.forEach(user => {
-                userMap[user.userNo] = user.userId;
+                // userMap에 userId와 idCardNum을 객체로 저장
+                userMap[user.userNo] = {
+                    userId: user.userId,
+                    idCardNum: user.idCardNum
+                };
+
+                // 성별 및 나이대 계산
+                const genderCode = user.idCardNum[6]; // idCardNum의 7번째 문자
+                const gender = (genderCode === '1' || genderCode === '3') ? '남자' : '여자';
+                const birthYear = parseInt(user.idCardNum.slice(0, 2), 10);
+                const currentYear = new Date().getFullYear();
+                const fullBirthYear = (genderCode === '1' || genderCode === '2') ? 1900 + birthYear : 2000 + birthYear;
+                const age = currentYear - fullBirthYear;
+                const ageGroup = Math.floor(age / 10) * 10; // 10단위로 끊어서 계산
+
+                // 이미지 경로 설정
+                const imageSrc = gender === '남자' ? '/resources/images/male_icon.png' : '/resources/images/female_icon.png';
+
+                // 참여 유저 목록에 추가
                 const userElement = document.createElement('div');
-                userElement.textContent = `${user.userId}`;
+                userElement.style.display = 'flex';
+                userElement.style.alignItems = 'center';
+                userElement.style.marginBottom = '10px';
+
+                const userImage = document.createElement('img');
+                userImage.src = imageSrc;
+                userImage.alt = gender;
+                userImage.style.width = '30px';
+                userImage.style.height = '30px';
+                userImage.style.marginRight = '10px';
+                userImage.style.borderRadius = '50%';
+
+                const userInfo = document.createElement('span');
+                userInfo.textContent = `${user.userId} (${ageGroup}대)`;
+
+                userElement.appendChild(userImage);
+                userElement.appendChild(userInfo);
+
                 joinMemberDiv.appendChild(userElement);
             });
         })
         .catch(error => console.error("Error fetching party users:", error));
+}
+
+//chat_tbl 정보를 bno로 받아오기
+function fetchChatContents() {
+    fetch(`/party/getPartyInfo/${bno}`)
+        .then(response => response.json())
+        .then(data => {
+            const currentUserInfo = data.find(info => info.userNo == userNo);
+            const userJoinTime = new Date(currentUserInfo.joinTime);
+            const userLastLeftTime = new Date(currentUserInfo.lastLeftTime);
+            // 시간대에 맞게 chat_content_tbl 정보 받아오기
+            fetch(`/party/getAllChatContent/${bno}`)
+                .then(response => response.json())
+                .then(chatData => {
+                    const chatList = chatData.filter(message => {
+                        const messageTime = new Date(message.chatDate);
+                        return messageTime >= userJoinTime;
+                    });
+
+                    let lastLeftMessageDisplayed = false;
+                    chatList.forEach(message => {
+                        const messageTime = new Date(message.chatDate);
+                        const userInfo = userMap[message.userNo];
+                        const senderId = userInfo ? userInfo.userId : "알 수 없는 사용자";
+                        const content = message.content || "";
+
+                        if (userLastLeftTime && messageTime > userLastLeftTime) {
+                            if (!lastLeftMessageDisplayed) {
+                                print('', "여기까지 읽었습니다.", 'system', 'state', 'read-marker', message.chatDate);
+                                lastLeftMessageDisplayed = true;
+                            }
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', '', message.chatDate);
+                        } else {
+                            print(senderId, content, message.userNo === userNo ? 'me' : 'other', 'msg', '', message.chatDate);
+                        }
+                    });
+
+                    // 마지막에 스크롤 조정
+                    const chatArea = $('#chatArea')[0];
+                    const readMarker = document.querySelector('.read-marker');
+                    if (readMarker) {
+                        readMarker.scrollIntoView();
+                        $('#scrollToBottomButton').show(); // 버튼 표시
+                    } else {
+                        chatArea.scrollTop = chatArea.scrollHeight;
+                    }
+                })
+                .catch(error => console.error("Error fetching chat contents:", error));
+        })
+        .catch(error => console.error("Error fetching party info:", error));
 }
 
 // WebSocket 연결 함수
@@ -88,30 +172,36 @@ function connect() {
         // 유저 목록 및 카운트 가져오기
         fetchPartyUserList();
         fetchPartyUserCount();
+        fetchChatContents();
     };
 
     ws.onmessage = function(evt) {
         let message = JSON.parse(evt.data);
-        const senderId = userMap[message.userNo] || "알 수 없는 사용자";
 
-        console.log("Received WebSocket message:", message);
+        // Ensure userMap is updated before processing the message
+        fetchPartyUserList().then(() => {
+            const userInfo = userMap[message.userNo];
+            const senderId = userInfo ? userInfo.userId : "알 수 없는 사용자";
 
-        if (message.userNo !== userNo) {
-            if (message.code === '1') { 
-                console.log(`[${senderId}] 입장 메시지 수신`);
-                print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', '', message.chatDate);
-                fetchPartyUserList();
-                fetchPartyUserCount();
-            } else if (message.code === '2') {
-                console.log(`[${senderId}] 퇴장 메시지 수신`);
-                print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', '', message.chatDate);
-                fetchPartyUserList();
-                fetchPartyUserCount();
-            } else if (message.code === '3') {
-                console.log(`[${senderId}] 일반 메시지 수신`);
-                print(senderId, message.content || "", 'other', 'msg', '', message.chatDate);
+            console.log("Received WebSocket message:", message);
+
+            if (message.userNo !== userNo) {
+                if (message.code === '1') { 
+                    console.log(`[${senderId}] 입장 메시지 수신`);
+                    print('', `[${senderId}]님이 들어왔습니다.`, 'other', 'state', '', message.chatDate);
+                    fetchPartyUserList();
+                    fetchPartyUserCount();
+                } else if (message.code === '2') {
+                    console.log(`[${senderId}] 퇴장 메시지 수신`);
+                    print('', `[${senderId}]님이 나갔습니다.`, 'other', 'state', '', message.chatDate);
+                    fetchPartyUserList();
+                    fetchPartyUserCount();
+                } else if (message.code === '3') {
+                    console.log(`[${senderId}] 일반 메시지 수신`);
+                    print(senderId, message.content || "", 'other', 'msg', '', message.chatDate);
+                }
             }
-        }
+        });
     };
 
     ws.onclose = function(evt) {
@@ -224,6 +314,40 @@ $(document).ready(function() {
     $('#chatInputContainer').show();
     $('#scrollToBottomButton').hide();
 });
+
+//partyInfotbl => chattbl => chatcontenttbl
+document.getElementById("leavePartyBtn").addEventListener('click', () => {
+    fetch(`/party/chkMaster/${bno}/${userNo}`)
+        .then(response => response.text())
+        .then(text => {
+            const parsedText = parseInt(text);
+            if (text == "0") {
+                // 일반 유저일 경우 바로 떠나기
+                location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
+            } else if (text == "1") {
+                // 방장일 경우 확인 창 띄우기
+                const isConfirmed = confirm("당신은 방장입니다. 방이 삭제됩니다. 계속하시겠습니까?");
+                if (isConfirmed) {
+                    location.href = `/party/leaveParty?bno=${bno}&userNo=${userNo}&isMaster=${text}`;
+                }
+            }
+        });
+});
+
+const psExhName = document.querySelector(".targetName").textContent;
+const category = document.querySelector(".category").textContent;
+document.querySelector(".moveToDetail").addEventListener('click', () => {
+	if(category == "popup"){
+		location.href = `/hypePop/popUpDetails?storeName=${psExhName}`;
+	}else if(category == "exhibition"){
+		fetch(`/party/findExhNo/${psExhName}`)
+		.then(response => response.json())
+		.then(data => 
+		location.href = `/exhibition/exhibitionDetail/exhNo=${data.exhNo}`);
+	}
+})
+console.log(psExhName);
+console.log(category);
 
 // 채팅 하단으로 이동
 function scrollToBottom() {
