@@ -1,6 +1,11 @@
 const rs = replyService;
 
 document.addEventListener("DOMContentLoaded", function () {
+	const userNoElement = document.getElementById("userNo");
+	const userIdElement = document.getElementById("userId");
+	const userNo = userNoElement ? userNoElement.value : null;
+	const userId = userIdElement ? userIdElement.value : null;
+	
     let currentPage = 1;
     const pageSize = 5;
     const goodsBanner = document.getElementById("goodsBanner");
@@ -37,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => console.error('Error:', err));
     }
 
-    function setBackgroundImage(item, path, fileName) {
+    function setBackgroundImage1(item, path, fileName) {
         fetch(`/${path}/${encodeURIComponent(fileName)}`)
             .then(response => response.blob())
             .then(blob => {
@@ -50,8 +55,29 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Error:', error));
     }
 
-    setBackgroundImage(goodsBanner, "goodsStore/goodsBannerImages", fileNameBanner);
-    setBackgroundImage(goodsDetailImg, "goodsStore/goodsDetailImages", fileNameDetail);
+    setBackgroundImage1(goodsBanner, "goodsStore/goodsBannerImages", fileNameBanner);
+    
+    function setBackgroundImage2(item, path, fileName) {
+        fetch(`/${path}/${encodeURIComponent(fileName)}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const imageUrl = URL.createObjectURL(blob);
+                const img = new Image();
+                img.src = imageUrl;
+                
+                img.onload = function() {
+                    const aspectRatio = img.height / img.width;
+                    item.style.width = "100%"; // 고정 너비 설정 (예시로 전체 너비로 설정)
+                    item.style.backgroundImage = `url(${imageUrl})`;
+                    item.style.backgroundSize = "cover";
+                    item.style.backgroundPosition = "center center";
+                    item.style.backgroundRepeat = "no-repeat";
+                    item.style.height = `${item.offsetWidth * aspectRatio}px`; // 높이를 비율에 맞춰 설정
+                };
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    setBackgroundImage2(goodsDetailImg, "goodsStore/goodsDetailImages", fileNameDetail);
 
     const decreaseBtn = document.getElementById('decreaseBtn');
     const increaseBtn = document.getElementById('increaseBtn');
@@ -170,7 +196,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const rating = document.getElementById('rating').value;
             const reviewText = document.getElementById('reviewText').value;
             const gno = new URLSearchParams(location.search).get('gno');
-            const userId = "유저ID입니다.";
             rs.add({
                 gno: gno,
                 userNo: userNo,
@@ -200,17 +225,15 @@ document.addEventListener("DOMContentLoaded", function () {
             replyUlMine.innerHTML = "";
             replyUlAll.innerHTML = "";
 
-            // 댓글 목록 초기화
             let myReplyMsg = '';
             let allReplyMsg = '';
 
-            // 내 댓글 추가 (로그인한 사용자만)
             if (userNo && data.myReply) { // userNo가 있을 때만 myReply 사용
                 const myReply = data.myReply;
                 myReplyMsg += `<li dataRno=${myReply.greplyNo} class="myChat">`;
                 myReplyMsg += `<div class="chatHeader">`;
                 myReplyMsg += `<div class="userRating"></div>`;
-                myReplyMsg += `<strong class="primaryFont">내 댓글: ${myReply.userId}</strong>`;
+                myReplyMsg += `<strong class="primaryFont">내 댓글: ${userId}</strong><br/>`;
                 myReplyMsg += `<small class="pullRight">${displayTime(myReply.gupdateDate)}</small>`;
                 myReplyMsg += `<div class="kebabMenu">⋮</div>`;
                 myReplyMsg += `<div class="menuOptions" style="visibility: hidden;">`;
@@ -227,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 allReplyMsg += `<li dataRno=${vo.greplyNo}>`;
                 allReplyMsg += `<div class="chatHeader">`;
                 allReplyMsg += `<div class="userRating"></div>`;
-                allReplyMsg += `<strong class="primaryFont">${vo.userId}</strong>`;
+                allReplyMsg += `<strong class="primaryFont">${vo.userId}</strong><br/>`;
                 allReplyMsg += `<small class="pullRight">${displayTime(vo.gupdateDate)}</small>`;
                 allReplyMsg += `<p>${vo.gcomment}</p>`;
                 allReplyMsg += `</li>`;

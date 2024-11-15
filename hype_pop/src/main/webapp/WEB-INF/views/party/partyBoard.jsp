@@ -9,148 +9,161 @@
 <title>Party Board</title>
 <style>
 body {
-	font-family: Arial, sans-serif;
-	background-color: #141414;
-	color: #ffffff;
-	margin: 0;
-	padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #141414; /* 어두운 배경 */
+    color: #ffffff; /* 텍스트 흰색 */
+    margin: 0;
+    padding: 0;
 }
 
 .boardBanner {
-	text-align: center;
-	padding: 20px;
-	background-color: #333;
-	color: #e50914;
-	font-size: 1.8em;
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: #e50914;
+    font-size: 1.8em;
 }
 
 table {
-	width: 90%;
-	margin: 20px auto;
-	border-collapse: collapse;
-	background-color: #333;
-	color: #ffffff;
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #333; /* 테이블 배경색 */
+    color: #ffffff; /* 기본 텍스트 색상 */
+    border: 2px solid #ffffff; /* 테이블 전체 테두리 흰색 */
 }
 
 th, td {
-	padding: 15px;
-	text-align: center;
-	border-bottom: 1px solid #555;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ffffff; /* 행 간 구분선 흰색 */
 }
 
 th {
-	background-color: #444;
-	color: #e50914;
-	font-weight: bold;
+    background-color: #add8e6; /* 연한 하늘색 */
+    font-weight: bold;
+    color: #ffffff; /* 흰색 텍스트 */
 }
 
-tr:hover {
-	background-color: #555;
+td {
+    background-color: #00aff0; /* 진한 하늘색 */
+    color: #ffffff; /* 흰색 텍스트 */
+}
+
+tr:hover td {
+    background-color: #5dade2; /* 강조 색상 */
 }
 
 /* 버튼 영역 */
 .buttonArea {
-	text-align: center;
-	margin: 20px;
+    text-align: center;
+    margin: 20px;
 }
 
+/* #goInsertBoard 버튼 스타일 */
 #goInsertBoard {
-	background-color: #e50914;
-	color: white;
-	padding: 10px 20px;
-	font-size: 1em;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
+    background-color: #00aff0; /* 연한 하늘색 */
+    color: #ffffff; /* 텍스트 흰색 */
+    padding: 10px 20px; /* 내부 여백 */
+    font-size: 16px; /* 글자 크기 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 둥근 모서리 */
+    cursor: pointer; /* 클릭 가능한 포인터 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
 }
 
 #goInsertBoard:hover {
-	background-color: #f40612;
+    background-color: #5dade2; /* 호버 시 더 진한 하늘색 */
+    transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 /* 페이지네이션 스타일 */
 .pagination {
-	text-align: center;
-	padding: 10px;
-	margin: 20px 0;
+    text-align: center;
+    padding: 10px;
+    margin: 20px 0;
 }
 
 .pageItem {
-	display: inline-block;
-	color: #ffffff;
-	background-color: #333;
-	padding: 10px 15px;
-	margin: 0 5px;
-	border: 1px solid #444;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.3s;
+    display: inline-block;
+    background-color: #00aff0; /* 연한 하늘색 */
+    color: #ffffff; /* 텍스트 흰색 */
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ffffff; /* 테두리 흰색 */
+    border-radius: 4px;
+    cursor: pointer; /* 클릭 가능한 포인터 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
 }
 
 .pageItem:hover {
-	background-color: #e50914;
+    background-color: #5dade2; /* 호버 시 더 진한 하늘색 */
+    transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 .pageItem.active {
-	background-color: #e50914;
-	color: #ffffff;
-	font-weight: bold;
+    background-color: #5dade2; /* 활성화된 버튼 색상 */
+    color: #ffffff; /* 텍스트 흰색 */
+    font-weight: bold;
 }
+
+/* 모달 스타일 */
 .modal {
-   display: none;
-   position: fixed;
-   z-index: 1000;
-   left: 0;
-   top: 0;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검정 */
 }
 
 .modal-content {
-   background-color: #222;
-   color: white;
-   margin: 15% auto;
-   padding: 20px;
-   border-radius: 8px;
-   width: 300px;
-   text-align: center;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #222; /* 모달 배경 */
+    color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 그림자 효과 */
 }
 
 .modal-content p {
-   font-size: 18px;
-   margin-bottom: 20px;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
 .modal-content button {
-   padding: 10px 20px;
-   background-color: #e50914;
-   color: white;
-   border: none;
-   cursor: pointer;
-   font-size: 16px;
-   border-radius: 5px;
-   transition: background-color 0.3s;
+    background-color: #e50914; /* 기본 배경 */
+    color: white; /* 텍스트 색상 */
+    padding: 10px 20px; /* 내부 여백 */
+    font-size: 16px; /* 글자 크기 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 둥근 모서리 */
+    cursor: pointer; /* 클릭 가능한 포인터 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 효과 */
 }
 
 .modal-content button:hover {
-   background-color: #c3070a;
+    background-color: #c3070a; /* 호버 색상 */
+    transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 .close {
-   color: #aaa;
-   float: right;
-   font-size: 28px;
-   font-weight: bold;
-   cursor: pointer;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
-   color: #fff;
+    color: #fff; /* 호버 시 흰색 */
 }
+
 </style>
 </head>
 <body>
@@ -159,7 +172,7 @@ tr:hover {
 		<sec:authentication property="principal" var="pinfo"/>
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
 	</sec:authorize>
-	<div>여기는 게시판 메인 배너</div>
+
 	<table>
 		<thead>
 			<tr>

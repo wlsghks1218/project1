@@ -11,8 +11,8 @@ body {
 	font-family: Arial, sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: #141414;
-	color: #ffffff;
+	background-color: #00aff0; /* 배경색 */
+	color: #ffffff; /* 텍스트 흰색 */
 }
 
 .container {
@@ -25,20 +25,23 @@ body {
 .mainBanner {
 	text-align: center;
 	padding: 20px;
-	background-color: #333333;
+	background-color: #007acc; /* 배너 배경 */
 	margin-bottom: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .mainBanner h2 {
 	font-size: 2em;
-	color: #e50914;
+	color: #ffffff; /* 배너 텍스트 */
 }
 
 /* 입력 및 선택 필드 스타일 */
 .inputGroup {
-	background-color: #222;
+	background-color: #00Aff0; /* 입력 필드 영역 배경 */
 	padding: 20px;
 	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .categorySelectGroup, .searchGroup, .selectedResultGroup,
@@ -50,7 +53,7 @@ label {
 	display: block;
 	font-weight: bold;
 	margin-bottom: 5px;
-	color: #b3b3b3;
+	color: #ffffff; /* 라벨 색상 */
 }
 
 input[type="text"], select {
@@ -58,38 +61,42 @@ input[type="text"], select {
 	padding: 12px;
 	margin: 8px 0;
 	box-sizing: border-box;
-	border: 1px solid #444;
+	border: 1px solid #004d80;
 	border-radius: 4px;
-	background-color: #333;
-	color: #fff;
+	background-color: #ffffff; /* 입력 필드 배경 */
+	color: #000000;
 }
 
 input[type="text"]::placeholder {
-	color: #b3b3b3;
+	color: #000000; /* 플레이스홀더 색상 */
 }
 
 /* 검색 결과 영역 */
 #searchResults {
 	margin-top: 10px;
-	background-color: #333;
+	background-color: #ffffff; /* 검색 결과 배경 */
 	padding: 10px;
 	border-radius: 4px;
+	color: #000000;
 }
 
 #selectedResult {
 	margin-top: 10px;
-	background-color: #333;
+	background-color: #ffffff; /* 선택 결과 배경 */
 	padding: 10px;
+	border: 1px solid #004d80;
 	border-radius: 4px;
+	color: #000000;
 }
 
 .resultItem {
 	padding: 8px 10px;
-	border-bottom: 1px solid #444;
+	border-bottom: 1px solid #004d80;
+	color: #000000;
 }
 
 .resultItem:hover {
-	background-color: #444;
+	background-color: #005f99; /* 호버 색상 */
 	cursor: pointer;
 }
 
@@ -102,43 +109,41 @@ button {
 	cursor: pointer;
 	margin-top: 10px;
 	transition: background-color 0.3s ease;
+	color: #ffffff; /* 버튼 텍스트 */
 }
 
 #submitBtn {
-	background-color: #e50914;
-	color: #ffffff;
+	background-color: #005f99; /* 작성 완료 버튼 */
 }
 
 #submitBtn:hover {
-	background-color: #f40612;
+	background-color: #000000; /* 호버 색상 */
 }
 
 #resetBtn {
-	background-color: #b3b3b3;
-	color: #333;
+	background-color: #005f99; /* 초기화 버튼 */
 }
 
 #resetBtn:hover {
-	background-color: #8c8c8c;
+	background-color: #000000; /* 호버 색상 */
 }
 
 #goBack {
-	background-color: #888;
-	color: #ffffff;
+	background-color: #005f99; /* 뒤로가기 버튼 */
 }
 
 #goBack:hover {
-	background-color: #555;
+	background-color: #000000; /* 호버 색상 */
 }
 
 /* 푸터와 네비게이션 스타일 */
 footer, nav {
-	background-color: #333;
-	color: #b3b3b3;
+	background-color: #007acc;
+	color: #ffffff; /* 텍스트 흰색 */
 	padding: 10px;
 	text-align: center;
+	border-radius: 4px;
 }
-
 </style>
 </head>
 <body>
@@ -148,10 +153,6 @@ footer, nav {
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
 	</sec:authorize>
 	<div class="container">
-		<div class="mainBanner">
-			<h2>여기는 게시판 메인 배너</h2>
-		</div>
-
 		<div class="inputGroup">
 			<form id="boardForm" method="post">
 		   		<input type="hidden" name="userNo" value="${pinfo.member.userNo}">

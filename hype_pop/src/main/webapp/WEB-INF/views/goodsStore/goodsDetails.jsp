@@ -13,68 +13,87 @@ body {
    color: #fff;
    margin: 0;
    padding: 0;
+   overflow-x: hidden;
+   font-size: 16px;
 }
 
 h1, h2, p, span {
    color: #fff;
+   font-size: 1rem;
 }
 
 /* 굿즈 상세 섹션 */
 .goodsDetails {
-   width: 80%;
-   margin: 30px auto;
    display: flex;
-   flex-direction: row;
-   border-radius: 10px;
+   flex-wrap: wrap;
+   width: 90%;
+   max-width: 75rem; /* 동일한 최대 너비 */
+   margin: 3vh auto;
+   border-radius: 0.625rem;
    background-color: #222;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
    overflow: hidden;
 }
 
-#goodsBanner, #goodsInfo {
-   width: 50%;
-   padding: 20px;
-   box-sizing: border-box;
-}
-
 #goodsBanner {
+   width: 50%;
+   min-width: 18.75rem;
    background-color: #333;
-   text-align: center;
    display: flex;
    justify-content: center;
    align-items: center;
-}
-
-#goodsBanner img {
-   max-width: 100%;
-   height: auto;
-   border-radius: 10px;
+   box-sizing: border-box;
+   padding: 2rem;
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+   border-radius: 0.625rem;
 }
 
 #goodsInfo {
+   width: 50%;
+   min-width: 18.75rem;
    background-color: #181818;
-   padding: 20px;
+   box-sizing: border-box;
+   padding: 2rem;
 }
 
 #goodsInfo span {
    display: block;
-   margin-bottom: 15px;
-   font-size: 18px;
+   font-size: 1.125rem;
+   margin-bottom: 0.9375rem;
+   word-wrap: break-word;
 }
 
+/* 굿즈 상세 이미지 */
+.goodsDetailImg {
+   width: 90%;
+   max-width: 75rem; /* 동일한 최대 너비 */
+   margin: 3vh auto;
+   background-color: #222;
+   border-radius: 0.625rem;
+   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
+   background-size: contain;
+   background-position: center center;
+   background-repeat: no-repeat;
+   height: auto;
+   min-height: 18.75rem;
+}
+
+/* 버튼 및 액션 스타일 */
 .quantityBar {
    display: flex;
    align-items: center;
-   margin: 20px 0;
+   margin: 2vh 0;
 }
 
 .quantityBar button {
-   width: 40px;
-   height: 40px;
+   width: 2.5rem;
+   height: 2.5rem;
    background-color: #444;
    color: #fff;
    border: none;
-   font-size: 20px;
+   font-size: 1.25rem;
    cursor: pointer;
    transition: background-color 0.3s;
 }
@@ -84,34 +103,38 @@ h1, h2, p, span {
 }
 
 #quantity {
-   width: 60px;
+   width: 3rem;
+   font-size: 1.125rem;
    text-align: center;
    border: 1px solid #333;
-   font-size: 18px;
    background-color: #222;
    color: #fff;
-   margin: 0 10px;
+   margin: 0 0.625rem;
 }
 
 .totalPrice {
-   font-size: 22px;
+   font-size: 1.375rem;
    font-weight: bold;
    color: #e50914;
+   margin-top: 2vh;
 }
 
 .actionButtons {
    display: flex;
-   gap: 15px;
+   flex-wrap: wrap;
+   gap: 1rem;
 }
 
 .actionButtons button {
-   padding: 15px 20px;
+   padding: 0.625rem;
+   flex: 1 1 auto;
    background-color: #e50914;
    color: white;
    border: none;
-   font-size: 18px;
+   font-size: 1rem;
    cursor: pointer;
    transition: background-color 0.3s;
+   min-width: 7.5rem;
 }
 
 .actionButtons button:hover {
@@ -122,140 +145,28 @@ h1, h2, p, span {
    background-color: #f44336;
 }
 
-/* 굿즈 상세 이미지 */
-.goodsDetailImg {
-    width: 80%;
-    margin: 30px auto;
-    text-align: center;
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    height: 600px;
-    position: relative;
-}
-
-/* 별점 및 후기 스타일 */
-.starRating span {
-   font-size: 30px;
-   cursor: pointer;
-}
-
-.starRating span:hover, .starRating span.active {
-   color: gold;
-}
-
-#userReviews {
-   width: 80%;
-   margin: 0 auto 30px auto;
-   padding: 20px;
-   background-color: #222;
-   border-radius: 10px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
-#userReviews h2 {
-   color: #fff;
-   font-size: 28px;
-   font-weight: 600;
-   margin-bottom: 20px;
-   text-align: left;
-   padding-bottom: 10px;
-   border-bottom: 2px solid #e50914;
-}
-
-.myChat, .allChat {
-   list-style-type: none;
+.actionButtons #chkLike {
    padding: 0;
-   color: #fff;
-}
-
-.myChat li, .allChat li {
-   background-color: #333;
-   padding: 15px;
-   margin-bottom: 10px;
-   border-radius: 8px;
-   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-   color: #fff;
-   width: 80%;
-   margin: 0 auto 10px;
-   position: relative;
-}
-
-.reviewItem {
-   margin-bottom: 20px;
-}
-
-.reviewContent {
-   width: 80%;
-   display: inline-block;
-}
-
-.avgStarRating {
+   width: 2.5rem;
+   height: 2.5rem;
    display: flex;
+   justify-content: center;
    align-items: center;
-   margin: 20px auto;
-   width: 50%;
-   justify-content: space-between;
 }
 
-/* 케밥 메뉴 */
-.kebabMenu {
-   position: absolute;
-   top: 15px;
-   right: 10px;
-   cursor: pointer;
-}
-
-.menuOptions {
-   visibility: hidden;
-   position: absolute;
-   right: 0;
-   top: 30px;
-   background: white;
-   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-   padding: 10px;
-   border-radius: 8px;
-   z-index: 1000;
-   color: black;
-}
-
-.menuOptions button {
-   display: block;
-   width: 100%;
-   padding: 10px;
-   margin-bottom: 5px;
-   cursor: pointer;
-   background-color: #e50914;
-   color: white;
-   border: none;
-   border-radius: 5px;
-   text-align: center;
-}
-
-#chkLike {
-   background-color: white;
-}
-
-.menuOptions button:hover {
-   background-color: #c3070a;
-}
-
-.menuOptions .deleteBtn {
-   background-color: #f44336;
-}
-
+/* 리뷰 폼 및 별점 스타일 */
 #reviewForm {
+   width: 90%;
+   max-width: 75rem; /* 동일한 최대 너비 */
+   margin: 3vh auto;
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   width: 80%;
-   margin: 30px auto;
    background-color: #222;
-   padding: 20px;
-   border-radius: 10px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+   padding: 2rem;
+   border-radius: 0.625rem;
+   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
 }
 
 #reviewText {
@@ -263,21 +174,21 @@ h1, h2, p, span {
    background-color: #333;
    color: #fff;
    border: 1px solid #444;
-   border-radius: 5px;
-   padding: 10px;
-   margin-bottom: 15px;
-   font-size: 16px;
-   resize:none;
+   border-radius: 0.3125rem;
+   padding: 1rem;
+   margin-bottom: 0.9375rem;
+   font-size: 1rem;
+   resize: none;
 }
 
 #addReply {
    background-color: #e50914;
    color: #fff;
    border: none;
-   padding: 10px 20px;
-   font-size: 16px;
+   padding: 0.625rem 1.25rem;
+   font-size: 1rem;
    cursor: pointer;
-   border-radius: 5px;
+   border-radius: 0.3125rem;
    transition: background-color 0.3s;
 }
 
@@ -288,80 +199,109 @@ h1, h2, p, span {
 .starRating {
    display: flex;
    justify-content: center;
-   margin-bottom: 10px;
+   margin-bottom: 0.625rem;
 }
 
 .starRating span {
-   font-size: 30px;
+   font-size: 1.875rem;
    cursor: pointer;
    color: gold;
 }
 
+.starRating span:hover, .starRating span.active {
+   color: gold;
+}
+
 #selectedRating {
-   margin-bottom: 15px;
+   margin-bottom: 0.9375rem;
    text-align: center;
 }
-.editCommentInput {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background-color: #222;
-    color: #fff;
-}
-.styledButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    margin-right: 10px;
-    transition: background-color 0.3s;
+
+.avgStarRating {
+   width: 90%;
+   max-width: 75rem; /* 동일한 최대 너비 */
+   margin: 3vh auto;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
 }
 
-.saveEditBtn {
-    background-color: #e50914;
-    color: white;
+/* 후기 스타일 */
+#userReviews {
+   width: 90%;
+   max-width: 75rem; /* 동일한 최대 너비 */
+   margin: 3vh auto;
+   padding: 2rem;
+   background-color: #222;
+   border-radius: 0.625rem;
+   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
 }
 
-.saveEditBtn:hover {
-    background-color: #c3070a;
+#userReviews h2 {
+   font-size: 1.75rem;
+   font-weight: 600;
+   margin-bottom: 2vh;
+   text-align: left;
+   padding-bottom: 0.625rem;
+   border-bottom: 0.125rem solid #e50914;
 }
 
-.cancelEditBtn {
-    background-color: #444;
-    color: white;
+.myChat, .allChat {
+   list-style-type: none;
+   padding: 0;
+   color: #fff;
 }
 
-.cancelEditBtn:hover {
-    background-color: #888;
+.myChat li, .allChat li {
+   background-color: #333;
+   padding: 1rem;
+   margin-bottom: 0.625rem;
+   border-radius: 0.5rem;
+   box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.3);
+   width: calc(100% - 2rem);
+   margin: 0 auto 0.625rem;
 }
 
-.pagination {
-    text-align: center;
-    margin-top: 20px;
-}
-.pagination button {
-    background-color: #e50914;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 5px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+/* 케밥 메뉴 */
+.kebabMenu {
+   position: absolute;
+   top: 0.9375rem;
+   right: 0.625rem;
+   cursor: pointer;
 }
 
-.pagination button.active {
-    background-color: #c3070a;
-    font-weight: bold;
+.menuOptions {
+   visibility: hidden;
+   position: absolute;
+   right: 0;
+   top: 1.875rem;
+   background: white;
+   box-shadow: 0px 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
+   padding: 0.625rem;
+   border-radius: 0.5rem;
+   z-index: 1000;
+   color: black;
 }
 
-.pagination button:hover {
-    background-color: #f44336;
+.menuOptions button {
+   display: block;
+   width: 100%;
+   padding: 0.625rem;
+   margin-bottom: 0.3125rem;
+   cursor: pointer;
+   background-color: #e50914;
+   color: white;
+   border: none;
+   border-radius: 0.3125rem;
+   text-align: center;
+}
+
+.menuOptions button:hover {
+   background-color: #c3070a;
+}
+
+.menuOptions .deleteBtn {
+   background-color: #f44336;
 }
 
 /* 모달 스타일 */
@@ -380,26 +320,27 @@ h1, h2, p, span {
    background-color: #222;
    color: white;
    margin: 15% auto;
-   padding: 20px;
-   border-radius: 8px;
-   width: 300px;
+   padding: 1.25rem;
+   border-radius: 0.5rem;
+   width: 80%;
+   max-width: 18.75rem;
    text-align: center;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5);
 }
 
 .modal-content p {
-   font-size: 18px;
-   margin-bottom: 20px;
+   font-size: 1.125rem;
+   margin-bottom: 2vh;
 }
 
 .modal-content button {
-   padding: 10px 20px;
+   padding: 0.625rem 1.25rem;
    background-color: #e50914;
    color: white;
    border: none;
    cursor: pointer;
-   font-size: 16px;
-   border-radius: 5px;
+   font-size: 1rem;
+   border-radius: 0.3125rem;
    transition: background-color 0.3s;
 }
 
@@ -410,7 +351,7 @@ h1, h2, p, span {
 .close {
    color: #aaa;
    float: right;
-   font-size: 28px;
+   font-size: 1.75rem;
    font-weight: bold;
    cursor: pointer;
 }
@@ -420,44 +361,40 @@ h1, h2, p, span {
    color: #fff;
 }
 
+/* 스크롤 버튼 */
 .scroll-btn {
-    position: fixed;
-    bottom: 100px;
-    right: 20px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    z-index: 20;
-}
-
-button {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
+   position: fixed;
+   bottom: 10vh;
+   right: 2vw;
+   display: flex;
+   flex-direction: row;
+   gap: 0.625rem;
+   z-index: 20;
 }
 
 .scroll-btn button {
-    background-color: #e50914;
-    color: white;
-    padding: 15px;
-    border: none;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+   background-color: #e50914;
+   color: white;
+   padding: 1rem;
+   border: none;
+   border-radius: 50%;
+   font-size: 1.25rem;
+   cursor: pointer;
+   transition: background-color 0.3s;
 }
 
 button:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+   cursor: not-allowed;
+   opacity: 0.5;
 }
 </style>
 </head>
 <body>
    <jsp:include page="layout/popUpHeader.jsp" />
-   	<sec:authorize access="isAuthenticated()">
+	<sec:authorize access="isAuthenticated()">
 		<sec:authentication property="principal" var="pinfo"/>
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+   		<input type="hidden" id="userId" value="${pinfo.member.userId}">
 	</sec:authorize>
    <div class="goodsDetails">
       <div id="goodsBanner"></div>
@@ -532,3 +469,4 @@ button:disabled {
 <script type="text/javascript" src="/resources/goodsJs/goodsDetail.js"></script>
 <script type="text/javascript" src="/resources/goodsJs/goodsHeader.js"></script>
 <script type="text/javascript" src="/resources/goodsJs/goodsNav.js"></script>
+<script type="text/javascript" src="/resources/purchaseJs/myCart.js"></script>

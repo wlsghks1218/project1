@@ -12,16 +12,16 @@ body {
 	font-family: Arial, sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: #141414;
-	color: #ffffff;
+	background-color: #00aff0; /* 배경색 변경 */
+	color: #ffffff; /* 텍스트 흰색 */
 }
 
 /* 메인 배너 스타일 */
 .banner {
 	text-align: center;
 	padding: 30px;
-	background-color: #333;
-	color: #e50914;
+	background-color: #0088cc; /* 배너 배경색 */
+	color: #ffffff; /* 텍스트 흰색 */
 	font-size: 1.8em;
 	font-weight: bold;
 	margin-bottom: 20px;
@@ -32,16 +32,17 @@ body {
 	max-width: 800px;
 	margin: 0 auto;
 	padding: 20px;
-	background-color: #222;
+	background-color: #005f99; /* 콘텐츠 배경색 */
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 그림자 효과 추가 */
+	color: #ffffff; /* 텍스트 흰색 */
 }
 
 /* 파티 정보 섹션 스타일 */
 .info-section {
 	margin-bottom: 15px;
 	padding: 15px;
-	background-color: #333;
+	background-color: #007acc; /* 정보 섹션 배경 */
 	border-radius: 5px;
 	display: flex;
 	align-items: center;
@@ -51,7 +52,7 @@ body {
 	flex: 0 0 20%;
 	font-size: 1em;
 	font-weight: bold;
-	color: #e50914;
+	color: #ffffff; /* 카테고리 텍스트 흰색 */
 	margin-right: 10px;
 	text-transform: uppercase; /* 텍스트 대문자 */
 }
@@ -66,17 +67,17 @@ body {
 /* 게시글 제목 스타일 */
 .boardTitle {
 	font-size: 1.4em; /* 텍스트 크기 조정 */
-	color: #e50914;
+	color: #ffffff; /* 텍스트 흰색 */
 	font-weight: bold;
 	margin-top: 15px;
-	border-bottom: 2px solid #444;
+	border-bottom: 2px solid #0088cc; /* 하단 경계선 */
 	padding-bottom: 5px;
 }
 
 /* 실시간 채팅 제목 */
 .chat-title {
 	font-size: 1.5em;
-	color: #e50914;
+	color: #ffffff; /* 텍스트 흰색 */
 	margin: 20px 0;
 	text-align: center;
 }
@@ -86,7 +87,7 @@ body {
 	max-height: 400px;
 	overflow-y: auto;
 	padding: 10px;
-	background-color: #333;
+	background-color: #005f99; /* 채팅 영역 배경색 */
 	border-radius: 8px;
 }
 
@@ -99,12 +100,14 @@ body {
 #msg {
 	width: 100%;
 	padding: 10px;
+	border: none;
+	border-radius: 4px;
 }
 
 /* 버튼 스타일 */
-#sendButton {
-	background-color: #e50914;
-	color: #ffffff;
+#sendButton, #leavePartyBtn, #scrollToBottomButton {
+	background-color: #0088cc; /* 버튼 배경색 */
+	color: #ffffff; /* 버튼 텍스트 흰색 */
 	padding: 10px;
 	width: 100%;
 	font-size: 1em;
@@ -112,21 +115,18 @@ body {
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
-	transition: background-color 0.3s ease;
+	transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#sendButton:hover {
-	background-color: #f40612;
+#sendButton:hover, #leavePartyBtn:hover, #scrollToBottomButton:hover {
+	background-color: #005f99; /* 버튼 호버 시 색상 */
+	transform: scale(1.05); /* 약간 커지는 효과 */
 }
 
 /* 버튼 영역 스타일 */
 #buttonArea {
 	text-align: center;
 	margin-top: 20px;
-}
-
-button:hover {
-	background-color: #f40612;
 }
 
 /* 전체 메시지 스타일 */
@@ -141,13 +141,13 @@ button:hover {
 }
 
 .my-message .name {
-    color: #e50914;
+    color: #ffffff; /* 내 이름 흰색 */
     margin-left: 8px;
 }
 
 .my-message .content {
-    background-color: #222;
-    color: #fff;
+    background-color: #004080; /* 내 메시지 배경색 */
+    color: #ffffff;
     padding: 5px 10px;
     border-radius: 8px;
     margin-right: 5px;
@@ -158,24 +158,26 @@ button:hover {
 }
 
 .other-message .name {
-    color: #00aaff;
+    color: #ffe600; /* 다른 유저 이름 노란색 */
     margin-right: 8px;
 }
 
 .other-message .content {
-    background-color: #444;
-    color: #fff;
+    background-color: #003366; /* 다른 유저 메시지 배경색 */
+    color: #ffffff;
     padding: 5px 10px;
     border-radius: 8px;
     margin-left: 5px;
 }
+
 /* 상태 메시지 (중앙 정렬) */
 .state-message {
     text-align: center;
-    color: #999; /* 상태 메시지 색상 */
+    color: #ffffff; /* 상태 메시지 텍스트 흰색 */
     font-size: 0.9em;
     margin: 10px 0; /* 위아래 여백 추가 */
 }
+
 </style>
 </head>
 <body>
@@ -185,7 +187,6 @@ button:hover {
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
    		<input type="hidden" id="userId" value="${pinfo.member.userId}">
 	</sec:authorize>
-	<div class="banner">여기는 게시판 메인 배너</div>
 	<div class="content">
 		<div class="info-section">
 			<div class="category">${vo.category}</div>

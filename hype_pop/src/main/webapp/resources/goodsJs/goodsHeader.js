@@ -1,89 +1,53 @@
-let userNoElement = document.getElementById("userNo");
-let userNo = userNoElement ? userNoElement.value : null;
-console.log(userNo);
-
-document.getElementById('searchBTN').addEventListener('click', function() {
-    performSearch();
-});
-
-document.getElementById('goodsSearchBox').addEventListener('keyup', function(event) {
-    if (event.key === 'Enter') {
-        performSearch();
-    }
-});
-
-function performSearch() {
-    const searchText = document.getElementById('goodsSearchBox').value;
-    localStorage.setItem('searchText', searchText);
-    location.href = `/goodsStore/goodsSearch`;
-}
-
-if(localStorage.getItem('searchText') === '' || localStorage.getItem('searchText') === null) {
-    const searchText = document.getElementById('goodsSearchBox');
-    searchText.placeholder = '검색할 굿즈 이름을 입력하세요';
-} else {
-    const savedSearchText = localStorage.getItem('searchText');
-    const searchText = document.getElementById('goodsSearchBox');
-    searchText.value = savedSearchText;
-}
-
-
-document.querySelectorAll('div').forEach(btn =>{
-	btn.addEventListener('click', (e)=>{
-		let type = btn.id;
-		switch(type){
-		case "mainLogoDiv":
-			location.href = "/";
-			break;
-        case "goodsMainLogoDiv":
-            const searchedText = document.getElementById('goodsSearchBox');
-            localStorage.setItem('searchText', '');
-            searchedText.placeholder = '검색할 굿즈 이름을 입력하세요';
-            if (userNo) {
-                location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
-            } else {
-                location.href = "/goodsStore/goodsMain";
-            }
-            break;
-		case "hamburgerDiv":
-		    const menu = document.querySelector("#hamburgerList ul");
-		    
-		    if (menu.style.display === "block") {
-		        menu.style.display = "none";
-		    } else {
-		        menu.style.display = "block";
-		    }
-			break;
-		// 알림
-		case "noticeDiv":
-			break;
-		
-		}
-	})
-})
-
-document.querySelectorAll('li').forEach(btn => {
-	btn.addEventListener('click',(e)=>{
-		let type = btn.id;
-		switch (type) {
-		case "searchPopUp":
-			location.href = "/hypePop/search/noData";
-			break;
-		case "goodsSearch":
-			location.href = "/goodsStore/goodsSearch";
-			break;
-		case "calendar":
-			location.href = "/hypePop/calendar";
-			break;
-		case "support":
-			location.href = "/hypePop/customerMain";
-			break;
-		case "login":
-			location.href = "/member/login";
-			break;
-		case "signIn":
-			location.href = "/member/join";
-			break;
+document.addEventListener("DOMContentLoaded", function() {
+	let userNoElement = document.getElementById("userNo");
+	let userNo = userNoElement ? userNoElement.value : null;
+	console.log(userNo);
+	
+	function performSearch() {
+		const searchText = document.getElementById('goodsSearchBox').value;
+		localStorage.setItem('searchText', searchText);
+		location.href = `/goodsStore/goodsSearch`;
 	}
-	})
-})
+	
+	document.getElementById('goodsSearchBox').addEventListener('keyup', function(event) {
+	    if (event.key === 'Enter') {
+	        performSearch();
+	    }
+	});
+	
+	
+	if(localStorage.getItem('searchText') === '' || localStorage.getItem('searchText') === null) {
+	    const searchText = document.getElementById('goodsSearchBox');
+	    searchText.placeholder = '검색할 굿즈 이름을 입력하세요';
+	} else {
+	    const savedSearchText = localStorage.getItem('searchText');
+	    const searchText = document.getElementById('goodsSearchBox');
+	    searchText.value = savedSearchText;
+	}
+	
+	document.getElementById("searchBtn").addEventListener('click', function() {
+	    performSearch();
+	});
+	
+	window.showLogos = function() {
+	    const logoContainer = document.getElementById("logoContainer");
+	    const overlay = document.getElementById("overlay");
+	
+	    // 슬라이드 메뉴 및 오버레이 표시
+	    logoContainer.classList.toggle("show");
+	    overlay.classList.toggle("show");
+	
+	    // 오버레이 클릭 시 메뉴 숨기기
+	    overlay.onclick = function() {
+	        logoContainer.classList.remove("show");
+	        overlay.classList.remove("show");
+	    }
+	};
+	document.getElementById("goodsLogo").addEventListener('click', function() {
+	    if (userNo) {
+	        location.href = `/goodsStore/goodsMain?userNo=${userNo}`;
+	    } else {
+	        location.href = "/goodsStore/goodsMain";
+	    }
+	});
+});
