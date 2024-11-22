@@ -1,193 +1,213 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+   prefix="sec"%>
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>고객센터</title>
 <style>
 /* CSS 스타일 */
 /* a 태그의 기본 스타일 */
 a {
-   text-decoration: none; /* 밑줄 제거 */
-   color: black; /* 기본 텍스트 색상 검정색 */
-   transition: color 0.3s ease; /* 색상 변화에 대한 트랜지션 효과 추가 */
+    text-decoration: none; /* 밑줄 제거 */
+    color: #ff66b2; /* 기본 텍스트 색상 핑크색 */
+    transition: color 0.3s ease; /* 색상 변화에 대한 트랜지션 효과 추가 */
 }
 
 a:hover {
-   color: blue; /* 마우스를 가져다 대면 색상이 파란색으로 변경 */
+    color: #66ccff; /* 마우스를 가져다 대면 색상이 하늘색으로 변경 */
 }
 
 .tab {
-   display: flex; /* Flexbox를 사용하여 수평 배치 */
-   gap: 20px; /* 각 탭 사이의 간격 */
-   margin-bottom: 20px; /* 탭 아래 여백 */
-   justify-content: center; /* 가운데 정렬 */
+    display: flex; /* Flexbox를 사용하여 수평 배치 */
+    gap: 20px; /* 각 탭 사이의 간격 */
+    margin-bottom: 20px; /* 탭 아래 여백 */
+    justify-content: center; /* 가운데 정렬 */
 }
 
 .tab div {
-   padding: 10px 20px; /* 패딩 추가로 클릭 영역 확장 */
-   background-color: #f0f0f0; /* 기본 배경 색상 */
-   border-radius: 5px; /* 모서리 둥글게 */
-   cursor: pointer; /* 마우스 커서를 포인터로 변경 */
-   transition: background-color 0.3s; /* 배경 색상 변화 효과 */
+    padding: 10px 20px; /* 패딩 추가로 클릭 영역 확장 */
+    background-color: #ffccff; /* 기본 배경 색상 핑크색 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+    transition: background-color 0.3s; /* 배경 색상 변화 효과 */
 }
 
 .tab div.active {
-   background-color: #ccc; /* 활성화된 탭의 배경 색상 */
+    background-color: #ff80ff; /* 활성화된 탭의 배경 색상 핑크색 */
 }
 
 .content {
-   max-width: 800px; /* 최대 너비 설정 */
-   height: 600px;
-   margin: 0 auto; /* 중앙 정렬 */
-   padding: 20px; /* 패딩 추가 */
-   border: 1px solid #ccc; /* 테두리 추가 */
-   border-radius: 5px; /* 모서리 둥글게 */
-   background-color: #f9f9f9; /* 배경 색상 */
-   position: relative; /* 부모 요소에 상대 위치 설정 */
+    max-width: 800px; /* 최대 너비 설정 */
+    height: 600px;
+    margin: 0 auto; /* 중앙 정렬 */
+    padding: 20px; /* 패딩 추가 */
+    border: 1px solid #ff66b2; /* 테두리 핑크색 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    background-color: #f2faff; /* 배경 색상 하늘색 */
+    position: relative; /* 부모 요소에 상대 위치 설정 */
 }
 
 .content section {
-   display: none; /* 기본적으로 모든 섹션 숨기기 */
-   text-align: center;
+    display: none; /* 기본적으로 모든 섹션 숨기기 */
+    text-align: center;
 }
 
 .content section.active {
-   display: block; /* 활성화된 섹션만 보이기 */
+    display: block; /* 활성화된 섹션만 보이기 */
 }
 
 .createAnnouncementBtn, .createInquiryBtn {
-   position: absolute; /* 절대 위치로 설정 */
-   bottom: 10px; /* 아래쪽 여백 */
-   right: 10px; /* 오른쪽 여백 */
+    position: absolute; /* 절대 위치로 설정 */
+    bottom: 10px; /* 아래쪽 여백 */
+    right: 10px; /* 오른쪽 여백 */
 }
 
 .content ul {
-   list-style-type: none;
-   padding: 0;
+    list-style-type: none;
+    padding: 0;
 }
 
 .content ul li {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   background-color: #f0f0f0;
-   border: 1px solid #ccc;
-   border-radius: 5px;
-   margin: 10px 0;
-   padding: 10px;
-   transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffe6f2; /* 항목 배경 색상 핑크색 */
+    border: 1px solid #ffccff; /* 테두리 핑크색 */
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+    transition: background-color 0.3s;
 }
 
 .content ul li:hover {
-   background-color: #e0e0e0;
+    background-color: #ffb3d9; /* 마우스 오버 시 색상 핑크색 */
 }
 
 .content ul li .title {
-   flex-grow: 1;
-   margin-left: 10px;
+    flex-grow: 1;
+    margin-left: 10px;
 }
 
 .content ul li .number, .content ul li .date {
-   margin-left: 10px;
+    margin-left: 10px;
 }
 
 .search {
-   display: flex;
-   align-items: center;
-   justify-content: flex-end;
-   margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
 }
 
 .search input[type="text"] {
-   padding: 5px;
-   margin-right: 10px;
+    padding: 5px;
+    margin-right: 10px;
 }
 
 .search img {
-   cursor: pointer;
+    cursor: pointer;
 }
 
 .pagination {
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .pagination a {
-   margin: 0 5px;
-   padding: 10px 15px;
-   border: 1px solid #ccc;
-   border-radius: 5px;
-   text-decoration: none;
-   color: black;
-   transition: background-color 0.3s ease;
+    margin: 0 5px;
+    padding: 10px 15px;
+    border: 1px solid #ff66b2; /* 테두리 핑크색 */
+    border-radius: 5px;
+    text-decoration: none;
+    color: black;
+    transition: background-color 0.3s ease;
 }
 
 .pagination a:hover {
-   background-color: #f0f0f0;
+    background-color: #ffb3d9; /* 마우스 오버 시 색상 핑크색 */
 }
 
 .pagination a.active {
-   background-color: #007bff;
-   color: white;
+    background-color: #66ccff; /* 선택된 페이지 하늘색 */
+    color: white;
 }
-
-.answerStatus {
-   margin-left: 10px; /* 여백 추가 */
-   color: green; /* 기본 색상 */
-}
-
-.answerStatus
-:contains
- 
-('
-답변
- 
-대기
- 
-중
- 
-')
-{
-color
-:
- 
-orange
-; /* 대기 중일 때 색상 변경 */
-
-
-}
-.answerStatus
-:contains
- 
-('
-답변
- 
-완료
- 
-')
-{
-color
-:
- 
-blue
-; /* 완료 시 색상 변경 */
-
-
+.toggle-answer{
+	height : 50px;
 }
 .answer {
     display: none;
     margin-left: 20px; /* 답변을 약간 들여쓰기 해서 구분 */
+    height : 50px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    background-color: #222;
+    color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    background-color: #ff66b2; /* 핑크색 버튼 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.modal-content button:hover {
+    background-color: #ff3399; /* 버튼 호버 시 색상 변경 */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: #fff;
 }
 </style>
 </head>
 <body>
    <jsp:include page="layout/popUpHeader.jsp" />
-
+   <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo" />
+      <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+   </sec:authorize>
    <br>
    <div class="tab">
       <div id="tab-announcement" class="active"
@@ -220,7 +240,9 @@ blue
          </div>
 
          <div class="createAnnouncementBtn">
-            <input type="button" onclick="createNotice()" value="공지작성">
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+               <input type="button" onclick="createNotice()" value="공지작성">
+            </sec:authorize>
          </div>
       </section>
 
@@ -230,15 +252,15 @@ blue
          <br>
          <hr>
          <br>
-			<div style="float: right;">
-				<span id = "inquiryCount"></span>
-				<select id="replyStatus" onchange="handleReplyStatusChange()">
-					<option value="allCheck">전체보기</option>
-					<option value="replyCheck">답변 완료</option>
-					<option value="noReplyCheck">답변 미완료</option>
-				</select>
-			</div>
-		<br>
+         <div style="float: right;">
+            <span id="inquiryCount"></span> <select id="replyStatus"
+               onchange="handleReplyStatusChange()">
+               <option value="allCheck">전체보기</option>
+               <option value="replyCheck">답변 완료</option>
+               <option value="noReplyCheck">답변 미완료</option>
+            </select>
+         </div>
+         <br>
          <ul class="inquiry-list">
             <li>로딩 중...</li>
          </ul>
@@ -262,7 +284,7 @@ blue
             <li>Q: 고객센터 운영 시간은 언제인가요? <a href="#" class="toggle-answer">▼</a></li>
             <li class="answer">A: 몰라용</li>
 
-            <li>Q: 개꿀팀 있을까요? <a href="#" class="toggle-answer">▼</a></li>
+            <li>Q: 개꿀팁 있을까요? <a href="#" class="toggle-answer">▼</a></li>
             <li class="answer">A: 몰라용</li>
 
             <li>Q: 회원 탈퇴는 어떻게 하나요? <a href="#" class="toggle-answer">▼</a></li>
@@ -272,6 +294,16 @@ blue
 
 
    </div>
+
+   <!-- 모달 창 HTML -->
+   <div id="loginModal" class="modal">
+      <div class="modal-content">
+         <span class="close">&times;</span>
+         <p>로그인이 필요한 기능입니다.</p>
+         <button id="goToLogin">로그인하러 가기</button>
+      </div>
+   </div>
+
 
    <br>
    <hr>

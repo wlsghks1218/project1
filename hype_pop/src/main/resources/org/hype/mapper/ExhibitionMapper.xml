@@ -1,136 +1,281 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="org.hype.mapper.ExhibitionMapper">
-	
+
 	<!-- 초기 로드 값 -->
-     <select id="getExhibitionsByPage" resultType="org.hype.domain.exhVO">
-      <![CDATA[
-        SELECT * FROM (
-            SELECT a.*, ROWNUM rnum
-            FROM (
-                SELECT * 
-                FROM exh_main_tbl
-                ORDER BY exhNo
-            ) a 
-            WHERE ROWNUM <= #{offset} + #{pageSize}
-        )
-        WHERE rnum > #{offset}
-       ]]>
-    </select>
-    
-    <!-- 시작일수 -->
-    <select id="getLatestExhibitions" resultType="org.hype.domain.exhVO">
-      <![CDATA[
-        SELECT * FROM (
-            SELECT a.*, ROWNUM rnum
-            FROM (
-                SELECT * 
-                FROM exh_main_tbl
-                ORDER BY exhStartDate asc
-            ) a 
-            WHERE ROWNUM <= #{offset} + #{pageSize}
-        )
-        WHERE rnum > #{offset}
-       ]]>
-    </select>
-    
-    <!-- 종료일순 -->
-    <select id="getDueSoonExhibitions" resultType="org.hype.domain.exhVO">
-      <![CDATA[
-        SELECT * FROM (
-            SELECT a.*, ROWNUM rnum
-            FROM (
-                SELECT * 
-                FROM exh_main_tbl
-                ORDER BY exhEndDate asc
-            ) a 
-            WHERE ROWNUM <= #{offset} + #{pageSize}
-        )
-        WHERE rnum > #{offset}
-       ]]>
-    </select>
-    
-    <!-- 가격순 -->
-    <select id="getExhibitionsOrderByPrice" resultType="org.hype.domain.exhVO">
-      <![CDATA[
-        SELECT * FROM (
-            SELECT a.*, ROWNUM rnum
-            FROM (
-                SELECT * 
-                FROM exh_main_tbl
-                ORDER BY exhPrice ${order}
-            ) a 
-            WHERE ROWNUM <= #{offset} + #{pageSize}
-        )
-        WHERE rnum > #{offset}
-       ]]>
-    </select>
-    
-     <!-- 얼리버드 전시회 -->
-    <select id="getEarlyBirdExhibitions" resultType="org.hype.domain.exhVO">
-      <![CDATA[
-        SELECT * FROM (
-            SELECT a.*, ROWNUM rnum
-            FROM (
-                SELECT * 
-                FROM exh_main_tbl
-                where exhName like '%얼리버드%' order by exhNo
-            ) a 
-            WHERE ROWNUM <= #{offset} + #{pageSize}
-        )
-        WHERE rnum > #{offset}
-       ]]>
-    </select>
-    
-    <select id="getExhibitionByNo" parameterType="int" resultType="org.hype.domain.exhVO">
-    SELECT * FROM exh_main_tbl WHERE exhNo = #{exhNo} 
+	<select id="getExhibitionsByPage"
+		resultType="org.hype.domain.exhVO">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum
+        FROM (
+            SELECT * 
+            FROM exh_main_tbl
+    ]]>
+		<where>
+			<if test="query != null and query != ''">
+				AND exhName LIKE '%' || #{query} || '%' <!-- 검색어 포함한 exhName 필터링 -->
+			</if>
+		</where>
+    <![CDATA[
+        ) a 
+        WHERE ROWNUM <= #{offset} + #{pageSize}
+    )
+    WHERE rnum > #{offset}
+    ]]>
 	</select>
 
-	<insert id="insertLike" parameterType="org.hype.domain.exhLikeVO">
-        INSERT INTO exh_like_list_tbl (exhNo, userNo, likeDate)
-        VALUES (#{exhNo}, #{userNo}, sysdate)
-    </insert>
+	<!-- 시작일수 -->
+	<select id="getLatestExhibitions"
+		resultType="org.hype.domain.exhVO">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum
+        FROM (
+            SELECT * 
+            FROM exh_main_tbl
+            ]]>
+		<where>
+			<if test="query != null and query != ''">
+				AND exhName LIKE '%' || #{query} || '%' <!-- 검색어 포함한 exhName 필터링 -->
+			</if>
+		</where>
+            <![CDATA[
+            ORDER BY exhStartDate ASC
+        ) a 
+        WHERE ROWNUM <= #{offset} + #{pageSize}
+    )
+    WHERE rnum > #{offset}
+    ]]>
+	</select>
 
-	<delete id="deleteLike" parameterType="org.hype.domain.exhLikeVO">
-		DELETE FROM exh_like_list_tbl WHERE exhNo = #{exhNo} AND userNo = #{userNo}		
-	</delete>
-	
-	<select id="isLiked" parameterType="org.hype.domain.exhLikeVO" resultType="int">
-   		SELECT *
-    	FROM exh_like_list_tbl 
-    	WHERE exhNo = #{exhNo} AND userNo = #{userNo}
+
+	<!-- 종료일순 -->
+	<select id="getDueSoonExhibitions"
+		resultType="org.hype.domain.exhVO">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum
+        FROM (
+            SELECT * 
+            FROM exh_main_tbl
+            ]]>
+		<where>
+			<if test="query != null and query != ''">
+				AND exhName LIKE '%' || #{query} || '%' <!-- 검색어 포함한 exhName 필터링 -->
+			</if>
+		</where>
+            <![CDATA[
+            ORDER BY exhEndDate ASC
+        ) a 
+        WHERE ROWNUM <= #{offset} + #{pageSize}
+    )
+    WHERE rnum > #{offset}
+    ]]>
+	</select>
+
+
+	<!-- 가격순 -->
+	<select id="getExhibitionsOrderByPrice"
+		resultType="org.hype.domain.exhVO">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum
+        FROM (
+            SELECT * 
+            FROM exh_main_tbl
+            ]]>
+		<where>
+			<if test="query != null and query != ''">
+				AND exhName LIKE '%' || #{query} || '%' <!-- 검색어 포함한 exhName 필터링 -->
+			</if>
+		</where>
+            <![CDATA[
+            ORDER BY exhPrice ${order}
+        ) a 
+        WHERE ROWNUM <= #{offset} + #{pageSize}
+    )
+    WHERE rnum > #{offset}
+    ]]>
+	</select>
+
+
+	<!-- 얼리버드 전시회 -->
+	<select id="getEarlyBirdExhibitions"
+		resultType="org.hype.domain.exhVO">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum
+        FROM (
+            SELECT * 
+            FROM exh_main_tbl
+            ]]>
+		<where>
+			<if test="query != null and query != ''">
+				AND exhName LIKE '%' || #{query} || '%' <!-- 검색어 포함한 exhName 필터링 -->
+			</if>
+			AND exhName LIKE '%얼리버드%' <!-- 얼리버드 필터 -->
+		</where>
+            <![CDATA[
+            ORDER BY exhNo
+        ) a 
+        WHERE ROWNUM <= #{offset} + #{pageSize}
+    )
+    WHERE rnum > #{offset}
+    ]]>
+	</select>
+
+	<select id="getPopularExhs" resultType="org.hype.domain.exhImgVO">
+	 <![CDATA[
+    	 SELECT exhNo, uuid, uploadpath AS uploadPath, filename AS fileName
+    	FROM (
+        SELECT em.exhNo, em.uuid, em.uploadpath, em.filename
+        FROM exh_img_tbl em
+        LEFT JOIN exh_like_list_tbl el ON em.exhNo = el.exhNo
+        GROUP BY em.exhNo, em.uuid, em.uploadpath, em.filename
+        ORDER BY COUNT(el.exhNo) DESC
+    	)
+    	WHERE ROWNUM <= 8
+      ]]>
 	</select>
 	
-	<select id="getLikeCount" parameterType="int" resultType="int">
-   		SELECT COUNT(*) FROM exh_like_list_tbl WHERE exhNo = #{exhNo}
-	</select>	
+	<select id="getExhBannerImg" resultType="org.hype.domain.exhImgVO">
+	 <![CDATA[
+    	 SELECT exhNo, uuid, uploadpath AS uploadPath, filename AS fileName
+    	FROM (
+        SELECT em.exhNo, em.uuid, em.uploadpath, em.filename
+        FROM exh_img_tbl em
+        LEFT JOIN exh_like_list_tbl el ON em.exhNo = el.exhNo
+        GROUP BY em.exhNo, em.uuid, em.uploadpath, em.filename
+        ORDER BY COUNT(el.exhNo) DESC
+    	)
+      ]]>
+	</select>
 	
-	<select id="countReviewsByUser" parameterType="map" resultType="int">
-        SELECT COUNT(*) 
-        FROM exh_reply_tbl
-        WHERE exhNo = #{exhNo} AND userNo = #{userNo}
-    </select>
+	<select id="getExhDetailImg" resultType="org.hype.domain.exhImgVO">
+    <![CDATA[
+        SELECT exhNo, uuid, uploadpath AS uploadPath, filename AS fileName
+        FROM (
+            SELECT em.exhNo, em.uuid, em.uploadpath, em.filename
+            FROM exh_detail_img_tbl em
+            LEFT JOIN exh_like_list_tbl el ON em.exhNo = el.exhNo
+            GROUP BY em.exhNo, em.uuid, em.uploadpath, em.filename
+            ORDER BY COUNT(el.exhNo) DESC
+        ) imgDetails
+        WHERE exhNo = #{exhNo}
+    ]]>
+	</select>
 	
-	<insert id="insertReply" parameterType="org.hype.domain.exhReplyVO">
-		INSERT INTO exh_reply_tbl (exhReplyNo, exhNo, userNo, exhComment, exhScore, exhRegDate)
-        VALUES (exh_reply_no_seq.NEXTVAL, #{exhNo}, #{userNo}, #{exhComment}, #{exhScore}, sysdate)
+	<select id="getExhImg" resultType="org.hype.domain.exhImgVO">
+    <![CDATA[
+        SELECT exhNo, uuid, uploadpath AS uploadPath, filename AS fileName
+        FROM (
+            SELECT em.exhNo, em.uuid, em.uploadpath, em.filename
+            FROM exh_img_tbl em
+            LEFT JOIN exh_like_list_tbl el ON em.exhNo = el.exhNo
+            GROUP BY em.exhNo, em.uuid, em.uploadpath, em.filename
+            ORDER BY COUNT(el.exhNo) DESC
+        ) imgDetails
+        WHERE exhNo = #{exhNo}
+    ]]>
+	</select>
+
+	<select id="getExhibitionByNo" parameterType="int"
+		resultType="org.hype.domain.exhVO">
+		SELECT * FROM exh_main_tbl WHERE exhNo = #{exhNo}
+	</select>
+
+	<insert id="insertLike"
+		parameterType="org.hype.domain.exhLikeVO">
+		INSERT INTO exh_like_list_tbl (exhNo, userNo, likeDate)
+		VALUES (#{exhNo}, #{userNo}, sysdate)
 	</insert>
 
-	<select id="getAllReplies" resultType="org.hype.domain.exhReplyVO">
-		select * from exh_reply_tbl where exhNo = #{exhNo} order by exhRegDate desc
+	<delete id="deleteLike"
+		parameterType="org.hype.domain.exhLikeVO">
+		DELETE FROM exh_like_list_tbl WHERE exhNo = #{exhNo} AND
+		userNo = #{userNo}
+	</delete>
+
+	<select id="isLiked" parameterType="org.hype.domain.exhLikeVO"
+		resultType="int">
+		SELECT *
+		FROM exh_like_list_tbl
+		WHERE exhNo = #{exhNo} AND
+		userNo = #{userNo}
 	</select>
 
-	<update id="updateReview" parameterType= "org.hype.domain.exhReplyVO">
-        UPDATE exh_reply_tbl
-        SET exhComment = #{exhComment}, exhScore = #{exhScore}, exhUpdateDate = sysdate
-        WHERE exhReplyNo = #{exhReplyNo} AND userNo = #{userNo}
-    </update>
+	<select id="getLikeCount" parameterType="int" resultType="int">
+		SELECT
+		COUNT(*) FROM exh_like_list_tbl WHERE exhNo = #{exhNo}
+	</select>
+
+	<select id="countReviewsByUser" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM exh_reply_tbl
+		WHERE exhNo = #{exhNo} AND
+		userNo = #{userNo}
+	</select>
+
+	<insert id="insertReply"
+		parameterType="org.hype.domain.exhReplyVO">
+		INSERT INTO exh_reply_tbl (exhReplyNo, exhNo, userNo,
+		exhComment, exhScore, exhRegDate)
+		VALUES (exh_reply_no_seq.NEXTVAL,
+		#{exhNo}, #{userNo}, #{exhComment},
+		#{exhScore}, sysdate)
+	</insert>
+
+	<select id="getUserReviews"
+		resultType="org.hype.domain.exhReplyVO">
+	 <![CDATA[
+    SELECT * FROM (
+        SELECT a.*, ROWNUM rnum 
+        FROM (
+            SELECT * 
+            FROM exh_reply_tbl 
+            WHERE exhNo = #{exhNo}
+            ORDER BY exhRegDate DESC
+        ) a
+        WHERE ROWNUM <= #{endRow}
+    )
+    WHERE rnum > #{startRow}
+      ]]>
+	</select>
+
+	<update id="updateReview"
+		parameterType="org.hype.domain.exhReplyVO">
+		UPDATE exh_reply_tbl
+		SET exhComment = #{exhComment},
+		exhScore = #{exhScore}, exhUpdateDate =
+		sysdate
+		WHERE exhReplyNo =
+		#{exhReplyNo} AND userNo = #{userNo}
+	</update>
 
 	<delete id="deleteComment">
-        DELETE FROM exh_reply_tbl
-        WHERE userNo = #{userNo} AND exhReplyNo = #{exhReplyNo}
-    </delete>
+		DELETE FROM exh_reply_tbl
+		WHERE userNo = #{userNo} AND
+		exhReplyNo = #{exhReplyNo}
+	</delete>
 
+	<select id="getAverageRating" resultType="java.lang.Double">
+		SELECT AVG(exhScore) AS
+		avg_rating
+		FROM exh_reply_tbl
+		WHERE exhNo = #{exhNo}
+	</select>
+
+	<select id="getTotalReviewCount" parameterType="int"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM exh_reply_tbl
+		WHERE exhNo = #{exhNo}
+	</select>
+	
+	
+	
 </mapper>

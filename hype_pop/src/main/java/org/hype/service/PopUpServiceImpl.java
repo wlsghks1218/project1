@@ -9,6 +9,7 @@ import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
 import org.hype.mapper.AttachMapper;
@@ -35,7 +36,7 @@ public class PopUpServiceImpl implements PopUpService {
         return mapper.getPopularPopUps();
     }
 
-    // 관심사에 따른 상위 스토어 조회
+    // 愿��ъ�ъ�� �곕Ⅸ ���� �ㅽ���� 議고��
     public Map<String, List<popStoreVO>> getTopStoresByInterests(int userno) {
         List<String> interests = mapper.getUserInterests(userno);
         Map<String, List<popStoreVO>> results = new HashMap<>();
@@ -43,7 +44,7 @@ public class PopUpServiceImpl implements PopUpService {
         if (interests != null && !interests.isEmpty()) {
             for (String interest : interests) {
                 List<popStoreVO> topStores = mapper.getTopStoresByInterest(interest);
-                results.put(interest, topStores); // 관심사와 관련된 상위 스토어 목록을 Map에 추가
+                results.put(interest, topStores); // 愿��ъ�ъ�� 愿��⑤�� ���� �ㅽ���� 紐⑸��� Map�� 異�媛�
             }
         }
         return results;
@@ -59,7 +60,7 @@ public class PopUpServiceImpl implements PopUpService {
     @Transactional
     @Override
     public likeVO likeCount(int psNo, int userNo) {
-        // 좋아요 목록에서 현재 사용자의 좋아요 상태 확인
+        // 醫����� 紐⑸����� ���� �ъ�⑹���� 醫����� ���� ����
         Map<String, Integer> params = new HashMap<>();
         params.put("psNo", psNo);
         params.put("userNo", userNo);
@@ -67,27 +68,27 @@ public class PopUpServiceImpl implements PopUpService {
         int likeStatus = mapper.checkLikeStatus(params);
         
         if (likeStatus == 0) {
-            // 좋아요가 없는 경우, 팝업 스토어의 좋아요 수 증가
-            mapper.incrementLikeCount(psNo); // 좋아요 수 1 증가
+            // 醫�����媛� ���� 寃쎌��, ���� �ㅽ���댁�� 醫����� �� 利�媛�
+            mapper.incrementLikeCount(psNo); // 醫����� �� 1 利�媛�
             
-            // 좋아요 목록에 새로운 좋아요 기록 추가
+            // 醫����� 紐⑸��� ��濡��� 醫����� 湲곕� 異�媛�
             likeVO newLike = new likeVO();
             newLike.setPsNo(psNo);
             newLike.setUserNo(userNo);
-            mapper.insertLike(newLike); // 새로운 좋아요 추가
+            mapper.insertLike(newLike); // ��濡��� 醫����� 異�媛�
             
-            return newLike; // 새로운 좋아요 정보 반환
+            return newLike; // ��濡��� 醫����� ��蹂� 諛���
         } else {
-            // 좋아요가 이미 있는 경우, 팝업 스토어의 좋아요 수 감소
-            mapper.decrementLikeCount(psNo); // 좋아요 수 1 감소
+            // 醫�����媛� �대�� ���� 寃쎌��, ���� �ㅽ���댁�� 醫����� �� 媛���
+            mapper.decrementLikeCount(psNo); // 醫����� �� 1 媛���
             
-            // 좋아요 목록에서 해당 기록 삭제
+            // 醫����� 紐⑸����� �대�� 湲곕� ����
             likeVO likeInfo = new likeVO();
             likeInfo.setPsNo(psNo);
             likeInfo.setUserNo(userNo);
-            mapper.deleteLike(likeInfo); // 좋아요 삭제
+            mapper.deleteLike(likeInfo); // 醫����� ����
             
-            return null; // 삭제된 경우 null 반환
+            return null; // ������ 寃쎌�� null 諛���
         }
     }
 
@@ -119,7 +120,7 @@ public String getStoreNameByPsNo(int referenceNo) {
 	return result;
 }
 
-// 해당 팝업스토어의 굿즈 정보들 받아오기
+// �대�� �����ㅽ���댁�� 援우� ��蹂대�� 諛����ㅺ린
 @Transactional
 @Override
 public List<goodsVO> getGoodsInfoByName(String storeName) {
@@ -129,10 +130,10 @@ public List<goodsVO> getGoodsInfoByName(String storeName) {
 	System.out.println("psNo: " + psNo); 
 	
 	List<goodsVO> result = mapper.getGoodsInfoByName(psNo);
-	System.out.println("조회된 상품 수: " + result.size());
+	System.out.println("議고���� ���� ��: " + result.size());
 	
 	for (goodsVO goods : result) {
-	    System.out.println("상품명: " + goods.getGname() + ", 가격: " + goods.getGprice());
+	    System.out.println("����紐�: " + goods.getGname() + ", 媛�寃�: " + goods.getGprice());
 	}
 	
 	return result;
@@ -153,8 +154,8 @@ public List<Map<String, Object>> getInterestsByPsNo(int psNo) {
 }
 @Override
 public double calculateAverageRating(int psNo) {
-    // 쿼리 결과가 이미 평균을 반환하므로, 바로 리턴
-    return mapper.findRatingsByPsNo(psNo); // 쿼리에서 이미 평균을 계산함
+    // 荑쇰━ 寃곌낵媛� �대�� ��洹��� 諛�����誘�濡�, 諛�濡� 由ы��
+    return mapper.findRatingsByPsNo(psNo); // 荑쇰━���� �대�� ��洹��� 怨��고��
 }
 @Override
 public List<popStoreVO> getAllPopUpData() {
@@ -172,7 +173,7 @@ public List<popStoreVO> findNearbyStores(double lat, double lng, double radius) 
     return mapper.findNearbyStores(params);
 }
 
-// 요셉이거 병합 부분
+// �����닿굅 蹂��� 遺�遺�
 @Override
 	public List<popStoreVO> showCalendar() {
 	    return mapper.showCalendar();
@@ -183,20 +184,63 @@ public List<popStoreVO> findNearbyStores(double lat, double lng, double radius) 
 		
 		return mapper.getCategoryData();
 	}
-	// 관심사 가져오기
+	// 愿��ъ�� 媛��몄�ㅺ린
 	@Override
 	public List<mCatVO> getUserInterest(int userNo) {
 
 		return mapper.getUserInterest(userNo);
 	}
 
-	// 좋아요 한 팝업스토어 가져오기
+	// 醫����� �� �����ㅽ���� 媛��몄�ㅺ린
 	@Override
 	public List<likeVO> getUserLike(int userNo) {
 
 		return mapper.getUserLike(userNo);
 	} 
-	
-	
+	@Transactional
+	@Override
+	public Map<String, List<popStoreVO>> getTopCategoriesByLikes() {
+		   List<String> interests = mapper.getTopInterestsByLikes();
+	        Map<String, List<popStoreVO>> results = new HashMap<>();
 
+	        if (interests != null && !interests.isEmpty()) {
+	            for (String interest : interests) {
+	            	  System.out.println("받아온 관심사 : " + interest);
+	                List<popStoreVO> topStores = mapper.getTopStoresByInterest(interest);
+	                results.put(interest, topStores); // 愿��ъ�ъ�� 愿��⑤�� ���� �ㅽ���� 紐⑸��� Map�� 異�媛�
+	            }
+	        }
+	        return results;
+	}
+	
+	@Override
+	public pImgVO getImageByStoreId(int psNo) {
+		  return mapper.getImageByStoreId(psNo);
+	}
+@Override
+public double getAvgRating(int psNo) {
+	double result = mapper.getAvgRating(psNo);
+	
+	return result;
+}
+@Override
+public boolean checkUserLiked(int psNo, int userNo) {
+    // Map�� �ъ�⑺���� ���쇰�명�� ����
+    Map<String, Object> params = new HashMap<>();
+    params.put("userNo", userNo);  // ���щ�� userNo瑜� Map�� 異�媛�
+    params.put("psNo", psNo);      // ���щ�� psNo瑜� Map�� 異�媛�
+    
+    // 留ㅽ�� 硫����� �몄�
+    int result = mapper.checkUserLiked(params);
+    System.out.println("荑쇰━ 寃곌낵 result: " + result);  // 荑쇰━ 寃곌낵 ����
+    
+    // result媛� 0蹂대�� �щ㈃ true, ����硫� false 諛���
+    return result > 0;
+}
+//캘린더에 필요한 이미지 가져오기
+	@Override
+	public List<pImgVO> getPopImg(int psNo) {
+		
+		return mapper.getPopImg(psNo);
+	} 
 }

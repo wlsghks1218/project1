@@ -1,8 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib uri = "http://www.springframework.org/security/tags" prefix = "sec" %>   
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="EUC-KR">
+    <meta charset="utf-8">
     <title>Insert title here</title>
     <style>
         body {
@@ -32,15 +33,30 @@
     </style>
 </head>
 <body>
-
+      <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="phi"/>
+   </sec:authorize>
     <div class="navBar">
-        <a href="/hypePop/search/noData">팝업 스토어 전체 보기</a>
-        <a href="/goodsStore/goodsSearch">굿즈 전체 보기</a>
-        <a href="/#map">내 주변</a>
-        <a href="/hypePop/calendar">캘린더</a>
-        <a href="/member/login">로그인</a>
-        <a href="/member/myPage?userNo=2">마이페이지</a>
+       <a href="/hypePop/search/noData">팝업스토어 전체 보기</a>
+       <a href="javascript:resetSearch();">굿즈 전체 보기</a>
+       <a href="/exhibition/exhibitionMain">전시회 메인 페이지</a>
+       <a href="/hypePop/popUpMain/#map">내 주변</a>
+       <a href="/hypePop/calendar">캘린더</a>
+       <a href="/party/partyBoard">파티구하기</a>
+       <sec:authorize access="!isAuthenticated()">
+       <a href="/member/login">로그인</a>
+       </sec:authorize>
+       <sec:authorize access="isAuthenticated()">
+       <a href="/logout">로그아웃</a>
+       <a href="/member/myPage?userNo=${phi.member.userNo}">마이페이지</a>
+       </sec:authorize>
+       <a href="/hypePop/customerMain">고객센터</a>
     </div>
-
 </body>
+<script type="text/javascript">
+function resetSearch() {
+    localStorage.setItem('searchText', "");
+    location.href = "/goodsStore/goodsSearch";
+}
+</script>
 </html>

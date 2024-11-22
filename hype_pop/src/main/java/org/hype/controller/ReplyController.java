@@ -160,6 +160,9 @@ public class ReplyController {
        Integer userNo = Integer.parseInt(String.valueOf(request.get("userNo"))); // String에서 Integer로 변환
        Integer pageNum = Integer.parseInt(String.valueOf(request.get("pageNum"))); // 페이지 번호
        Integer amount = Integer.parseInt(String.valueOf(request.get("amount"))); // 항목 수
+       
+       System.out.println("댓글 불러오기용 스토어 넘버는 ? : " + psNo);
+       System.out.println("댓글 불러오기용 유저 넘버는 ? : " + userNo);
 
        System.out.println("Received request: " + request);
 
@@ -179,6 +182,9 @@ public class ReplyController {
 
        // 리뷰 가져오기
        List<psReplyVO> reviews = service.getOtherReviews(psNo, userNo, cri);
+       
+       System.out.println("불러온 리뷰 목록: " + reviews);
+       System.out.println("전체 리뷰 수: " + service.getTotalReviews(psNo, userNo));
 
        // 응답 맵 구성
        Map<String, Object> response = new HashMap<>();
@@ -191,33 +197,87 @@ public class ReplyController {
                .contentType(MediaType.APPLICATION_JSON)
                .body(response);
    }
-   //추가(김윤)
-   @GetMapping(value = "/getMyPopupReply", produces = MediaType.APPLICATION_JSON_VALUE)
-   @ResponseBody // JSON으로 응답하기 위해 추가
-   public ResponseEntity<Map<String, Object>> getMyPopupReviews(@RequestParam int userNo) {
-       Map<String, Object> response = new HashMap<>();
-       try {
-           Map<String, Object> result = service.getMyPopupReviews(userNo);
-           
-           List<psReplyVO> replies = (List<psReplyVO>) result.get("replies");
-           List<String> psNames = (List<String>) result.get("psNames"); // psNames를 가져옵니다.
-           List<Map<String, Object>> replyList = new ArrayList<>();
-
-           for (int i = 0; i < replies.size(); i++) {
-               psReplyVO reply = replies.get(i);
-               Map<String, Object> replyData = new HashMap<>();
-               replyData.put("psName", psNames.get(i)); // psNames에서 psName을 가져옵니다.
-               replyData.put("psComment", reply.getPsComment()); // psComment는 psReplyVO에서 가져옵니다.
-               replyData.put("psRegDate", reply.getPsRegDate()); // psRegDate도 가져옵니다.
-               replyList.add(replyData);
-           }   response.put("replies", replyList);
-           return ResponseEntity.ok(response);
-       } catch (Exception e) {
-           log.error("Error retrieving popup reviews", e);
-           response.put("error", e.getMessage());
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-       }
    
+   
+   @PostMapping("/getAllReviews")
+   public ResponseEntity<Map<String, Object>> getAllReviews(@RequestBody Map<String, Object> request) {
+       // 요청 본문에서 psNo와 userNo 추출
+       Integer psNo = Integer.parseInt(String.valueOf(request.get("psNo"))); // String에서 Integer로 변환
+       Integer pageNum = Integer.parseInt(String.valueOf(request.get("pageNum"))); // 페이지 번호
+       Integer amount = Integer.parseInt(String.valueOf(request.get("amount"))); // 항목 수
+       
+       System.out.println("댓글 불러오기용 스토어 넘버는 ? : " + psNo);
+       System.out.println("Received request: " + request);
 
+       // Criteria 객체 생성 및 설정
+       Criteria cri = new Criteria();
+       if (pageNum <= 0) {
+           cri.setPageNum(1); // 기본 페이지 번호 설정
+       } else {
+           cri.setPageNum(pageNum);
+       }
+
+       if (amount <= 0) {
+           cri.setAmount(10); // 기본 항목 수 설정
+       } else {
+           cri.setAmount(amount);
+       }
+
+       // 리뷰 가져오기
+       List<psReplyVO> reviews = service.getAllReviews(psNo, cri);
+       
+
+
+       // 응답 맵 구성
+       Map<String, Object> response = new HashMap<>();
+       response.put("status", "success");
+       response.put("message", reviews.isEmpty() ? "리뷰가 없습니다." : "리뷰를 불러왔습니다.");
+       response.put("reviews", reviews);
+       response.put("totalReviews", service.getAllReviewcount(psNo)); // 전체 리뷰 수 추가
+
+       return ResponseEntity.ok()
+               .contentType(MediaType.APPLICATION_JSON)
+               .body(response);
+   }
+   //(마이페이지에서 댓글 가져오기, 윤)
+
+   @GetMapping(value ="/getMyPopupReply", produces = MediaType.APPLICATION_JSON_VALUE)
+   @ResponseBody
+   public ResponseEntity<Map<String, Object>> getMyPopupReply(
+           @RequestParam int userNo, // 사용자 번호
+           @RequestParam(defaultValue = "1") int pageNum, // 페이지 번호 (기본값 1)
+           @RequestParam(defaultValue = "5") int amount) { // 페이지당 항목 수 (기본값 5)
+
+      
+
+       // 페이징 처리된 댓글 목록 가져오기
+       List<psReplyVO> replies = service.getPopupRepliesWithPaging(userNo, pageNum, amount);
+
+       if (pageNum <= 0) pageNum = 1;
+       if (amount <= 0) amount = 5;
+       
+       // 전체 댓글 수 조회
+       int totalCount = service.getTotalPopupReplyCount(userNo);
+
+       if (replies == null || replies.isEmpty()) {
+           return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 댓글이 없으면 204 응답
+       }
+
+       // 댓글마다 팝업스토어 이름(psName)을 가져오기
+       for (psReplyVO reply : replies) {
+           String psName = service.getPsName(reply.getPsNo()); // psNo로 psName 조회
+           reply.setPsName(psName); // psName 설정
+           log.info("psName" + psName);
+       }
+       
+      
+
+       // 응답 객체 구성
+       Map<String, Object> response = new HashMap<>();
+       response.put("replies", replies); // 댓글 목록
+       response.put("totalCount", totalCount); // 전체 댓글 수
+       log.info("total:" + totalCount);
+
+       return new ResponseEntity<>(response, HttpStatus.OK); // 댓글과 전체 댓글 수 포함한 응답
    }
 }

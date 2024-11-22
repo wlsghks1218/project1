@@ -5,6 +5,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="org.hype.mapper.PopUpMapper">
 
+<!-- 팝업스토어 번호로 이미지를 가져오는 쿼리 -->
+<select id="getImageByStoreId" parameterType="int" resultMap="pImgResultMap">
+    SELECT psNo, uuid, uploadPath, fileName
+    FROM pop_img_tbl
+    WHERE psNo = #{psNo}
+</select>
+
+
+<resultMap id="pImgResultMap" type="org.hype.domain.pImgVO">
+    <result property="psNo" column="psNo"/>
+    <result property="uuid" column="uuid"/>
+    <result property="uploadPath" column="uploadPath"/>
+    <result property="fileName" column="fileName"/>
+</resultMap>
+
 	<!-- 특정 유저의 관심사를 가져오는 쿼리 -->
 	<select id="getUserInterests" parameterType="java.lang.Integer"
 		resultType="java.lang.String">
@@ -29,23 +44,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     ]]>
 	</select>
 
-	<select id="getTopStoresByInterest"
-		parameterType="java.lang.String"
-		resultType="org.hype.domain.popStoreVO">
-		SELECT PSNAME, LIKECOUNT
-		FROM (
-		SELECT pop_main_tbl.PSNAME,
-		pop_main_tbl.LIKECOUNT,
-		ROW_NUMBER() OVER (ORDER BY
-		pop_main_tbl.LIKECOUNT DESC) AS rn
-		FROM pop_main_tbl
-		JOIN pop_cat_tbl ON
-		pop_main_tbl.PSNO = pop_cat_tbl.PSNO
-		WHERE pop_cat_tbl.${value} = 1
-		)
-		WHERE rn BETWEEN 1 AND 8
-	</select>
-
+<select id="getTopStoresByInterest"
+        parameterType="java.lang.String"
+        resultType="org.hype.domain.popStoreVO">
+    SELECT *
+    FROM (
+        SELECT pop_main_tbl.*, 
+               ROW_NUMBER() OVER (ORDER BY pop_main_tbl.LIKECOUNT DESC) AS rn
+        FROM pop_main_tbl
+        JOIN pop_cat_tbl ON pop_main_tbl.PSNO = pop_cat_tbl.PSNO
+        WHERE pop_cat_tbl.${value} = 1
+    )
+    WHERE rn BETWEEN 1 AND 8
+</select>
 
 
 
@@ -207,6 +218,143 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     GROUP BY PSNO
     ]]>
 </select>
+	
+	<!-- 관심사 가져오기 -->
+	<select id="getUserInterest" resultType="org.hype.domain.mCatVO">
+		select * from member_cat_tbl where userNo = #{userNo}
+	</select>
+
+	<!-- 좋아요 한 팝업스토어 가져오기 -->
+	<select id="getUserLike" resultType="org.hype.domain.likeVO">
+		select * from like_list_tbl where userNo = #{userNo}
+	</select>
+
+<!-- 관심사별 좋아요 수가 많은 상위 3개 관심사 조회 -->
+<select id="getTopInterestsByLikes" resultType="java.lang.String">
+    <![CDATA[
+        SELECT interest
+        FROM (
+            SELECT 'HEALTHBEAUTY' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.HEALTHBEAUTY = 1
+            GROUP BY pc.HEALTHBEAUTY
+            
+            UNION ALL
+            
+            SELECT 'GAME' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.GAME = 1
+            GROUP BY pc.GAME
+            
+            UNION ALL
+            
+            SELECT 'CULTURE' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.CULTURE = 1
+            GROUP BY pc.CULTURE
+
+            UNION ALL
+            
+            SELECT 'SHOPPING' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.SHOPPING = 1
+            GROUP BY pc.SHOPPING
+            
+            UNION ALL
+            
+            SELECT 'SUPPLY' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.SUPPLY = 1
+            GROUP BY pc.SUPPLY
+
+            UNION ALL
+            
+            SELECT 'KIDS' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.KIDS = 1
+            GROUP BY pc.KIDS
+
+            UNION ALL
+            
+            SELECT 'DESIGN' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.DESIGN = 1
+            GROUP BY pc.DESIGN
+
+            UNION ALL
+            
+            SELECT 'FOODS' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.FOODS = 1
+            GROUP BY pc.FOODS
+
+            UNION ALL
+            
+            SELECT 'INTERIOR' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.INTERIOR = 1
+            GROUP BY pc.INTERIOR
+
+            UNION ALL
+            
+            SELECT 'POLICY' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.POLICY = 1
+            GROUP BY pc.POLICY
+
+            UNION ALL
+            
+            SELECT 'CHARACTER' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.CHARACTER = 1
+            GROUP BY pc.CHARACTER
+
+            UNION ALL
+            
+            SELECT 'EXPERIENCE' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.EXPERIENCE = 1
+            GROUP BY pc.EXPERIENCE
+
+            UNION ALL
+            
+            SELECT 'COLLABORATION' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.COLLABORATION = 1
+            GROUP BY pc.COLLABORATION
+
+            UNION ALL
+            
+            SELECT 'ENTERTAINMENT' AS interest, COUNT(*) AS like_count
+            FROM like_list_tbl ll
+            JOIN pop_cat_tbl pc ON ll.PSNO = pc.PSNO
+            WHERE pc.ENTERTAINMENT = 1
+            GROUP BY pc.ENTERTAINMENT
+        )
+        WHERE ROWNUM <= 3
+        ORDER BY like_count DESC
+    ]]>
+</select>
+
+
+<select id="getAvgRating" parameterType="int" resultType="double">
+    SELECT NVL(AVG(psScore), 0)
+    FROM pop_reply_tbl
+    WHERE psNo = #{psNo}
+</select>
 
 	<!-- 특정 팝업 스토어의 평균 별점을 계산하는 쿼리 -->
 	<select id="findRatingsByPsNo" parameterType="int"
@@ -216,6 +364,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE psNo =
 		#{psNo}
 	</select>
+	
+	
+<select id="checkUserLiked" resultType="int">
+    SELECT COUNT(*)
+    FROM like_list_tbl
+    WHERE userNo = #{userNo} AND psNo = #{psNo}
+</select>
+
 
 
 	<!-- 근처 스토어 찾기 -->
@@ -248,16 +404,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from
 		pop_cat_tbl order by psno
 	</select>
-	
-	<!-- 관심사 가져오기 -->
-	<select id="getUserInterest" resultType="org.hype.domain.mCatVO">
-		select * from member_cat_tbl where userNo = #{userNo}
+<select id="getPopImg" resultType="org.hype.domain.pImgVO">
+    <![CDATA[
+        SELECT psNo, uuid, uploadpath AS uploadPath, filename AS fileName
+        FROM (
+            SELECT em.psNo, em.uuid, em.uploadpath, em.filename
+            FROM pop_img_tbl em
+            LEFT JOIN like_list_tbl el ON em.psNo = el.psNo
+            GROUP BY em.psNo, em.uuid, em.uploadpath, em.filename
+            ORDER BY COUNT(el.psNo) DESC
+        ) imgDetails
+        WHERE psNo = #{psNo}
+    ]]>
 	</select>
-
-	<!-- 좋아요 한 팝업스토어 가져오기 -->
-	<select id="getUserLike" resultType="org.hype.domain.likeVO">
-		select * from like_list_tbl where userNo = #{userNo}
-	</select>
-
-
 </mapper>

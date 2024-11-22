@@ -2,15 +2,17 @@
    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>마이페이지</title>
 <style>
 html {
-   height: 100%;
+   height: 80%;
    overflow-y: auto; /* 세로 스크롤 활성화 */
 }
 
@@ -18,7 +20,11 @@ body {
    font-family: Arial, sans-serif;
    margin: 0;
    padding: 0;
-   overflow-y: auto;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin: 0;
+   overflow-y: hidden;
 }
 
 .container {
@@ -32,40 +38,9 @@ body {
    box-sizing: border-box; /* padding이 요소 크기에 포함되도록 설정 */
    padding-top: 40px;
    padding-bottom: 80px;
-   min-height: 1300px; /* 최소 세로 길이 지정 */
-   overflow: auto; /* 스크롤바가 필요할 때 자동으로 생성되도록 설정 */
+   min-height: 1200px; /* 최소 세로 길이 지정 */
    margin-bottom: 30px; /* 여백 추가 */
-   overflow: hidden;
-}
-
-/* Header */
-header {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 10px 20px;
-   background-color: #eee;
-   border-bottom: 2px solid #ccc;
-}
-
-header .home-btn, header .search-btn {
-   background-color: #f5a9bc;
-   border: none;
-   padding: 10px;
-   cursor: pointer;
-}
-
-header .search-bar {
-   flex-grow: 1;
-   margin: 0 20px;
-}
-
-header .search-bar input {
-   width: 100%;
-   padding: 10px;
-   border: none;
-   border-bottom: 2px solid #ccc;
-   outline: none;
+   overflow-y: hidden;/* 내부에서 세로 스크롤 활성화 */
 }
 
 /* Form Layout */
@@ -123,18 +98,22 @@ header .search-bar input {
    grid-template-columns: repeat(4, 1fr);
    gap: 10px;
    margin: 20px 0;
+   overflow: hidden; /* 슬라이더의 콘텐츠가 넘치지 않도록 설정 */
+   width: 100%; /* 부모의 너비를 가득 채움 */
 }
+
 .image-goodsItem img {
-    width: 100%; /* 이미지가 부모의 너비를 넘지 않도록 설정 */
-    height: auto; /* 비율을 유지하며 자동 크기 조정 */
-    object-fit: cover; /* 이미지 비율을 유지하며 크기를 맞추기 */
+   width: 100%; /* 이미지가 부모의 너비를 넘지 않도록 설정 */
+   height: auto; /* 비율을 유지하며 자동 크기 조정 */
+   object-fit: cover; /* 이미지 비율을 유지하며 크기를 맞추기 */
 }
 /* Image items */
-.image-goodsItem {
-    width: 100%; /* 부모의 너비를 가득 채움 */
-    height: 200px; /* 고정된 높이 설정 */
-    overflow: hidden; /* 내용이 넘칠 경우 숨김 처리 */
+.image-goodsItem img, .image-popupItem img, .image-exhItem img {
+   width: 100%;
+   height: auto;
+   object-fit: cover;
 }
+
 .image-item {
    position: relative;
    text-align: center;
@@ -163,18 +142,11 @@ header .search-bar input {
    align-items: center; /* 수직 중앙 정렬 */
    margin: 0 10px;
    margin-bottom: 200px;
-   position: relative;
+   position: fixed;
    flex-wrap: wrap;
    bottom: 50px; /* 화면 하단에서 20px 떨어진 위치 */
-   z-index: 1000;
    margin-top: 80px;
    padding-bottom: 30px;
-}
-
-/* Footer */
-footer {
-   text-align: center;
-   margin: 40px 0;
 }
 
 /* Navigation Bar */
@@ -185,6 +157,8 @@ nav {
    width: 100%;
    background-color: #ccc;
    text-align: center;
+   z-index: 1000; /* 버튼 섹션보다 위에 위치하도록 */
+   padding: 10px 0; /* 수직 여백 추가 */
 }
 
 nav a {
@@ -292,6 +266,7 @@ nav a {
    align-items: center;
    position: relative;
    max-height: 300px;
+   padding: 0 10px;
 }
 
 .image-grid {
@@ -304,6 +279,22 @@ nav a {
    flex: 0 0 25%; /* 한 번에 4개 보이도록 설정 */
    box-sizing: border-box;
    padding: 10px;
+   text-align: center; /* 이미지와 이름을 중앙 정렬 */
+   position: relative;
+}
+
+.image-item img {
+   width: 100%; /* 이미지가 컨테이너 너비에 맞게 조정됨 */
+   height: auto;
+}
+
+.store-name {
+   margin-top: 10px; /* 이미지와 이름 사이의 여백 */
+   font-size: 14px; /* 글씨 크기 조정 */
+   color: #333; /* 글씨 색상 */
+   white-space: normal; /* 텍스트가 줄 바꿈 되도록 설정 */
+   word-wrap: break-word; /* 단어가 길어지면 자동으로 줄 바꿈 */
+   overflow-wrap: break-word; /* 단어가 길어지면 자동으로 줄 바꿈 */
 }
 
 .arrow {
@@ -318,11 +309,11 @@ nav a {
 }
 
 .left {
-   left: 10px; /* 좌측 화살표 위치 */
+   left: -40px; /* 좌측 화살표 위치 */
 }
 
 .right {
-   right: 10px; /* 우측 화살표 위치 */
+   right: -40px; /* 우측 화살표 위치 */
 }
 
 /* 모달 배경 */
@@ -546,14 +537,260 @@ nav a {
    transition: all 0.3s ease; /* 부드러운 효과 */
    margin-top: 10px;
 }
+
+.removePopupBtn, .removeGoodsBtn, .removeExhBtn {
+   position: absolute;
+   top: 5px; /* 이미지 상단에서 5px만큼 떨어진 위치 */
+   right: 5px; /* 이미지 우측에서 5px만큼 떨어진 위치 */
+   background-color: #696969;
+   color: white;
+   border: none;
+   font-size: 1em; /* 버튼 글자 크기 조정 */
+   width: 13px; /* 버튼 크기 조정 */
+   height: 13px; /* 버튼 크기 조정 */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   cursor: pointer;
+   z-index: 2;
+   padding: 0; /* 패딩 제거 */
+}
+
+.image-popupItem, .image-goodsItem, .image-exhItem {
+   position: relative; /* 버튼을 위해서 부모 요소에 position을 상대적으로 설정 */
+   margin-bottom: 50px; /* 이미지 아래에 여백 추가 */
+}
+
+.button-container {
+   display: flex;
+   flex-direction: row; /* 세로로 버튼 배치 */
+   justify-content: center; /* 세로로 중앙 정렬 */
+   align-items: center; /* 가로로 중앙 정렬 */
+   margin-top: 30px; /* 위쪽에 여백 추가 */
+   gap: 15px; /* 버튼 사이 간격 */
+}
+/* 헤더 스타일 */
+.popUpHeader {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   padding: 5px 20px;
+   background-color: #fee7ed;
+   position: relative;
+   z-index: 1002;
+}
+
+/* 메인 로고 및 햄버거 버튼 역할 */
+#mainLogoButton {
+   background: none;
+   border: none;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   margin-right: 20px; /* 로고와 검색창 사이의 간격 */
+   z-index: 1002;
+}
+
+#mainLogo img {
+   max-height: 35px;
+   width: auto;
+}
+
+/* 검색 및 알림 스타일 */
+#popUpSearchBox {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   position: absolute; /* 부모의 relative에 대해 절대 위치 */
+   left: 50%; /* 수평 중앙 정렬 */
+   transform: translateX(-50%); /* 정확한 가운데 정렬 */
+   flex-grow: 1;
+   margin: 0 20px;
+}
+
+#popUpSearchBox input {
+   padding: 12px 20px; /* 패딩을 약간 증가시켜 높이 조정 */
+   width: 600px; /* 크기 두 배 증가 */
+   border: 1px solid #ccc;
+   border-radius: 25px; /* 끝부분 둥글게 */
+   outline: none;
+   text-align: center; /* 텍스트 중앙 정렬 */
+   font-size: 16px;
+   margin-right: 10px; /* 검색 버튼과의 간격 */
+}
+
+#popUpSearchClick, #noticeDiv {
+   cursor: pointer;
+}
+
+/* 알림 버튼 */
+#noticeDiv {
+   margin-left: 20px; /* 검색창과 알림 버튼 사이의 간격 */
+}
+
+/* 슬라이드 메뉴 */
+#logoContainer {
+   position: absolute; /* 고정된 위치 대신 절대 위치로 변경 */
+   top: calc(100% + 5px);
+   left: 0;
+   height: auto;
+   width: 150px;
+   background-color: #fee7ed;
+   transform: translateX(-100%); /* 기본적으로 숨겨짐 */
+   transition: transform 0.3s ease;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding-top: 60px;
+   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+   z-index: 999;
+   margin-top: 40px;
+}
+
+#logoContainer.show {
+   transform: translateX(0); /* 메뉴 표시 시 슬라이드 효과 */
+}
+
+#logoContainer div {
+   padding: 15px;
+   cursor: pointer;
+   width: 100%;
+   text-align: center;
+   transition: background-color 0.3s;
+   top: 100px;
+   padding-top: 60px;
+}
+
+#logoContainer div:hover {
+   background-color: #f0f0f0;
+}
+
+#logoContainer img {
+   max-height: 50px;
+   width: auto;
+}
+
+/* 오버레이 */
+.overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: none;
+   z-index: 999;
+}
+
+.overlay.show {
+   display: block;
+   top: 100px;
+   padding-top: 60px;
+}
+
+/* 오버레이에서 메인 로고와 슬라이더 제외 */
+.noOverlay {
+   z-index: 1003; /* 최상위로 올려서 슬라이더보다 위에 표시 */
+   position: relative;
+}
+
+#alarmDiv {
+   display: inline-block; /* 버튼이 세로로 쌓이지 않게 */
+   margin-left: 20px; /* 검색창과 알림 버튼 사이의 간격 */
+   position: relative; /* 절대 위치를 기준으로 하기 위해 relative로 설정 */
+}
+
+/* 알림 목록 스타일 */
+#notificationList {
+   display: none;
+   position: absolute;
+   top: 70px;
+   right: 20px;
+   background-color: white;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+   z-index: 1000;
+   padding: 15px;
+   width: 500px; /* 너비 증가 */
+   max-height: 400px; /* 최대 높이 설정 */
+   overflow-y: auto; /* 스크롤 추가 */
+}
+
+#notificationList div {
+   margin: 5px 0; /* 여백 */
+   padding: 5px; /* 여백 */
+   border-bottom: 1px solid #eee; /* 구분선 */
+}
+
+#notificationList div:last-child {
+   border-bottom: none; /* 마지막 아이템의 구분선 제거 */
+}
+
+.notification-dot {
+   position: absolute; /* 아이콘에 겹치게 하기 위해 절대 위치 설정 */
+   bottom: 8px; /* 알림 버튼 아래 위치 */
+   right: 28px; /* 알림 버튼 오른쪽 위치 */
+   width: 10px; /* 점의 너비 */
+   height: 10px; /* 점의 높이 */
+   background-color: red; /* 빨간색 */
+   border-radius: 50%; /* 둥글게 만들기 */
+   z-index: 1003; /* 알림 아이콘 위에 표시 */
+   display: none;
+}
+
+.delete-button {
+   background-color: transparent; /* 배경 투명 */
+   border: none; /* 테두리 없음 */
+   color: #00aff0; /* 버튼 색상 */
+   cursor: pointer; /* 커서 포인터로 변경 */
+   transition: color 0.3s; /* 색상 변화에 애니메이션 추가 */
+}
+
+.delete-button:hover {
+   color: #ff0000; /* 호버 시 색상 변경 */
+}
+
+#searchBTN {
+   background-color: #00aff0; /* 버튼 배경색 */
+   color: white; /* 버튼 텍스트 색상 */
+   padding: 12px 20px; /* 검색창과 동일한 패딩 */
+   border: none; /* 테두리 제거 */
+   border-radius: 25px; /* 검색창과 동일한 둥근 모서리 */
+   font-size: 16px; /* 텍스트 크기 */
+   text-align: center; /* 텍스트 중앙 정렬 */
+   cursor: pointer; /* 클릭 가능한 포인터 커서 */
+   display: inline-block; /* 검색창과 같은 블록 형태 */
+   transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+   margin-left: 10px; /* 검색창과 버튼 사이 간격 */
+}
+
+#searchBTN:hover {
+   background-color: #007acc; /* 호버 시 색상 변경 */
+}
+
+.footer-container {
+   padding: 20px;
+   background-color: #f8f8f8;
+   border-top: 1px solid #ccc;
+   text-align: center;
+   margin-bottom: 40px;
+   width: 100%;
+}
+
+.footer-contact h4 {
+   margin-bottom: 10px;
+   padding: 5px;
+   color: black;
+}
 </style>
 
 </head>
 <body>
 
-   <header>
-      <jsp:include page="layout/popUpHeader.jsp" />
-   </header>
+
+   <jsp:include page="layout/popUpHeader.jsp" />
+
 
    <div class="container">
 
@@ -593,26 +830,6 @@ nav a {
                변경</button>
          </div>
 
-
-         <!--관심사 배열  -->
-         <%--       <%
-          String[] interestNames = {
-              "헬스/뷰티", 
-             "게임", 
-             "문화", 
-             "쇼핑", 
-             "문구", 
-             "키즈", 
-             "디자인", 
-             "식품", 
-             "인테리어", 
-             "정책", 
-             "캐릭터", 
-             "체험", 
-             "콜라보", 
-             "방송"   
-          };
-       %>  --%>
 
 
 
@@ -784,239 +1001,238 @@ nav a {
       <div class="form-section">
          <h3>좋아요한 팝업스토어</h3>
          <div class="slider-container">
-            <input type="hidden" value="2" name="userNo" id="userNo">
+          <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
+            <button class="arrow left" onclick="slideLeft('popupStoreSlider')">❮</button>
+            <div class="image-grid" id="popupStoreSlider">
+               <c:forEach var="popup" items="${pLikeList}">
+                  <div class="image-popupItem" id="popup-${popup.psNo}"
+                     data-file-name="${popup.uuid}_${popup.fileName}">
+                     <c:if test="${not empty popup.psName}">
+                        <img alt="${popup.psName}" id="popupStoreImg"
+                           onclick="window.location.href='/hypePop/popUpDetails?storeName=${popup.psName}'" />
+                        <div class="store-name">${popup.psName}</div>
+                     </c:if>
+                     <button class="removePopupBtn"
+                        onclick="removePopup(${popup.psNo})">X</button>
+                  </div>
+               </c:forEach>
+               <button class="arrow right"
+                  onclick="slideRight('popupStoreSlider')">❯</button>
+            </div>
+         </div>
+         <h3>좋아요한 굿즈</h3>
+         <div class="slider-container">
+             <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
             <button class="arrow left" onclick="slideLeft('goodsSlider')">❮</button>
             <div class="image-grid" id="goodsSlider">
                <c:forEach var="goods" items="${gLikeList}">
+                  <input id="goodsImageFileName" type="hidden"
+                     value="${goods.uuid}_${goods.fileName}">
                   <div class="image-goodsItem" id="goods-${goods.gno}"
                      data-file-name="${goods.uuid}_${goods.fileName}">
                      <c:if test="${not empty goods.gname}">
-                        <img alt="${goods.gname}" id="goodsBannerImg" />
+                        <img alt="${goods.gname}" id="goodsBannerImg1"
+                           onclick="window.location.href='/goodsStore/goodsDetails?gno=${goods.gno}'" />
+                        <div class="store-name">${goods.gname}</div>
                      </c:if>
-                     <button onclick="removeGoods(${goods.gno})">X</button>
+                     <button class="removeGoodsBtn"
+                        onclick="removeGoods(${goods.gno})">X</button>
                   </div>
                </c:forEach>
-            <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
-            </div>
-            </div>
-            <h3>좋아요한 굿즈</h3>
-            <div class="slider-container">
-               <input type="hidden" value="2" name="userNo" id="userNo">
-               <button class="arrow left" onclick="slideLeft('goodsSlider')">❮</button>
-               <div class="image-grid" id="goodsSlider">
-                  <c:forEach var="goods" items="${gLikeList}">
-                      <input id="goodsImageFileName" type="hidden" value="${goods.uuid}_${goods.fileName}">
-                      <div class="image-goodsItem" id="goods-${goods.gno}"
-                        data-file-name="${goods.uuid}_${goods.fileName}">
-                        <c:if test="${not empty goods.gname}">
-                           <img alt="${goods.gname}" id="goodsBannerImg" />
-                        </c:if>
-                        <button onclick="removeGoods(${goods.gno})">X</button>
-                     </div>
-                  </c:forEach>
-                  <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
+               <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
 
-               </div>
-            </div>
-            <h3>좋아요한 전시</h3>
-            <div class="slider-container">
-               <input type="hidden" value="2" name="userNo" id="userNo">
-               <button class="arrow left" onclick="slideLeft('goodsSlider')">❮</button>
-               <div class="image-grid" id="goodsSlider">
-                  <c:forEach var="goods" items="${gLikeList}">
-                     <div class="image-exhibitionItem" id="goods-${goods.gno}"
-                        data-file-name="${goods.uuid}_${goods.fileName}">
-                        <c:if test="${not empty goods.gname}">
-<%--                            <img src="/images/${goods.uuid}_${goods.fileName}"
-                              alt="${goods.gname}"> --%>
-                        </c:if>
-                        <button onclick="removeGoods(${goods.gno})">X</button>
-                     </div>
-                  </c:forEach>
-                  <button class="arrow right" onclick="slideRight('goodsSlider')">❯</button>
-               </div>
-            </div>
-
-            <div class="btn-section">
-               <button type="button" class="btn btn-sec" id="goCartBtn"
-                  onclick="goToMyCart()">장바구니</button>
-               <input type="hidden" value="2" name="userNo" id="userNo">
-               <button type="button" class="btn btn-sec" id="paymentListBtn"
-                  onclick="getPayList(userNo)">내결제 목록</button>
-               <button type="button" class="btn btn-sec" id="deleteIdBtn"
-                  style="background-color: red; color: white;">회원 탈퇴</button>
             </div>
          </div>
+         <h3>좋아요한 전시</h3>
+         <div class="slider-container">
+             <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
+            <button class="arrow left" onclick="slideLeft('exhibitionSlider')">❮</button>
+            <div class="image-grid" id="exhibitionSlider">
+               <c:forEach var="exh" items="${eLikeList}">
+                  <input id="exhImageFileName" type="hidden"
+                     value="${exh.uuid}_${exh.fileName}">
+                  <div class="image-exhItem" id="exh-${exh.exhNo}"
+                     data-file-name="${exh.uuid}_${exh.fileName}">
+                     <c:if test="${not empty exh.exhName}">
+                        <img alt="${exh.exhName}" id="exhImg"
+                           onclick="window.location.href='/exhibition/exhibitionDetail?exhNo=${exh.exhNo}'" />
+                        <div class="store-name">${exh.exhName}</div>
+                     </c:if>
+                     <button class="removeExhBtn" onclick="removeExh(${exh.exhNo})">X</button>
+                  </div>
+               </c:forEach>
+               <button class="arrow right"
+                  onclick="slideRight('exhibitionSlider')">❯</button>
+
+            </div>
+         </div>
+
+         <div class="button-container">
+            <button type="button" class="btn btn-sec" id="goCartBtn"
+               onclick="goToMyCart()">장바구니</button>
+             <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
+            <button type="button" class="btn btn-sec" id="paymentListBtn"
+               onclick="getPayList()">내결제 목록</button>
+            <button type="button" class="btn btn-sec" id="deleteUserData"
+               onclick="deleteUserData()"
+               style="background-color: red; color: white;">회원 탈퇴</button>
+         </div>
+
+
       </div>
-
-      <!--    <div class="image-item">
-            <img src="popup1.jpg" alt="팝업스토어1" onclick="goToPopupDetail(1)">
-            <button onclick="removePopup(1)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="popup2.jpg" alt="팝업스토어2" onclick="goToPopupDetail(2)">
-            <button onclick="removePopup(2)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="popup3.jpg" alt="팝업스토어3" onclick="goToPopupDetail(3)">
-            <button onclick="removePopup(3)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="popup4.jpg" alt="팝업스토어4" onclick="goToPopupDetail(4)">
-            <button onclick="removePopup(4)">X</button>
-         </div> -->
-
-
-
-      <!--    <div class="image-item">
-            <img src="goods1.jpg" alt="굿즈1" onclick="goToGoodsDetail(1)">
-            <button onclick="removeGoods(1)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="goods2.jpg" alt="굿즈2" onclick="goToGoodsDetail(2)">
-            <button onclick="removeGoods(2)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="goods3.jpg" alt="굿즈3" onclick="goToGoodsDetail(3)">
-            <button onclick="removeGoods(3)">X</button>
-         </div>
-         <div class="image-item">
-            <img src="goods4.jpg" alt="굿즈4" onclick="goToGoodsDetail(4)">
-            <button onclick="removeGoods(4)">X</button>
-         </div> -->
+   </div>
 
 
 
 
-      <!-- 푸터 포함 -->
-      <jsp:include page="layout/popUpFooter.jsp" />
-      <jsp:include page="layout/popUpNavBar.jsp" />
 
 
 
 
-      <!--///////////////모달 창//////////////  -->
+   <!-----------------모달 창------------------------>
 
 
-      <!--비밀번호 변경 모달-->
-      <div id="foundUserPwModal" style="display: none;">
-         <div class="modal-content">
-            <!-- X 버튼 추가 -->
-            <span class="close" onclick="closePwModal()">&times;</span>
-            <form action="passwordChange?userNo=${userNo}" method="get"
-               id="passwordChangeForm" onsubmit="return submitPwChange()">
-               <div class="modal-body">
-                  <div class="form-group">
-                     <p>
-                        <input type="password" class="modal-input" name="oldPw"
-                           placeholder="기존 비밀번호 입력" required>
-                     </p>
-                  </div>
-                  <div class="form-group">
-                     <p>
-                        <input type="password" class="modal-input" name="newPw"
-                           placeholder="신규 비밀번호 입력" required>
-                     </p>
-                  </div>
-                  <div class="form-group">
-                     <span> <input type="password" class="modal-input"
-                        name="checkNewPw" placeholder="신규 비밀번호 확인" required>
-                     </span>
-                  </div>
+   <!--비밀번호 변경 모달-->
+   <div id="foundUserPwModal" style="display: none;">
+      <div class="modal-content">
+         <!-- X 버튼 추가 -->
+         <span class="close" onclick="closePwModal()">&times;</span>
+         <form action="passwordChange?userNo=${userNo}" method="post"
+            id="passwordChangeForm" onsubmit="return submitPwChange()">
+            <div class="modal-body">
+               <div class="form-group">
+                  <p>
+                     <input type="password" class="modal-input" name="oldPw"
+                        placeholder="기존 비밀번호 입력" required>
+                  </p>
                </div>
-               <div class="modal-footer">
-                  <button type="submit" class="btn btn-sec">비밀번호 변경</button>
+               <div class="form-group">
+                  <p>
+                     <input type="password" class="modal-input" name="newPw"
+                        placeholder="신규 비밀번호 입력" required>
+                  </p>
                </div>
+               <div class="form-group">
+                  <span> <input type="password" class="modal-input"
+                     name="checkNewPw" placeholder="신규 비밀번호 확인" required>
+                  </span>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="submit" class="btn btn-sec">비밀번호 변경</button>
+            </div>
 
 
-            </form>
-         </div>
+         </form>
       </div>
-      <!--이메일 변경 모달  -->
+   </div>
+   <!--이메일 변경 모달  -->
 
-      <div id="changeUserEmailModal" style="display: none;">
-         <div class="modal-content">
-            <!-- X 버튼 추가 -->
-            <span class="close" onclick="closeEmailModal()">&times;</span>
-            <form id="EmailChangeForm">
-               <div class="modal-body">
-                  <!-- 이메일 전송 필드 -->
-                  <div class="form-group form-group-inline">
-                     <input type="email" class="modal-input" id="userEmail2"
-                        value="${userInfo.userEmail}">
-                     <button type="button" id="sendEmailBtn" class="btn btn-sec"
-                        onclick="verifyEmailSend()">이메일 전송</button>
-                  </div>
-
-                  <!-- 코드 입력 및 확인 버튼 -->
-                  <div class="form-group form-group-inline">
-                     <input type="number" class="modal-input" name="verifyCode"
-                        id="verifyCodeInput" placeholder="코드 입력" required>
-                     <button type="button" id="sendEmailCode" class="btn btn-sec"
-                        onclick="verifyEmailCode()">코드 확인</button>
-                  </div>
-
-                  <!-- 신규 이메일 입력 -->
-                  <div class="form-group">
-                     <input type="email" class="modal-input" name="newEmail"
-                        placeholder="신규 이메일 입력" required>
-                  </div>
-
-                  <!-- 신규 이메일 확인 -->
-                  <div class="form-group">
-                     <input type="email" class="modal-input" name="checkNewEmail"
-                        placeholder="신규 이메일 확인" required>
-                  </div>
+   <div id="changeUserEmailModal" style="display: none;">
+      <div class="modal-content">
+         <!-- X 버튼 추가 -->
+         <span class="close" onclick="closeEmailModal()">&times;</span>
+         <form id="EmailChangeForm">
+            <div class="modal-body">
+               <!-- 이메일 전송 필드 -->
+               <div class="form-group form-group-inline">
+                  <input type="email" class="modal-input" id="userEmail2"
+                     value="${userInfo.userEmail}">
+                  <button type="button" id="sendEmailBtn" class="btn btn-sec"
+                     onclick="verifyEmailSend()">이메일 전송</button>
                </div>
 
-               <div class="modal-footer">
-                  <button type="button" class="btn btn-sec"
-                     onclick="submitEmailChange()">이메일 변경</button>
+               <!-- 코드 입력 및 확인 버튼 -->
+               <div class="form-group form-group-inline">
+                  <input type="number" class="modal-input" name="verifyCode"
+                     id="verifyCodeInput" placeholder="코드 입력" required>
+                  <button type="button" id="sendEmailCode" class="btn btn-sec"
+                     onclick="verifyEmailCode()">코드 확인</button>
                </div>
-            </form>
-         </div>
+
+               <!-- 신규 이메일 입력 -->
+               <div class="form-group">
+                  <input type="email" class="modal-input" name="newEmail"
+                     placeholder="신규 이메일 입력" required>
+               </div>
+
+               <!-- 신규 이메일 확인 -->
+               <div class="form-group">
+                  <input type="email" class="modal-input" name="checkNewEmail"
+                     placeholder="신규 이메일 확인" required>
+               </div>
+            </div>
+
+            <div class="modal-footer">
+               <button type="button" class="btn btn-sec"
+                  onclick="submitEmailChange()">이메일 변경</button>
+            </div>
+         </form>
       </div>
+   </div>
 
-      <!-- 전화번호 변경 모달 -->
-      <div id="changePhoneNumberModal" style="display: none;">
-         <div class="modal-content">
-            <!-- X 버튼 추가 -->
-            <span class="close" onclick="closePhoneNumModal()">&times;</span>
-            <form action="phoneNumberChange?userNo=${userNo}" method="get"
-               id="phoneNumberChange">
-               <div class="modal-body">
-                  <input id="userNo" type="hidden" value="2" name="userNo">
-                  <div class="form-group">
-                     <p>
-                        <input type="text" class="modal-input" name="oldPhoneNumber"
-                           placeholder="기존 전화번호 입력">
-                     </p>
-                  </div>
-                  <div class="form-group">
-                     <p>
-                        <input type="text" class="modal-input" name="newPhoneNumber"
-                           placeholder="신규 전화번호 입력">
-                     </p>
-                  </div>
-                  <div class="form-group">
-                     <span> <input type="text" class="modal-input"
-                        name="checkNewPhoneNumber" placeholder="신규 전화번호 확인">
-                     </span>
-                  </div>
+   <!-- 전화번호 변경 모달 -->
+   <div id="changePhoneNumberModal" style="display: none;">
+      <div class="modal-content">
+         <!-- X 버튼 추가 -->
+         <span class="close" onclick="closePhoneNumModal()">&times;</span>
+         <form action="phoneNumberChange?userNo=67" method="get"
+            id="phoneNumberChange">
+            <div class="modal-body">
+                <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
+               <div class="form-group">
+                  <p>
+                     <input type="text" class="modal-input" name="oldPhoneNumber"
+                        placeholder="기존 전화번호 입력">
+                  </p>
                </div>
-               <div class="modal-footer">
-                  <button type="submit" class="btn btn-sec"
-                     onclick="return PhoneNumberChange()">전화번호 변경</button>
+               <div class="form-group">
+                  <p>
+                     <input type="text" class="modal-input" name="newPhoneNumber"
+                        placeholder="신규 전화번호 입력">
+                  </p>
                </div>
-            </form>
-         </div>
+               <div class="form-group">
+                  <span> <input type="text" class="modal-input"
+                     name="checkNewPhoneNumber" placeholder="신규 전화번호 확인">
+                  </span>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="submit" class="btn btn-sec"
+                  onclick="return PhoneNumberChange()">전화번호 변경</button>
+            </div>
+         </form>
       </div>
+   </div>
+
+   <jsp:include page="layout/popUpFooter.jsp" />
+   <jsp:include page="layout/popUpNavBar.jsp" />
 
 
 
-
-      <script type="text/javascript" src="/resources/memberJs/myPage.js"></script>
-      <script type="text/javascript" src="/resources/purchaseJs/myCart.js"></script>
+   <script type="text/javascript" src="/resources/memberJs/myPage.js"></script>
+   <script type="text/javascript" src="/resources/purchaseJs/myCart.js"></script>
 </body>
 
 

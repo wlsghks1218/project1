@@ -7,47 +7,59 @@ import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
 
 public interface PopUpService {
-	// 인기많은 친구 8개 가져오기
+	// �멸린留��� 移�援� 8媛� 媛��몄�ㅺ린
     public List<popStoreVO> getPopularPopUps();
-    //유저가 고른 관심사 별 상위 8개
+    
+    // ��泥� 愿��ъ�� 以� 醫����� ��媛� 媛��� 留��� ���� 3媛��� 移댄��怨�由щ�� ������怨� 3媛��� 移댄��怨�由щ� 媛�媛� 8媛��� �ㅽ���대�� 媛��몄�� 
+    public Map<String, List<popStoreVO>> getTopCategoriesByLikes();
+    //����媛� 怨�瑜� 愿��ъ�� 蹂� ���� 8媛�
     public Map<String, List<popStoreVO>> getTopStoresByInterests(int userno);
-    //이름으로 스토어 정보 가져오기
+    //�대��쇰� �ㅽ���� ��蹂� 媛��몄�ㅺ린
     public popStoreVO getStoreInfoByName(String storeName);
-    //좋아요 수 증가 로직
+    //醫����� �� 利�媛� 濡�吏�
     public likeVO likeCount(int psNo, int userNo);
-    //좋아요 수 가져오기
+    //醫����� �� 媛��몄�ㅺ린
 	public Integer getLikeCount(int psNo);
-	// 유저가 좋아요 했는지 안했는지 확인
+	// ����媛� 醫����� ����吏� ������吏� ����
 	public boolean checkUserLike(int psNo, int userNo);
-	// 팝업스토어 이름으로 굿즈 정보 받아오기
+	// �����ㅽ���� �대��쇰� 援우� ��蹂� 諛����ㅺ린
 	public List<goodsVO> getGoodsInfoByName(String storeName);
 	
 	public String getStoreNameByPsNo(int referenceNo);
-	// 검색내용으로 팝업스토어 검색하기
+	// 寃����댁�⑹�쇰� �����ㅽ���� 寃�����湲�
 	public List<popStoreVO> popUpSearchByData(String searchData);
 	
-	// 검색 결과 팝업스토어들의 관심사 가져 오기
+	// 寃��� 寃곌낵 �����ㅽ���대�ㅼ�� 愿��ъ�� 媛��� �ㅺ린
 	public List<Map<String, Object>> getInterestsByPsNo(int psNo);
-    // 평균 평점 가져오는 메서드	
+    // ��洹� ���� 媛��몄�ㅻ�� 硫�����	
 	public double calculateAverageRating(int psNo);
-    // 전체 스토어 데이터 조회
+    // ��泥� �ㅽ���� �곗�댄�� 議고��
 	public List<popStoreVO> getAllPopUpData();
-	// 1km 이내 스토어 찾기 로직
+	// 1km �대�� �ㅽ���� 李얘린 濡�吏�
 	public List<popStoreVO> findNearbyStores(double lat, double lng, double radius);
 	
-	//요셉이 병합부분 
+	public pImgVO getImageByStoreId(int psNo);
+	
+	public double getAvgRating(int psNo);
+	
+	// 愿��ъ�� 媛��몄�ㅺ린
+	public List<mCatVO> getUserInterest(int userNo);
+	
+	// 醫������� �����ㅽ���� 媛��몄�ㅺ린
+	public List<likeVO> getUserLike(int userNo);
+	
+	public boolean checkUserLiked(int psNo, int userNo);
+	//������ 蹂��⑸�遺� 
 	public List<popStoreVO> showCalendar();
 
 	public List<pCatVO> getCategoryData();
 	
-	    // 관심사 가져오기
-		public List<mCatVO> getUserInterest(int userNo);
 
-		// 좋아요한 팝업스토어 가져오기
-		public List<likeVO> getUserLike(int userNo);
-	
+
+	public List<pImgVO> getPopImg(int psNo);
 }

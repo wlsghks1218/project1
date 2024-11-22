@@ -32,40 +32,40 @@ import lombok.extern.log4j.Log4j;
 @RestController
 @RequestMapping("/goodsStore")
 public class GoodsRestController {
-	
+   
     @Autowired
     private GoodsService gService;
     
     @GetMapping(value = "/chkLike/{gno}/{userNo}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> chkLike(@PathVariable("gno") int gno, @PathVariable("userNo") int userNo){
-    	int result = gService.getLikeChk(userNo, gno);
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+       int result = gService.getLikeChk(userNo, gno);
+       return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
     @GetMapping(value = "/changeLike/{gno}/{userNo}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> changeLike(@PathVariable("gno") int gno, @PathVariable("userNo") int userNo){
-    	int result = gService.updateLike(userNo, gno);
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+       int result = gService.updateLike(userNo, gno);
+       return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
     @GetMapping(value = "/getLikeCount/{gno}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> getLikeCount(@PathVariable("gno") int gno){
-    	int result = gService.getLikeCount(gno);
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+       int result = gService.getLikeCount(gno);
+       return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
     @PostMapping(value = "/getAllGoodsList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<goodsVO>> getAllGoodsList(){
-    	List<goodsVO> result = gService.getAllGoodsList();
+       List<goodsVO> result = gService.getAllGoodsList();
         for (goodsVO vo : result) {
             gCatVO voCat = gService.getCategory(vo.getGno());
             vo.setGcat(voCat);
             List<gImgVO> imgVo = new ArrayList<gImgVO>();
             gImgVO imgVo1 = gService.getImgByGno(vo.getGno());
             imgVo.add(imgVo1);  
-        	vo.setAttachList(imgVo);
+           vo.setAttachList(imgVo);
         }
-    	return new ResponseEntity<>(result, HttpStatus.OK);
+       return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
     @GetMapping("/goodsBannerImages/{fileName:.+}")

@@ -1,17 +1,28 @@
+/* 전체 요소에 대한 기본 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* 레이아웃 안정성을 위해 box-sizing 설정 */
+}
+
+/* 기본 배경 색상 설정 */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #141414; /* 어두운 배경 */
-    color: #e5e5e5; /* 밝은 텍스트 색상 */
+    background-color: #fee7ed; /* 주요 배경 색상 */
+    color: #00aff0; /* 텍스트 색상 */
     margin: 0;
     padding: 0;
 }
 
+/* 팝업 추천 제목 스타일 */
 h1 {
     text-align: center;
     margin: 20px 0;
     font-size: 2.5em;
+    color: #fee7ed; /* 주요 색상 */
 }
 
+/* 검색 조건 스타일 */
 .searchConditions {
     display: flex;
     justify-content: center; /* 중앙 정렬 */
@@ -23,8 +34,9 @@ h1 {
     gap: 20px; /* 버튼 사이 간격 */
 }
 
+/* 관심사 버튼 스타일 */
 #selectInterestsBtn {
-    background-color: #e50914; /* 넷플릭스 빨간색 */
+    background-color: #00aff0; /* 주요 색상 */
     color: #ffffff;
     border: none;
     padding: 10px 20px;
@@ -34,53 +46,67 @@ h1 {
 }
 
 #selectInterestsBtn:hover {
-    background-color: #f40612; /* 조금 더 어두운 빨간색 */
+    background-color: #0082b3; /* 약간 어두운 색상 */
 }
 
+/* 관심사 버튼 영역 중앙 정렬 */
 #interestButtons {
     display: flex;
     flex-wrap: wrap;
     justify-content: center; /* 중앙 정렬 */
-    margin: 20px 0; /* 위아래 여백 */
-    gap: 10px; /* 버튼 간의 간격 추가 */
+    margin: 20px auto; /* 좌우 여백을 자동으로 설정하여 중앙 정렬 */
+    gap: 10px;
+    max-width: 80%; /* 최대 너비를 설정하여 화면 크기 초과를 방지 */
 }
 
+/* 관심사 버튼 스타일을 위해 추가 */
 #interestButtons button {
-    background-color: #f0f0f0; /* 기본 색상 */
-    color: #000; /* 기본 텍스트 색상 */
-    border: none;
-    padding: 10px 20px; /* 버튼의 안쪽 여백 (크기 조정) */
+    background-color: #ffffff; /* 배경색을 흰색으로 변경 */
+    color: #00aff0; /* 텍스트 색상 변경 */
+    border: 1px solid #00aff0; /* 테두리 색상도 동일하게 변경 */
+    padding: 10px 20px; /* 버튼의 안쪽 여백 */
     margin: 5px; /* 버튼 사이의 기본 마진 */
     cursor: pointer;
-    border-radius: 5px; /* 버튼의 모서리를 둥글게 */
+    border-radius: 5px; /* 버튼 모서리 둥글게 */
     transition: background-color 0.3s ease, color 0.3s ease; /* 색상 변화 애니메이션 */
 }
+/* 버튼 hover 상태 */
+#interestButtons button:hover {
+    background-color: #00aff0; /* 호버 시 배경색을 주요 색상으로 */
+    color: white; /* 텍스트를 흰색으로 */
+    border-color: #00aff0; /* 테두리 색상 변경 */
+}
 
-/* 선택된 버튼 스타일 (넷플릭스 레드) */
+/* 선택된 버튼 스타일 */
 #interestButtons button.selected {
-    background-color: #e50914; /* 넷플릭스 레드 */
+    background-color: #00aff0; /* 주요 색상 */
     color: white; /* 텍스트는 흰색 */
 }
 
 .interestBtn {
-    background-color: #444444; /* 어두운 회색 */
-    color: #e5e5e5; /* 밝은 텍스트 색상 */
-    border: none;
-    padding: 10px 15px;
+    flex-shrink: 0;
+    font-size: 18px;
+    padding: 12px 20px;
     border-radius: 5px;
-    margin: 5px;
+    background-color: #333;
+    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+    
 }
 
 .interestBtn:hover {
-    background-color: #666666; /* 회색 밝기 증가 */
+    background-color: #e50914;
+    transform: scale(1.05);
 }
+
 
 table.searchResultStore {
     width: 80%; /* 중앙 정렬을 위해 너비 조정 */
     margin: 0 auto; /* 중앙 정렬 */
     border-collapse: collapse;
+    background-color: #fee7ed; /* 주요 색상 */
 }
 
 #popUpStoreImg {
@@ -94,7 +120,7 @@ table.searchResultStore {
 #popUpName {
     font-size: 1.5em;
     font-weight: bold;
-    color: #e50914; /* 넷플릭스 빨간색 */
+    color: #00aff0; /* 텍스트 색상 */
 }
 
 #likeCount {
@@ -104,14 +130,13 @@ table.searchResultStore {
 
 h3 {
     margin: 10px 0;
-    color: #e5e5e5; /* 밝은 텍스트 색상 */
+    color: #00aff0; /* 텍스트 색상 */
 }
 
 span {
-    background-color: #555; /* 관심사 강조를 위한 배경 색상 */
-    color: #ffffff; /* 흰색 텍스트 */
-    padding: 5px 10px;
-    border-radius: 3px;
+    background-color: transparent; /* 배경색 투명으로 설정 */
+    color: #00aff0; /* 텍스트 색상 */
+    padding: 0; /* 패딩 제거 */
 }
 
 /* 전체 테이블 설정 */
@@ -119,22 +144,93 @@ span {
     width: 50%; /* 화면의 50% 너비 사용 */
     margin: 0 auto; /* 중앙 정렬 */
     padding: 20px;
-    background-color: #141414; /* 넷플릭스 스타일 배경색 */
+    background-color: #fee7ed; /* 주요 색상 */
     overflow: visible; /* 부모 요소의 오버플로우 설정 */
+    min-height: 530px;
 }
 
+.scroll-btn {
+   position: fixed;
+   bottom: 10vh;
+   right: 2vw;
+   display: flex;
+   flex-direction: column; /* 버튼들이 위에서 아래로 정렬되게 설정 */
+   gap: 0.625rem;
+   z-index: 20;
+}
+
+.scroll-btn button {
+   background-color: #00aff0; /* 배경색을 #00aff0로 변경 */
+   color: white;
+   padding: 1rem;
+   border: none;
+   border-radius: 10px; /* 모서리 둥글게 설정 */
+   font-size: 0; /* 텍스트는 보이지 않도록 설정 */
+   cursor: pointer;
+   transition: background-color 0.3s, opacity 0.3s;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 3rem; /* 버튼 크기 */
+   height: 3rem; /* 버튼 크기 */
+   position: relative; /* 삼각형을 위한 relative 위치 지정 */
+   opacity: 0.5; /* 기본적으로 불투명 상태 */
+}
+
+.scroll-btn button:hover {
+   background-color: #0092c4; /* 호버 시 색상 변경 */
+   opacity: 1; /* 호버 시 불투명도 1로 설정 */
+}
+
+
+.scroll-btn button::before {
+   content: "";
+   position: absolute;
+   width: 0;
+   height: 0;
+   border-left: 0.6rem solid transparent; /* 삼각형 크기 조정 */
+   border-right: 0.6rem solid transparent; /* 삼각형 크기 조정 */
+   left: 50%; /* 수평 중앙 정렬 */
+   transform: translateX(-50%); /* 정확한 중앙 정렬 */
+}
+
+#scrollUp::before {
+   border-bottom: 1.2rem solid white; /* 위로 화살표 크기 조정 */
+   top: 50%; /* 버튼 중앙에 삼각형을 배치 */
+   transform: translateY(-50%) translateX(-50%); /* 삼각형을 정확히 중앙에 맞추기 위한 변환 */
+}
+
+#scrollDown::before {
+   border-top: 1.2rem solid white; /* 아래로 화살표 크기 조정 */
+   bottom: 50%; /* 버튼 중앙에 삼각형을 배치 */
+   transform: translateY(50%) translateX(-50%); /* 삼각형을 정확히 중앙에 맞추기 위한 변환 */
+}
+
+.scroll-btn button:hover {
+   background-color: #0092c4; /* 호버 시 색상 변경 */
+}
+
+button:disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+}
+
+
 /* 각 팝업스토어 카드 */
+/* 스토어 카드 */
 .store-card {
     width: 100%; /* 카드 너비를 100%로 설정 */
-    background-color: #333; /* 카드 배경색을 약간 밝게 조정 */
-    color: #fff; /* 글자색 */
+    background-color: #00aff0; /* 배경색을 #00aff0으로 변경 */
+    color: #ffffff; /* 텍스트 색상을 하얀색으로 변경 */
     border-radius: 10px; /* 카드 모서리 둥글기 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 그림자 효과 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
     padding: 20px; /* 내부 여백 */
     margin-bottom: 20px; /* 카드 간의 간격 */
     display: flex; /* 플렉스 박스 사용 */
     align-items: center; /* 수직 정렬 */
+    position: relative; /* 자식 요소의 절대 위치 조정을 위해 relative로 설정 */
 }
+
 
 /* 이미지 영역 */
 .store-image {
@@ -149,12 +245,6 @@ span {
     border-radius: 10px; /* 모서리 둥글기 */
 }
 
-.store-info .header {
-    display: flex; /* Flexbox 사용 */
-    justify-content: space-between; /* 공간을 양쪽으로 분배 */
-    align-items: center; /* 수직 중앙 정렬 */
-}
-
 /* 카드 내부 정보 영역 */
 .store-info {
     flex: 1; /* 남은 공간을 차지 */
@@ -164,23 +254,32 @@ span {
 .store-info h2 {
     font-size: 1.2rem; /* 스토어 이름 크기 */
     margin-bottom: 5px; /* 여백 */
+    color: #ffffff; /* 텍스트 색상 하얀색 */
 }
 
 .store-info .likeCount {
-    font-weight: bold; /* 두꺼운 글씨 */
-    color: #f39c12; /* 색상 */
-    margin-left: 10px; /* 좋아요 수와 이름 간의 간격 */
+    position: absolute; /* 절대 위치 지정 */
+    top: 10px; /* 카드 상단에서 10px 떨어지게 설정 */
+    right: 10px; /* 카드 오른쪽에서 10px 떨어지게 설정 */
+    background-color: #ffffff; /* 배경색 흰색 */
+    color: #00aff0; /* 텍스트 색상 주요 색상 */
+    font-weight: bold; /* 텍스트 두껍게 */
+    padding: 5px 10px; /* 안쪽 여백 */
+    border-radius: 8px; /* 둥근 모서리 */
+    font-size: 1.2rem; /* 글자 크기 설정 */
+    z-index: 1; /* 다른 요소 위에 표시되도록 설정 */
 }
 
 .store-info h3 {
     font-size: 1rem; /* 주소 크기 */
     margin-bottom: 5px; /* 여백 */
+    color: #ffffff; /* 텍스트 색상 하얀색 */
 }
 
 /* 관심사 및 날짜 정보 */
 .store-info span {
     background-color: transparent; /* 배경색 투명으로 설정 */
-    color: #e5e5e5; /* 기존 텍스트 색상으로 설정 */
+    color: #ffffff; /* 텍스트 색상 하얀색 */
     padding: 0; /* 패딩 제거 */
 }
 
@@ -191,18 +290,24 @@ span {
 }
 
 .store-info .popUpCat {
-    display: flex; /* 플렉스 박스 사용 */
-    flex-wrap: wrap; /* 줄 바꿈 가능하게 */
-    margin-top: 10px; /* 여백 추가 */
+    background-color: rgba(0, 0, 0, 0.7); /* 불투명한 검은색 배경 */
+    color: white; /* 흰색 텍스트 */
+    font-weight: bold; /* 텍스트 굵게 */
+    padding: 5px 10px; /* 안쪽 여백 */
+    border-radius: 8px; /* 둥근 모서리 */
+    display: inline-flex; /* inline-flex로 변경 */
+    align-items: center; /* 세로 정렬 */
+    margin-right: 0; /* 오른쪽 여백 없앰 */
+    line-height: 1; /* 라인 높이 조정 */
+    white-space: nowrap; /* 텍스트가 줄 바꿈 없이 한 줄로 유지 */
 }
-
 /* 관심사 태그 스타일 */
 .interest-tag {
     display: inline-block; /* 인라인 블록으로 설정 */
     margin-right: 8px; /* 오른쪽 여백 추가 */
     padding: 5px 10px; /* 패딩 추가 */
-    background-color: #555; /* 관심사 강조를 위한 배경 색상 */
-    color: #ffffff; /* 흰색 텍스트 */
+    background-color: #00aff0; /* 주요 색상 */
+    color: white; /* 흰색 텍스트 */
     border-radius: 3px; /* 모서리 둥글게 */
     font-size: 14px; /* 글자 크기 설정 */
 }
@@ -213,71 +318,47 @@ span {
     color: white; /* 텍스트는 흰색 */
 }
 
+
 /* 검색 조건 버튼 스타일 */
 .searchConditions h3 span {
     padding: 10px 15px; /* 버튼의 패딩 */
     border-radius: 5px; /* 둥근 모서리 */
-    background-color: #444; /* 기본 배경색 */
-    color: #e5e5e5; /* 기본 텍스트 색상 */
+    background-color: #fee7ed; /* 주요 색상 */
+    color: #00aff0; /* 텍스트 색상 */
     cursor: pointer; /* 커서 모양 변경 */
     transition: background-color 0.3s; /* 부드러운 색상 변화 */
 }
 
 /* 선택된 버튼 스타일 */
 .searchConditions h3 span.selected {
-    background-color: #e50914; /* 넷플릭스 빨간색 */
+    background-color: #00aff0; /* 주요 색상 */
     color: white; /* 흰색 텍스트 */
 }
 
-/* 더보기 버튼 스타일 */
-#loadMoreBtn {
-    background-color: #e50914; /* 넷플릭스 빨간색 */
-    color: #ffffff; /* 흰색 텍스트 */
-    border: none;
-    padding: 10px 20px; /* 버튼의 안쪽 여백 */
-    border-radius: 5px; /* 버튼의 모서리를 둥글게 */
-    cursor: pointer;
-    transition: background-color 0.3s; /* 부드러운 색상 변화 */
-    margin: 20px 0; /* 여백 추가 */
-}
-
-/* 더보기 버튼 호버 효과 */
-#loadMoreBtn:hover {
-    background-color: #f40612; /* 조금 더 어두운 빨간색 */
-}
-/* storeName 클래스에 의도하지 않은 스타일을 제거 */
-.store-info .storeName {
-    border: none; /* 테두리 제거 */
-    box-shadow: none; /* 그림자 효과 제거 */
-    outline: none; /* 외곽선 제거 */
-}
-/* 초기화 버튼 스타일 */
-#resetBtn {
-    padding: 10px 15px; /* 버튼의 패딩 */
-    border-radius: 5px; /* 둥근 모서리 */
-    background-color: #444; /* 기본 배경색 */
-    color: #e5e5e5; /* 기본 텍스트 색상 */
-    cursor: pointer; /* 커서 모양 변경 */
-    transition: background-color 0.3s; /* 부드러운 색상 변화 */
-    display: inline-block;
-    text-align: center;
-    margin-top: 10px; /* y축 위치 조정 */
-}
-
-/* 선택된 초기화 버튼 스타일 */
-#resetBtn.selected {
-    background-color: #e50914; /* 넷플릭스 빨간색 */
-    color: white; /* 흰색 텍스트 */
-}
-
-/* 초기화 버튼 호버 효과 */
-#resetBtn:hover {
-    background-color: #f40612; /* 조금 더 어두운 빨간색 */
-}
-
-/* 중앙 정렬을 위한 wrapper */
+/* 초기화 버튼 중앙 정렬 */
 #resetWrapper {
-    display: flex;
-    justify-content: center; /* x축 중앙 정렬 */
-    margin-top: 20px; /* 버튼 상단 여백 */
+    display: flex; /* 플렉스 박스를 사용하여 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    margin: 20px auto; /* 위 아래 여백 추가 및 자동 중앙 정렬 */
+}
+
+/* 초기화 텍스트 스타일 */
+#resetWrapper span {
+     background-color: #00aff0; /* 호버 시 배경색을 주요 색상으로 */
+      color: white; /* 텍스트를 흰색으로 */
+    border: 1px solid #00aff0; /* 테두리 색상도 동일하게 변경 */
+    padding: 10px 20px; /* 텍스트의 여백 */
+    cursor: pointer;
+    border-radius: 5px; /* 버튼 모서리 둥글게 */
+    transition: background-color 0.3s ease, color 0.3s ease; /* 색상 변화 애니메이션 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    display: inline-block; /* span을 블록처럼 보이게 하기 위해 */
+}
+
+/* span hover 상태 */
+#resetWrapper span:hover {
+    background-color: #00aff0; /* 호버 시 배경색을 주요 색상으로 */
+    color: white; /* 텍스트를 흰색으로 */
+    border-color: #00aff0; /* 테두리 색상 변경 */
 }

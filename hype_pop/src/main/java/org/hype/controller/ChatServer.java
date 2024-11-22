@@ -30,9 +30,9 @@ import lombok.extern.log4j.Log4j;
 @ServerEndpoint("/chatserver.do")
 public class ChatServer {
 
-    // bno별로 세션을 관리하는 맵
+    // bno에 따른 세션 목록을 관리하는 맵
     private static Map<String, List<Session>> bnoSessionMap = new ConcurrentHashMap<>();
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // Ping을 위한 스케줄러
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // Ping 메시지 전송 스케줄링
 
     @Autowired
     private PartyService service;
@@ -46,16 +46,17 @@ public class ChatServer {
             service = context.getBean(PartyService.class);
         }
 
-        // 클라이언트가 접속할 때 bno를 요청 파라미터로 전달받음
+        // 클라이언트에서 전달된 bno 값을 통해 세션을 등록
         String bno = session.getRequestParameterMap().get("bno").get(0);
 
-        // bno에 해당하는 세션 리스트가 없으면 생성하고, 세션 추가
+        // bno에 해당하는 세션 리스트가 없으면 새로 추가
         bnoSessionMap.putIfAbsent(bno, new ArrayList<>());
         bnoSessionMap.get(bno).add(session);
 
         log.info("Session connected: " + session.getId() + " for bno: " + bno);
         checkSessionList(bno);
         
+        // 일정 시간 간격으로 Ping 메시지를 전송하는 작업을 스케줄링
         scheduler.scheduleAtFixedRate(() -> sendPing(session), 0, 30, TimeUnit.SECONDS);
     }
     
@@ -74,14 +75,14 @@ public class ChatServer {
     public void handleMessage(String msg, Session session) {
         try {
             ChatContentVO message = gson.fromJson(msg, ChatContentVO.class);
-            String bno = message.getBno(); // 메시지에서 bno 추출
+            String bno = message.getBno(); // 메시지에 포함된 bno 값
 
-            if (message.getCode().equals("3")) { // 메시지 전송
+            if (message.getCode().equals("3")) { // 메시지 처리
                 log.info("Message received for bno " + bno + ": " + message);
                 service.insertChatContent(message); // DB에 메시지 저장
             }
 
-            // bno에 해당하는 세션에만 메시지 전송
+            // bno에 해당하는 모든 세션에 메시지를 전송
             List<Session> sessions = bnoSessionMap.get(bno);
             if (sessions != null) {
                 for (Session s : sessions) {
@@ -98,7 +99,7 @@ public class ChatServer {
 
     @OnClose
     public void handleClose(Session session) {
-        // 모든 bno 목록에서 해당 세션을 제거
+        // bno에 해당하는 세션 목록에서 해당 세션을 제거
         for (String bno : bnoSessionMap.keySet()) {
             bnoSessionMap.get(bno).remove(session);
         }

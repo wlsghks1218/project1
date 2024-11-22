@@ -77,7 +77,7 @@ public class GReplyController {
     public ResponseEntity<String> chkReplied(@PathVariable("userNo") int userNo, @PathVariable("gno") int gno){
     	log.warn("aaaaaaaaaaaa" + userNo + gno);
     	String result = gService.chkReplied(userNo, gno);
-    	log.warn("result가 여기 표시됨 : " + result );
+    	log.warn("result�� ���� ǥ�õ� : " + result );
     	return new ResponseEntity<>(result, HttpStatus.OK);
     }
     
@@ -101,45 +101,36 @@ public class GReplyController {
         }
     }
     @GetMapping(value = "/getGreplyReviews", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody // JSON으로 응답하기 위해 추가
-    public ResponseEntity<Map<String, Object>> getGreplyReviews(@RequestParam int userNo) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            Map<String, Object> result = gService.getGreplyReviews(userNo);
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getGreplyReviews(
+            @RequestParam int userNo,
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "5") int amount
+    ) {
+        if (pageNum <= 0) pageNum = 1;
+        if (amount <= 0) amount = 5;
 
-            if (result == null) {
-                throw new NullPointerException("Service returned null result");
-            }
+        // Retrieve paginated replies and total count
+        List<gReplyVO> greplies = gService.getUserRepliesWithPaging(userNo, pageNum, amount);
+        int totalCount = gService.getTotalUserReplyCount(userNo);
+        log.info("tt" + totalCount);
 
-            List<gReplyVO> greplies = (List<gReplyVO>) result.get("greplies");
-            List<String> gnames = (List<String>) result.get("gnames");
-
-            if (greplies == null || gnames == null) {
-                throw new NullPointerException("No greplies or gnames found");
-            }
-            if (greplies.size() != gnames.size()) {
-                throw new IllegalArgumentException("Mismatch in size between greplies and gnames");
-            }
-
-            List<Map<String, Object>> greplyList = new ArrayList<>();
-            for (int i = 0; i < greplies.size(); i++) {
-                gReplyVO greply = greplies.get(i);
-                Map<String, Object> greplyData = new HashMap<>();
-                greplyData.put("gno", greply.getGno());
-                greplyData.put("gname", gnames.get(i));
-                greplyData.put("gcomment", greply.getGcomment());
-                greplyData.put("gregDate", greply.getGregDate());
-                greplyList.add(greplyData);
-            }
-
-            response.put("greplies", greplyList);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Error retrieving popup reviews", e);
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        if (greplies == null || greplies.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // No content if no replies
         }
 
-    
-}
+        // Add corresponding gname to each greply
+        for (gReplyVO greply : greplies) {
+            String gname = gService.getGName(greply.getGno()); // Get gname by gno
+            greply.setGname(gname); // Set gname to each greply
+            log.info("gname: " + gname);
+        }
+
+        // Create response map
+        Map<String, Object> response = new HashMap<>();
+        response.put("greplies", greplies);
+        response.put("totalCount", totalCount);
+
+        return new ResponseEntity<>(response, HttpStatus.OK); // Return responses with total count
+    }
 }

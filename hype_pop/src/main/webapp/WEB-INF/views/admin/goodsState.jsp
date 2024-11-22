@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>상품 상태 조회 페이지</title>
 <style>

@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>Party Board</title>
 <style>
@@ -163,6 +164,9 @@ tr:hover td {
 .close:focus {
     color: #555; /* 호버 시 밝은 검은색 */
 }
+#empty{
+   min-height: 500px;
+}
 
 </style>
 </head>
@@ -173,18 +177,20 @@ tr:hover td {
    		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
 	</sec:authorize>
 
-	<table>
-		<thead>
-			<tr>
-				<th>카테고리</th>
-				<th>팝업스토어 or 전시회 이름</th>
-				<th>파티 구인 제목</th>
-				<th>파티 등록 날짜</th>
-				<th>파티 인원 현황</th>
-			</tr>
-		</thead>
-		<tbody></tbody>
-	</table>
+   <div id="empty">
+      <table>
+         <thead>
+            <tr>
+               <th>카테고리</th>
+               <th>팝업스토어 or 전시회 이름</th>
+               <th>파티 구인 제목</th>
+               <th>파티 등록 날짜</th>
+               <th>파티 인원 현황</th>
+            </tr>
+         </thead>
+         <tbody></tbody>
+      </table>
+   </div>
 	<div id="pagination" class="pagination"></div>
 	<div class="buttonArea">
 		<button id="goInsertBoard">게시글 작성</button>
@@ -196,8 +202,9 @@ tr:hover td {
 	      <button id="goToLogin" onclick="location.href='/member/login'">로그인하러 가기</button>
 	   </div>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
-	<jsp:include page="layout/goodsNavBar.jsp" />
+	
+	<jsp:include page="layout/partyFooter.jsp" />
+	<jsp:include page="layout/partyNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/partyBoard.js"></script>
 <script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>

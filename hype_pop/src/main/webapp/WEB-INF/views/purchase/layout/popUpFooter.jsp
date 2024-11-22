@@ -1,33 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    </div>
-   <div class="footer-container">
-        <div class="footer-links">
-            <h4>링크</h4>
-            <ul>
-                <li id="aboutLink">회사 소개</li>
-                <li id="servicesLink">서비스</li>
-                <li id="contactLink">연락처</li>
-                <li id="privacyLink">개인정보 처리방침</li>
-                <li id="termsLink">이용 약관</li>
-            </ul>
-        </div>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>푸터와 네비게이션 바</title>
+<style>
+.footer-container {
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.footer-contact h4 {
+    margin-bottom: 10px;
+    padding: 5px;
+    color: black;
+}
+</style>
+</head>
+<body>
+    <!-- 네비게이션 바 -->
+    <jsp:include page="popUpNavBar.jsp"/>
+    <!-- 푸터 내용 -->
+    <div class="footer-container">
         <div class="footer-contact">
-            <h4>연락처</h4>
-            <p>전화: 123-456-7890</p>
-            <p>이메일: info@example.com</p>
-        </div>
-        <div class="footer-social">
-            <h4>소셜 미디어</h4>
-            <ul>
-                <li id="facebookLink">Facebook</li>
-                <li id="twitterLink">Twitter</li>
-                <li id="instagramLink">Instagram</li>
-            </ul>
+            <h4>Address. 서울특별시 종로구 종로12길 15, 2층/5층/8~10층(관철동 13-13) | E-mail. hypePop@hypepop.or.kr | 사업자등록번호 123-45-67890호</h4>
+            <h4>Copyrights 2024 by HYPE. All right reserved.</h4>
         </div>
     </div>
-    <div class="footer-bottom">
-        <p>&copy; 2024 Your Company Name. 모든 권리 보유.</p>
-    </div>
-<script type="text/javascript" src="/resources/goodsJs/goodsMain.js"></script>
+</body>
 </html>

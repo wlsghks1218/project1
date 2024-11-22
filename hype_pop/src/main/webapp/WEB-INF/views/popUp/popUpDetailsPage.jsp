@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
     <meta charset="UTF-8">
     <title>팝업스토어 상세 페이지</title>
      <link rel="stylesheet" type="text/css" href="/resources/css/popUpMain.css">

@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
     <meta charset="UTF-8">
     <title>구매 완료</title>
     <style>
@@ -81,10 +82,11 @@
     <div class="emoji">👏👏👏</div>
     <p>구매해 주셔서 감사합니다. 구매 내역을 확인하시거나 쇼핑을 계속해 보세요!</p>
     <div class="button-container">
-        <a  class="button button-primary">구매목록으로 가기</a>
-        <a  class="button button-secondary">쇼핑 계속하기</a>
+        <a class="btn" onclick="location.href='/purchase/getPayList?userNo=67'">구매 목록으로 가기</a>
+        <a class="btn" onclick="location.href='/goodsStore/goodsSearch'">쇼핑 계속하기</a>
     </div>
-</div>
+</div>        
+
 
 </body>
 </html>

@@ -62,5 +62,8 @@
     </c:forEach>
 </div>
 
-<!-- 더보기 버튼 -->
-<button id="loadMoreBtn">더보기</button>
+
+<div class="scroll-btn">
+    <button id="scrollUp" aria-label="위로 이동"></button>
+    <button id="scrollDown" aria-label="아래로 이동"></button>
+</div>

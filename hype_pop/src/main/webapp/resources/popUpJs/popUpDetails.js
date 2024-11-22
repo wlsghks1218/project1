@@ -5,12 +5,46 @@ let currentPage = 1; // 현재 페이지를 저장할 변수
 const amount = 10; // 한 페이지에 보여줄 리뷰 수
 
 
+checkUserLiked(psNo, userNo);
 fetchOtherReviews(psNo, userNo, page = 1);
+
+
+//모달 요소
+var modal = document.getElementById("loginModal");
+
+//모달 닫기 버튼
+var span = document.getElementsByClassName("close")[0];
+
+//모달 열기
+function openLoginModal() {
+	var modal = document.getElementById("loginModal");
+  modal.style.display = "flex"; // 모달을 보이게 설정
+}
+
+//모달 닫기
+span.onclick = function() {
+	var modal = document.getElementById("loginModal");
+  modal.style.display = "none"; // 모달을 숨김
+}
+
+//모달 외부를 클릭했을 때도 모달 닫기
+window.onclick = function(event) {
+	var modal = document.getElementById("loginModal");
+  if (event.target == modal) {
+      modal.style.display = "none";
+  }
+}
+
+function updateCancel() {
+    const updateForm = document.getElementById('updateForm');
+    updateForm.style.display = 'none';  // 수정 폼 숨기기
+    document.getElementById('updateText').value = '';  // 텍스트 필드 초기화
+    document.getElementById('rating').value = ''; // 별점 초기화
+}
 
 
 // 리뷰 작성 가능 여부 체크
 function canWriteReview(psNo, userNo) {
-	console.log("리뷰 작성 가능여부 체크중")
     return fetch('/reply/checkUserReview', {
         method: 'POST',
         headers: {
@@ -30,6 +64,11 @@ function canWriteReview(psNo, userNo) {
         return false; // 오류 발생 시 기본적으로 작성 불가
     });
 }
+
+
+
+
+
 function loadUserReviews(reviews) {
     const reviewList = document.getElementById('reviewList');
     const noReviewMessage = document.getElementById('noReviewMessage');
@@ -37,7 +76,6 @@ function loadUserReviews(reviews) {
 
     reviewList.innerHTML = ''; // 리뷰 목록 초기화
     
-    console.log("유저의 리뷰를 로드하는중");
 
     // 리뷰가 없을 때
     if (reviews.length === 0) {
@@ -98,8 +136,8 @@ function loadUserReviews(reviews) {
         if (review) {
             const kebabMenuOptions = `
                 <ul class="kebabMenuOptions" style="display: none;">
-                    <li class="editReview">수정</li>
-                    <li class="deleteReview">삭제</li>
+                   <li class="editReview" style="list-style-type: none;">수정</li>
+                   <li class="deleteReview" style="list-style-type: none;">삭제</li>
                 </ul>
             `;
             row.querySelector('.kebabMenu').insertAdjacentHTML('afterend', kebabMenuOptions);
@@ -117,6 +155,7 @@ function loadUserReviews(reviews) {
             document.addEventListener('click', function () {
                 document.querySelectorAll('.kebabMenuOptions').forEach(menu => menu.style.display = "none");
             });
+         
 
             kebabMenuOptionsEl.querySelector('.editReview').addEventListener('click', function () {
                 // 수정 폼을 찾습니다.
@@ -139,7 +178,7 @@ function loadUserReviews(reviews) {
                     star.style.color = (parseInt(star.getAttribute('data-value')) <= selectedRating) ? 'gold' : 'gray'; // 선택된 별점에 따라 색상 변경
                 });
             });
-             
+          
             kebabMenuOptionsEl.querySelector('.deleteReview').addEventListener('click', function () {
                 if (confirm("리뷰를 삭제하시겠습니까?")) {
                     fetch('/reply/deleteReview', {
@@ -201,12 +240,20 @@ document.querySelectorAll('#newReviewStars span').forEach(star => {
     });
 });
 
-// 리뷰 작성 데이터 전송 함수
+//리뷰 작성 데이터 전송 함수
 function send(form) {
     const reviewText = document.getElementById('reviewText').value;
     const selectedRating = document.querySelector('#newReviewStars span.selected'); // 선택된 별점
     const psScore = window.selectedRating;
-console.log(psScore);
+
+
+
+    // userNo가 없으면 로그인 모달을 띄우고 함수 종료
+    if (!userNo) {
+        openLoginModal(); // 로그인 모달 열기
+        return; // 나머지 코드 실행 중지
+    }
+
     if (reviewText.trim() === '' || psScore === '0') {
         alert('별점과 리뷰 내용을 입력해주세요.'); // 경고 메시지 표시
         return;
@@ -243,9 +290,10 @@ console.log(psScore);
     });
 }
 
+
+
 // 리뷰 목록 가져오는 함수
 function fetchUserReviews(psNo, userNo) {
-	console.log("유저의 리뷰를 가져오는중")
     fetch('/reply/getUserReviews', {
         method: 'POST',
         headers: {
@@ -265,13 +313,69 @@ function fetchUserReviews(psNo, userNo) {
     	 fetchOtherReviews(psNo, userNo, page = 1); 
     })
     .catch(err => {
-        console.error('Error:', err);
         alert('리뷰를 가져오는 데 문제가 발생했습니다. 다시 시도해 주세요.');
     });
 }
 
 // DOMContentLoaded 이벤트 핸들러
 document.addEventListener("DOMContentLoaded", function () {
+	// span 내의 평균 별점 값 가져오기
+	let averageRatingText = document.getElementById("averageRating").textContent;
+	
+	
+
+	// 텍스트 값을 숫자로 변환
+	let averageRating = parseFloat(averageRatingText);
+
+
+	// 숫자 여부를 확인하고, 소수 첫째 자리까지 반올림
+	if (!isNaN(averageRating)) {
+	    let roundedRating = averageRating.toFixed(1);
+	    document.getElementById("averageRating").textContent = roundedRating; // 결과를 화면에 반영
+	} else {
+	    console.error("평균 별점이 숫자가 아닙니다.");
+	}
+	// 굿즈 이미지 로직
+	for (let i = 1; i <= 3; i++) {
+	    const goodsItem = document.querySelector(`#goodsItem${i} .goodsInfo`);
+	    const fileNameInput = document.querySelector(`#fileName${i}`);
+	    
+	    if (goodsItem && fileNameInput) {
+	        const fileName = fileNameInput.value;
+	        setBackgroundImage(goodsItem, fileName);
+	    }
+	}
+	
+	const fileData = document.querySelector(".fileData");
+
+	if (fileData) {
+	    const fileName = fileData.value; // 이미 uuid와 filename이 결합된 값이므로 바로 사용
+	    const imgElement = document.querySelector(".popUpbanner img");
+
+
+	    if (fileName) {
+	        // 파일 이름 그대로 이미지 경로를 생성
+	        fetch(`/hypePop/images/${fileName}`)
+	            .then(response => {
+	                if (response.ok) {
+	                    return response.blob();
+	                } else {
+	                    throw new Error('이미지를 불러올 수 없습니다.');
+	                }
+	            })
+	            .then(blob => {
+	                // 이미지 Blob을 URL로 변환하여 이미지 소스로 설정
+	                const imageUrl = URL.createObjectURL(blob);
+	                imgElement.src = imageUrl;  // 이미지를 동적으로 설정
+	            })
+	            .catch(error => {
+	                console.error('이미지 로드 실패:', error);
+	            });
+	    }
+	} else {
+	    console.log("파일 데이터가 존재하지 않습니다.");
+	}
+	
     let psNo = document.getElementById('psNo').value;
     let userNo = document.getElementById('userNo').value;
 	
@@ -288,6 +392,63 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchUserReviews(psNo, userNo); // 기존 리뷰 목록 가져오기
         }
     });
+    
+    
+    const scrollUpButton = document.getElementById("scrollUp");
+    const scrollDownButton = document.getElementById("scrollDown");
+
+    // 최상단으로 스크롤
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 최하단으로 스크롤
+    function scrollToBottom() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    // 스크롤 상태에 따라 버튼 보이기/숨기기 설정
+    function checkScrollPosition() {
+        if (window.scrollY === 0) {
+            scrollUpButton.style.display = 'none'; // 위 버튼 숨기기
+            scrollDownButton.style.display = 'block'; // 아래 버튼 보이기
+        } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            scrollUpButton.style.display = 'block'; // 위 버튼 보이기
+            scrollDownButton.style.display = 'none'; // 아래 버튼 숨기기
+        } else {
+            scrollUpButton.style.display = 'block'; // 위 버튼 보이기
+            scrollDownButton.style.display = 'block'; // 아래 버튼 보이기
+        }
+    }
+
+    // 버튼에 클릭 이벤트 리스너 추가
+    scrollUpButton.addEventListener("click", scrollToTop);
+    scrollDownButton.addEventListener("click", scrollToBottom);
+
+    // 버튼 호버 시 불투명도 변경
+    scrollUpButton.addEventListener("mouseenter", function() {
+        scrollUpButton.style.opacity = 1; // 호버 시 불투명도 1로 설정
+    });
+    scrollUpButton.addEventListener("mouseleave", function() {
+        if (window.scrollY !== 0) {
+            scrollUpButton.style.opacity = 0.5; // 호버를 떼면 불투명도 0.5로 설정
+        }
+    });
+
+    scrollDownButton.addEventListener("mouseenter", function() {
+        scrollDownButton.style.opacity = 1; // 호버 시 불투명도 1로 설정
+    });
+    scrollDownButton.addEventListener("mouseleave", function() {
+        if (window.innerHeight + window.scrollY < document.body.offsetHeight) {
+            scrollDownButton.style.opacity = 0.5; // 호버를 떼면 불투명도 0.5로 설정
+        }
+    });
+
+    // 페이지 로드 및 스크롤 시 버튼 상태 업데이트
+    window.addEventListener("scroll", checkScrollPosition);
+    checkScrollPosition(); // 초기 로딩 시 상태 설정
+    
+    
    
 
     // CSS 파일 동적으로 로드
@@ -309,32 +470,40 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 //좋아요 버튼 클릭 이벤트 핸들러
+//좋아요 버튼 클릭 이벤트 핸들러
 document.querySelectorAll('#likeCount').forEach(button => {
     button.addEventListener('click', (event) => {
         event.preventDefault();
-        console.log("좋아요 버튼 클릭");
+        let psNo = document.getElementById('psNo').value;
+        let userNo = document.getElementById('userNo').value;
 
-        let psNo = document.getElementById('psNo').value;  // 팝업스토어 번호
-        let userNo = document.getElementById('userNo').value; // 사용자 번호
+        // userNo가 없을 경우 로그인 모달을 띄움
+        if (!userNo) {
+            openLoginModal(); // 로그인 모달 함수 호출
+            return; // 나머지 코드 실행을 막음
+        }
 
         fetch('/hypePop/likeCount', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ psNo: psNo, userNo: userNo }) // JSON 형식으로 전송
+            body: JSON.stringify({ psNo: psNo, userNo: userNo })
         })
         .then(response => {
             if (response.ok) {
-                // 좋아요 수 업데이트
-                updateLikeCount(psNo);
+                checkUserLiked(psNo, userNo); // 좋아요 상태 확인 및 이미지 변경
+                updateLikeCount(psNo)
             } else {
-                alert("이미 좋아요를 눌렀습니다!"); // 이미 눌렀을 때 알림
+                checkUserLiked(psNo, userNo);  // 이미 눌렀을 때 알림
+                updateLikeCount(psNo)
             }
         })
         .catch(err => console.error('Error:', err));
     });
 });
+
+
 
 // 좋아요 수 업데이트 함수
 function updateLikeCount(psNo) {
@@ -357,7 +526,7 @@ function updateLikeCount(psNo) {
             const totalLikeCountElement = document.getElementById('totalLikeCount');
             // 좋아요 수 업데이트
             if (totalLikeCountElement) { // 요소 존재 여부 확인
-                totalLikeCountElement.textContent = `좋아요 수: ${data.likeCount}`; // 좋아요 수 업데이트
+                totalLikeCountElement.textContent = `❤️ ${data.likeCount}`; // 좋아요 수 업데이트
             } else {
                 console.error('전체 좋아요 수 요소를 찾을 수 없습니다.');
             }
@@ -370,12 +539,13 @@ function updateLikeCount(psNo) {
         alert('좋아요 수 업데이트 중 오류가 발생했습니다.');
     });
 }
-   // 댓글 수정 함수 
+
+//댓글 수정 함수 
 function update(f) {
     const updateText = document.getElementById('updateText').value;
     const selectedRating = document.querySelector('#newReviewStars span.selected'); // 선택된 별점
     const psScore = window.selectedRating;
-    console.log(psScore);
+
     if (updateText.trim() === '' ) {
         alert('리뷰 내용을 입력해주세요.'); // 경고 메시지 표시
         return;
@@ -405,12 +575,37 @@ function update(f) {
         document.getElementById('updateText').value = ''; // 리뷰 입력란 초기화
         document.getElementById('updateForm').style.display = 'none'; // 리뷰 작성 폼 숨기기
         document.getElementById('noReviewMessage').style.display = 'none'; // 메시지 숨기기
+
+        // 전체 별점 평균을 다시 받아옴
+        fetchAverageRating(psNo);
     })
     .catch(err => {
         console.error('Error:', err);
         alert('리뷰 수정 중 문제가 발생했습니다. 다시 시도해 주세요.');
     });
-} 
+}
+
+//전체 별점 평균을 받아오는 함수
+function fetchAverageRating(psNo) {
+	fetch(`/hypePop/getStoreAvg?psNo=${psNo}`) // 서버에서 psNo로 평균 별점 정보를 가져오는 API
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success' && data.averageRating) {
+            let averageRating = parseFloat(data.averageRating);
+            if (!isNaN(averageRating)) {
+                // 소수점 첫째 자리로 반올림
+                let roundedRating = averageRating.toFixed(1);
+                document.getElementById("averageRating").textContent = roundedRating; // 결과를 화면에 반영
+            }
+        } else {
+            console.error('평균 별점 데이터를 가져오는 데 실패했습니다.');
+        }
+    })
+    .catch(err => {
+        console.error('Error fetching average rating:', err);
+    });
+}
+
 // 별점 유지 함수
 document.querySelector('form').addEventListener('submit', function(event) {
     var ratingInput = document.querySelector('#rating');
@@ -420,9 +615,8 @@ document.querySelector('form').addEventListener('submit', function(event) {
     }
 });
 
-
 function fetchOtherReviews(psNo, userNo, page = 1) {
-    console.log("유저의 리뷰를 가져오는 중");
+
 
     const reviewsList = document.getElementById('allReviewsList');
     reviewsList.innerHTML = ''; // 기존 리뷰 초기화
@@ -431,23 +625,28 @@ function fetchOtherReviews(psNo, userNo, page = 1) {
     loadingMessage.innerHTML = '<td colspan="4" class="loadingMessage">로딩 중...</td>';
     reviewsList.appendChild(loadingMessage); // 로딩 메시지 추가
 
-    fetch('/reply/getOtherReviews', {
+    // userNo가 없으면 모든 리뷰를 가져오고, 있으면 해당 유저의 리뷰만 가져옴
+    const url = userNo ? '/reply/getOtherReviews' : '/reply/getAllReviews';
+    const bodyData = userNo 
+        ? JSON.stringify({ psNo: psNo, userNo: userNo, pageNum: page, amount: amount }) 
+        : JSON.stringify({ psNo: psNo, pageNum: page, amount: amount }); // userNo가 없으면 이 값만 보냄
+
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ psNo: psNo, userNo: userNo, pageNum: page, amount: amount }) // 여기서 amount를 사용
+        body: bodyData
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
 
         // 로딩 메시지 제거
         reviewsList.innerHTML = '';
 
         if (data.reviews && Array.isArray(data.reviews)) {
             if (data.reviews.length === 0) {
-                reviewsList.innerHTML = '<tr><td colspan="4" class="noReviewsMessage">다른 유저의 댓글이 없습니다</td></tr>';
+                reviewsList.innerHTML = '<tr><td colspan="4" class="noReviewsMessage">댓글이 없습니다.</td></tr>';
             } else {
                 data.reviews.forEach(review => {
                     const reviewRow = `
@@ -469,10 +668,10 @@ function fetchOtherReviews(psNo, userNo, page = 1) {
                     `;
                     reviewsList.innerHTML += reviewRow + commentRow;
                 });
-
-                // 페이지 업데이트
-                updatePagination(data.totalReviews);
             }
+
+            // 페이지 업데이트
+            updatePagination(data.totalReviews); // totalReviews를 업데이트 후 페이지네이션 처리
         } else {
             reviewsList.innerHTML = '<tr><td colspan="4" class="errorMessage">리뷰를 가져오는 중 오류가 발생했습니다.</td></tr>';
             console.error('가져온 데이터 형식이 올바르지 않습니다:', data);
@@ -484,66 +683,132 @@ function fetchOtherReviews(psNo, userNo, page = 1) {
     });
 }
 
-function changePage(page) {
-    if (page < 1) return; // 첫 페이지를 넘지 않도록
-    currentPage = page; // 현재 페이지 업데이트
-    fetchOtherReviews(psNo, userNo, currentPage); // 새로운 페이지의 리뷰 가져오기
-}
-
 function updatePagination(totalReviews) {
-    const totalPages = Math.ceil(totalReviews / amount); // 전체 페이지 수 계산
-    const pageNumbers = document.getElementById('pageNumbers');
-    pageNumbers.innerHTML = ''; // 기존 페이지 번호 초기화
+    // 리뷰 개수를 기준으로 전체 페이지 수 계산
+    const totalPages = Math.ceil(totalReviews / amount); 
 
-    for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement('button');
-        pageButton.innerText = i;
-        pageButton.onclick = () => changePage(i); // 버튼 클릭 시 페이지 변경
-        pageNumbers.appendChild(pageButton);
+    const paginationContainer = document.getElementById('pagination');
+    const prevButton = document.getElementById('prevPage');
+    const nextButton = document.getElementById('nextPage');
+    const pageNumbers = document.getElementById('pageNumbers');
+
+    // 리뷰가 없을 때 페이지네이션 숨기기
+    if (totalReviews === 0) {
+        paginationContainer.style.display = 'none'; // 페이지네이션 숨기기
+        prevButton.style.display = 'none'; // 이전 버튼 숨기기
+        nextButton.style.display = 'none'; // 다음 버튼 숨기기
+        pageNumbers.style.display = 'none'; // 페이지 번호 숨기기
+        return; // 함수 종료
     }
+
+    // 리뷰가 있을 때 페이지네이션 보이기
+    paginationContainer.style.display = 'block'; // 페이지네이션 보이기
+    pageNumbers.style.display = 'block'; // 페이지 번호 보이기
+
+    // 기존 페이지 번호 초기화
+    pageNumbers.innerHTML = '';
+
+    // 전체 페이지 수가 1보다 크면 페이지 버튼 생성
+    if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.innerText = i;
+            pageButton.onclick = () => changePage(i); // 버튼 클릭 시 페이지 변경
+            pageNumbers.appendChild(pageButton);
+        }
+    }
+
+    // 첫 페이지일 때 "이전" 버튼 숨기기
+    prevButton.style.display = (currentPage === 1) ? 'none' : 'inline-block';
+
+    // 마지막 페이지일 때 "다음" 버튼 숨기기
+    nextButton.style.display = (currentPage === totalPages) ? 'none' : 'inline-block';
 }
+
 
 document.querySelectorAll('.hitGoods span').forEach(item => {
     item.addEventListener('click', () => {
-        // 클릭한 상품의 부모 <td> 요소를 선택하여 숨겨진 입력을 찾기
-        const gnoInput = item.parentNode.querySelector('input[type="hidden"]'); 
-        const gno = gnoInput.value; // 숨겨진 input 요소의 값 가져오기
-        location.href = `/goodsStore/goodsDetails?gno=${gno}`;
+        // 클릭한 상품의 부모 .goodsItem 요소를 선택하여 해당 input[type="hidden"]을 찾기
+        const goodsItem = item.closest('.goodsItem'); // span의 상위 요소인 .goodsItem을 찾기
+        if (!goodsItem) {
+            console.error('상품 정보가 포함된 .goodsItem을 찾을 수 없습니다.');
+            return;
+        }
+
+        // .goodsItem 안에서 gno input을 찾아서 값을 가져오기
+        const gnoInput = goodsItem.querySelector('input[name^="gno"]'); // gno로 시작하는 input 요소 찾기
+        const gno = gnoInput ? gnoInput.value : null; // gno 값 가져오기
+
+        if (gno) {
+            location.href = `/goodsStore/goodsDetails?gno=${gno}`; // gno가 존재하면 상세 페이지로 이동
+        } else {
+            console.error('gno 값을 찾을 수 없습니다.');
+        }
     });
 });
-document.getElementById("toggleGoodsList").addEventListener("change", function() {
-    const goodsTable = document.getElementById("goodsTable");
-    const toggleText = this.nextSibling;
+const toggleGoodsList = document.getElementById("toggleGoodsList");
 
-    if (this.checked) {
-        goodsTable.style.display = "table"; // 테이블 보이기
-        toggleText.textContent = "상품 리스트 출력 ON"; // 텍스트 변경
-    } else {
-        goodsTable.style.display = "none"; // 테이블 숨기기
-        toggleText.textContent = "상품 리스트 출력 OFF"; // 텍스트 변경
+if (toggleGoodsList) {
+    toggleGoodsList.addEventListener("change", function() {
+        const goodsList = document.getElementById("goodsList");
+        const toggleText = this.nextSibling;
+
+        if (!goodsList || !toggleText) return; // 널 체크
+
+        if (this.checked) {
+            goodsList.style.display = "flex"; // 상품 리스트 보이기 (flex로 표시)
+            toggleText.textContent = "상품 리스트 출력 ON"; // 텍스트 변경
+        } else {
+            goodsList.style.display = "none"; // 상품 리스트 숨기기
+            toggleText.textContent = "상품 리스트 출력 OFF"; // 텍스트 변경
+        }
+    });
+}
+//좋아요 상태 확인 함수
+function checkUserLiked(psNo, userNo) {
+    fetch('/hypePop/checkUserLiked', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ psNo: psNo, userNo: userNo })
+    })
+    .then(response => response.json())
+    .then(data => {
+        
+        const likeButton = document.getElementById('likeButton'); // 좋아요 버튼의 ID를 가져옴
+        if (data.liked) { // true이면 좋아요가 눌린 상태
+            document.querySelector('#likeIcon').src = '/resources/images/fullHeart.png';  // 변경할 이미지 경로
+        } else { // false이면 좋아요가 눌리지 않은 상태
+            document.querySelector('#likeIcon').src = '/resources/images/emptyHeart.png';  
+        }
+    })
+    .catch(err => {
+        console.error('좋아요 상태 확인 중 오류 발생:', err);
+    });
+}
+
+
+function setBackgroundImage(item, fileName) {
+    if (!fileName) {
+        console.error("fileName이 존재하지 않습니다.");
+        return;
     }
-});
 
-// 호출 시 psNo와 userNo를 전달하여 초기 리뷰 로드
+    const imageElement = item.querySelector('img');  // 해당 상품의 이미지 태그 찾기
 
-// 사용자의 좋아요 상태 체크 함수
-//function checkUserLikeStatus(psNo, userNo) {
-//    fetch('/hypePop/checkUserLike', {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify({ psNo: psNo, userNo: userNo })
-//    })
-//    .then(response => response.json())
-//    .then(data => {
-//        // 좋아요 상태와 총 좋아요 수 업데이트
-//        updateLikeCount(psNo, data.hasLiked); // 하트 상태와 좋아요 수 업데이트
-//    })
-//    .catch(error => {
-//        console.error('오류 발생:', error);
-//    });
-//}
-//
-
-
+    if (imageElement) {
+        // 이미지를 불러와서 src 속성에 설정
+        fetch(`/goodsStore/goodsBannerImages/${encodeURIComponent(fileName)}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const imageUrl = URL.createObjectURL(blob);
+                imageElement.src = imageUrl;  // src에 이미지 URL 설정
+            })
+            .catch(error => {
+                console.error("이미지를 불러오는 중 오류 발생: ", error);
+            });
+    } else {
+        console.error("이미지 태그를 찾을 수 없습니다.");
+    }
+}

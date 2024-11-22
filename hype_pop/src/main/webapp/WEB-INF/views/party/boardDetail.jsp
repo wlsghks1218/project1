@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
@@ -258,8 +259,8 @@ body {
 			<button id="leavePartyBtn">파티 나가기</button>
 		</div>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
-	<jsp:include page="layout/goodsNavBar.jsp" />
+	<jsp:include page="layout/partyFooter.jsp" />
+	<jsp:include page="layout/partyNavBar.jsp" />
 </body>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

@@ -171,7 +171,7 @@ public class GoodsServiceImpl implements GoodsService{
 
         // 각 필드가 1인 경우, 리스트에 해당 카테고리를 추가
         if (vo.getHealthBeauty() == 1) {
-            selectedCategories.add("healthbeauty");
+            selectedCategories.add("healthBeauty");
         }
         if (vo.getGame() == 1) {
             selectedCategories.add("game");

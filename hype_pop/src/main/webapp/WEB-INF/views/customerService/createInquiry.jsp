@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+   prefix="sec"%>
 <!DOCTYPE html>
 <html>
 
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>공지사항 작성</title>
 <style>
@@ -104,14 +107,19 @@ button:hover, #goBack:hover {
 
 	<div class="ciContext">
 		<form action="/support/createInquiry" method="post">
+			<sec:authorize access="isAuthenticated()">
+				<sec:authentication property="principal" var="pinfo" />
+				<input type="hidden" name="userNo" value="${pinfo.member.userNo}">
+			</sec:authorize>
+
 			<div class="title-date">
 				<input type="text" id="ciTitle" name="title"
 					placeholder="제목을 입력하세요..." required> <select id="qnaType"
 					name="qnaType" required>
 					<option value="" disabled selected>유형 선택</option>
-					<option value="일반 문의">일반 문의</option>
-					<option value="기술 지원">기술 지원</option>
-					<option value="결제">결제 관련</option>
+					<option value="일반">일반</option>
+					<option value="기술">기술</option>
+					<option value="결제">결제</option>
 					<option value="기타">기타</option>
 				</select>
 			</div>

@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-	let userNoElement = document.getElementById("userNo");
-	let userNo = userNoElement ? userNoElement.value : null;
-	console.log(userNo);
+	const userNoElement = document.getElementById("userNo");
+	const userIdElement = document.getElementById("userId");
+	const userNo = userNoElement ? userNoElement.value : null;
+	const userId = userIdElement ? userIdElement.value : null;
 	
 	window.showLogos = function() {
 	    const logoContainer = document.getElementById("logoContainer");

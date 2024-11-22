@@ -107,11 +107,12 @@ public class PartyServiceImpl implements PartyService {
 		return mapper.updatePlusMember(bno);
 	}
 	
-	@Override
-	public int updateLeaveMember(int bno, int userNo) {
-		int result1= mapper.chkMaster(bno, userNo);
-		return mapper.deleteLeaveMember(bno, userNo);
-	}
+	   @Transactional
+	   @Override
+	   public int updateLeaveMember(int bno, int userNo) {
+	      int result1= mapper.updateMinusMember(bno, userNo);
+	      return mapper.deleteLeaveMember(bno, userNo);
+	   }
 	
 	@Override
 	public int deleteParty(int bno, int userNo) {

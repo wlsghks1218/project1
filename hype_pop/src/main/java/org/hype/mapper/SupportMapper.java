@@ -31,7 +31,7 @@ public interface SupportMapper {
 
    public int getTotalInquiryCount(@Param("userNo")int userNo);
    
-   //추가
+   // ߰ 
    public List<qnaVO> getUserInquiriesWithPaging(@Param("userNo") int userNo, @Param("startRow") int startRow, @Param("endRow") int endRow);
 
    public int getTotalInquiryCountByUser(@Param("userNo") int userNo);
@@ -41,6 +41,8 @@ public interface SupportMapper {
    public int replyCheckCount(@Param("userNo")int userNo, @Param("answered")boolean answered);
 
    public int getReplyCount(@Param("userNo") int userNo);
-	
+
+   public Integer getNoticeNo(String title);
+   
    
 }

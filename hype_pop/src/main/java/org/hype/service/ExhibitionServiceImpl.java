@@ -1,8 +1,8 @@
 package org.hype.service;
 
-import java.util.Date;
 import java.util.List;
 
+import org.hype.domain.exhImgVO;
 import org.hype.domain.exhLikeVO;
 import org.hype.domain.exhReplyVO;
 import org.hype.domain.exhVO;
@@ -17,23 +17,23 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	public ExhibitionMapper exhibitionmapper;
 	
 	@Override
-	public List<exhVO> getExhibitionsByPage(int page, int pageSize, String filter) {
+	public List<exhVO> getExhibitionsByPage(int page, int pageSize, String filter, String query) {
 	    int offset = (page - 1) * pageSize;
-	    
+
+	    // Äõ¸® Á¶°ÇÀ» °¢ ÇÊÅÍ¿Í ÇÔ²² Àü´Þ
 	    switch (filter) {
 	        case "latest":
-	            // ìµœì‹  ì „ì‹œíšŒ ê¸°ì¤€ìœ¼ë¡œ ê°€ì ¸ì˜¤ëŠ” ì¿¼ë¦¬
-	            return exhibitionmapper.getLatestExhibitions(offset, pageSize);	            
+	            return exhibitionmapper.getLatestExhibitions(offset, pageSize, query);  // ÃÖ½Å Àü½ÃÈ¸ ±âÁØÀ¸·Î °¡Á®¿À´Â Äõ¸®
 	        case "dueSoon":
-	            return exhibitionmapper.getDueSoonExhibitions(offset, pageSize);	        
+	            return exhibitionmapper.getDueSoonExhibitions(offset, pageSize, query);  // ¸¶°¨¼ø
 	        case "lowerPrice":
-	            return exhibitionmapper.getExhibitionsOrderByPrice("ASC", offset, pageSize);	        
+	            return exhibitionmapper.getExhibitionsOrderByPrice("ASC", offset, pageSize, query);  // ³·Àº°¡°Ý¼ø
 	        case "higherPrice":
-	            return exhibitionmapper.getExhibitionsOrderByPrice("DESC", offset, pageSize);	        
+	            return exhibitionmapper.getExhibitionsOrderByPrice("DESC", offset, pageSize, query);  // ³ôÀº°¡°Ý¼ø
 	        case "earlyBird":
-	            return exhibitionmapper.getEarlyBirdExhibitions(offset, pageSize);
+	            return exhibitionmapper.getEarlyBirdExhibitions(offset, pageSize, query);  // ¾ó¸®¹öµå Àü½ÃÈ¸
 	        default:
-	            return exhibitionmapper.getExhibitionsByPage(offset, pageSize);
+	            return exhibitionmapper.getExhibitionsByPage(offset, pageSize, query);  // ±âº» Àü½ÃÈ¸ ¸ñ·Ï
 	    }
 	}
 
@@ -69,9 +69,9 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	}
 
 	@Override
-	public List<exhReplyVO> getAllReplies(int exhNo) {
+	public List<exhReplyVO> getUserReviews(int exhNo, int startRow, int endRow) {
 		
-		return exhibitionmapper.getAllReplies(exhNo);
+		return exhibitionmapper.getUserReviews(exhNo, startRow, endRow);
 	}
 
 	@Override
@@ -88,13 +88,55 @@ public class ExhibitionServiceImpl implements ExhibitionService {
 	@Override
 	public boolean isLiked(int exhNo, int userNo) {
 		Integer likeCount = exhibitionmapper.isLiked(exhNo, userNo);
-	    return (likeCount != null && likeCount > 0); // null ì²´í¬ì™€ ë¹„êµ
+	    return (likeCount != null && likeCount > 0); // null Ã¼Å©¿Í ºñ±³
 	}
 
 	@Override
 	public int getLikeCount(int exhNo) {
 
 		return exhibitionmapper.getLikeCount(exhNo);
+	}
+
+
+	@Override
+	public Double getAverageRating(Integer exhNo) {
+	    Double rating = exhibitionmapper.getAverageRating(exhNo);
+	    return (rating != null) ? rating : 0.0;
+	}
+
+	// ´ñ±Û ÃÑ °³¼ö
+	@Override
+	public int getTotalReviewCount(int exhNo) {
+
+		return exhibitionmapper.getTotalReviewCount(exhNo);
+	}
+
+
+	@Override
+	public List<exhImgVO> getPopularExhs() {
+		
+		return exhibitionmapper.getPopularExhs();
+	}
+
+
+	@Override
+	public List<exhImgVO> getExhBannerImg() {
+
+		return exhibitionmapper.getExhBannerImg();
+	}
+
+
+	@Override
+	public List<exhImgVO> getExhDetailImg(int exhNo) {
+	
+		return exhibitionmapper.getExhDetailImg(exhNo);
+	}
+
+
+	@Override
+	public List<exhImgVO> getExhImg(int exhNo) {
+		
+		return exhibitionmapper.getExhImg(exhNo);
 	}
 
 }

@@ -33,6 +33,7 @@ public class AlarmController extends TextWebSocketHandler {
     @Autowired
     private NotificationService service;
     
+   
     @Autowired
     private PopUpService popService;
     
@@ -44,7 +45,6 @@ public class AlarmController extends TextWebSocketHandler {
     
     @Autowired
     private NoticeService nService;
-
 
     private List<WebSocketSession> sessions = new ArrayList<>();
     private ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환용
@@ -62,6 +62,7 @@ public class AlarmController extends TextWebSocketHandler {
         String payload = message.getPayload();
         NotificationRequest request = objectMapper.readValue(payload, NotificationRequest.class);
         log.info("유저 넘버는? : " + request.getUserNo());
+        log.info("전달된 qnaNo: " + request.getQnaNo()); // qnaNo 값 로깅
 
         switch (request.getAction()) {
             case "checkNotifications":
@@ -73,15 +74,24 @@ public class AlarmController extends TextWebSocketHandler {
             case "markNotificationsAsRead":
                 handleMarkNotificationsAsRead(session, request.getUserNo());
                 break;
+            case "sendInqueryNotification":
+                sendInqueryNotification(request.getQnaNo()); // qnaNo로 알림 전송
+                break;
+            case "sendNoticeNotification":
+                sendNoticeNotifications(request.getNoticeNo()); // 새로운 액션에 대한 처리
+                break;
             default:
                 log.warn("알 수 없는 액션: " + request.getAction());
                 break;
         }
+    
     }
 
     private void handleCheckNotifications(WebSocketSession session, int userNo) throws Exception {
         // 사용자 ID로 알림 목록 조회
         List<NotificationVO> notifications = service.getAlarmsForUser(userNo);
+        
+        System.out.println("여기까지 오기는 오냐? : " + notifications);
         
         if (notifications == null) {
             notifications = new ArrayList<>(); // 기본값으로 빈 리스트 초기화
@@ -171,101 +181,266 @@ public class AlarmController extends TextWebSocketHandler {
             }
         }
     }
+    
+    // 공지사항 알림
+    public void sendNoticeNotifications(int noticeNo) {
+        
+        List<Integer> allUserNos = service.getAllUserNos(); // 전체 사용자 목록 가져오기
 
-    // 유저가 좋아요한 팝업스토어에 대해 알림을 자동으로 생성
-    @Scheduled(cron = "0 0 0 * * *") // 매일 자정 실행
-    public void sendDailyNotifications() {
-        List<NotificationVO> notifications = new ArrayList<>();
-
-        // 로그인한 유저에 대해 처리
-        // 예시로 userNo는 이미 로그인된 유저의 값이라고 가정
-        int userNo = 5;
-
-        // 해당 유저가 좋아요한 스토어 ID 목록 가져오기
-        List<Integer> likedStoreIds = service.getLikedPopUpStoresByUser(userNo); // 해당 유저가 좋아요한 스토어들의 ID
-
-        // 각 스토어의 정보를 가져와서 알림을 생성
-        for (int psNo : likedStoreIds) {
-
-            // 유저에게 보낼 알림 생성
-            NotificationVO notification = createNotificationForUser(psNo , userNo);
-            //notifications.add(notification);
-
+        for (int userNo : allUserNos) {                     
+            NotificationVO noticeNotification = createNoticeNotification(noticeNo, userNo);
             try {
-                // 해당 유저에게 알림 보내기
-                notifySpecificUser(notification, userNo);
+                notifySpecificUser(noticeNotification, userNo);
             } catch (Exception e) {
                 log.error("알림 전송 중 오류 발생: ", e);
             }
         }
     }
+    
+    public void sendInqueryNotification(int qnaNo) {
+    	
+    	log.warn("알람 컨트롤러의 qno는 : " + qnaNo);
+    	
+    	int userNo = service.getUserNoByQnaNo(qnaNo);
+    	
+    	log.warn("알람의 유저넘버는 : " + userNo);
+       
+    	// 특정 1대1 문의에 대한 알림 생성
+        NotificationVO qnaNotification = createQnaNotification(qnaNo, userNo);
+        try {
+            // 해당 유저에게 알림 보내기
+            notifySpecificUser(qnaNotification, userNo);
+        } catch (Exception e) {
+            log.error("알림 전송 중 오류 발생: ", e);
+        }
+    }
+    
 
-    // 알림을 생성하는 메서드 (스토어 정보를 기반으로)
-    private NotificationVO createNotificationForUser(int psNo, int userNo) {
-        NotificationVO notification = new NotificationVO();
-        // 알림에 필요한 정보 설정 (예: 좋아요한 팝업스토어 정보)
-        notification.setType("psNo");
-        notification.setReferenceNo(psNo);
-        notification.setTitle("좋아요한");
-        notification.setMessage("의 종료일이 5일남았습니다");
-        notification.setUserNo(userNo); 
-        service.insertPopUpNotification(notification);
-        return notification;
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정 실행
+    public void sendDailyNotifications() {
+        List<NotificationVO> notifications = new ArrayList<>();
+
+        // 로그인한 유저에 대해 처리
+        int userNo = 5;
+
+        // 해당 유저가 좋아요한 스토어 ID 목록 가져오기
+        List<Integer> endStoreIds = service.getLikedPopUpStoresByUser(userNo);
         
+        List<Integer> startStoreIds = service.getLikedStartPopUpStoresByUser(userNo);
+
+        // 각 스토어의 정보를 가져와서 알림을 생성
+        for (int psNo : endStoreIds) {
+            // 종료일 5일 전 알림 생성
+            NotificationVO endNotification = createNotificationForUser(psNo, userNo, "end");
+            // 시작일 5일 전 알림 생성
+
+      
+            try {
+                // 해당 유저에게 알림 보내기
+                notifySpecificUser(endNotification, userNo);
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생: ", e);
+            }
+        }
+        
+        for ( int psNo : startStoreIds) {
+        	 NotificationVO startNotification = createNotificationForUser(psNo, userNo, "start");
+
+             try {
+                 // 해당 유저에게 알림 보내기
+                 notifySpecificUser(startNotification, userNo);
+             } catch (Exception e) {
+                 log.error("알림 전송 중 오류 발생: ", e);
+             }
+		}
+
+        // 굿즈에 대해서도 알림 생성
+        List<Integer> goodsIds = service.getLikedGoodsByUserNo(userNo);
+        for (int gNo : goodsIds) {
+            // 굿즈 종료 5일 전 알림 생성
+            NotificationVO goodsEndNotification = createGoodsNotification(gNo, userNo);
+            try {
+                // 해당 유저에게 알림 보내기
+                notifySpecificUser(goodsEndNotification, userNo);
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생: ", e);
+            }
+        }
+
+        // 전시회에 대한 알림 생성
+        List<Integer> endExhIds = service.getLikedEndExhByUserNo(userNo);
+        for (int exhNo : endExhIds) {
+            // 전시회 종료 5일 전 알림 생성
+            NotificationVO exhEndNotification = createExhibitionNotification(exhNo, userNo, "end");
+
+            try {
+                // 해당 유저에게 알림 보내기
+                notifySpecificUser(exhEndNotification, userNo);
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생: ", e);
+            }
+        }
+        List<Integer> startExhIds = service.getLikedStartExhByUserNo(userNo);
+        for ( int exhNo : startExhIds) {
+       	 NotificationVO exhStartNotification = createExhibitionNotification(exhNo, userNo, "start");
+
+            try {
+                // 해당 유저에게 알림 보내기
+                notifySpecificUser(exhStartNotification, userNo);
+            } catch (Exception e) {
+                log.error("알림 전송 중 오류 발생: ", e);
+            }
+		}
     }
 
-    // 특정 유저에게 알림을 전송하는 메서드 추가
+    // 팝업스토어 종료일 및 시작일 알림 생성
+    private NotificationVO createNotificationForUser(int psNo, int userNo, String type) {
+        NotificationVO notification = new NotificationVO();
+        if ("end".equals(type)) {
+            notification.setType("psNo");
+            notification.setReferenceNo(psNo);
+            notification.setTitle("좋아요한");
+            notification.setMessage("의 종료일이 5일 남았습니다");
+        } else if ("start".equals(type)) {
+            notification.setType("psNo");
+            notification.setReferenceNo(psNo);
+            notification.setTitle("좋아요한");
+            notification.setMessage("의 시작일이 5일 남았습니다");
+        }
+        notification.setUserNo(userNo);
+        service.insertPopUpNotification(notification);
+        return notification;
+    }
+
+    // 굿즈 종료일 알림 생성
+    private NotificationVO createGoodsNotification(int gNo, int userNo) {
+        NotificationVO notification = new NotificationVO();
+        notification.setType("gNo");
+        notification.setReferenceNo(gNo);
+        notification.setTitle("좋아요한");
+        notification.setMessage("굿즈의 판매 종료일이 5일 남았습니다");
+        notification.setUserNo(userNo);
+        service.insertPopUpNotification(notification);
+        return notification;
+    }
+
+    // 전시회 종료일 및 시작일 알림 생성
+    private NotificationVO createExhibitionNotification(int exhNo, int userNo, String type) {
+        NotificationVO notification = new NotificationVO();
+        if ("end".equals(type)) {
+            notification.setType("exhNo");
+            notification.setReferenceNo(exhNo);
+            notification.setTitle("좋아요한");
+            notification.setMessage("전시회 종료일이 5일 남았습니다");
+        } else if ("start".equals(type)) {
+            notification.setType("exhNo");
+            notification.setReferenceNo(exhNo);
+            notification.setTitle("좋아요한");
+            notification.setMessage("전시회 시작일이 5일 남았습니다");
+        }
+        notification.setUserNo(userNo);
+        service.insertPopUpNotification(notification);
+        return notification;
+    }
+
+    // 공지사항 알림 생성
+    private NotificationVO createNoticeNotification(int noticeNo, int userNo) {
+        NotificationVO notification = new NotificationVO();
+        notification.setType("noticeNo");
+        notification.setReferenceNo(noticeNo);
+        notification.setTitle("새로운 공지사항 등록!");
+        notification.setMessage("확인해보세요!");
+        notification.setUserNo(userNo);
+        service.insertPopUpNotification(notification);
+        return notification;
+    }
+
+    // 1대1 문의 답변 알림 생성
+    private NotificationVO createQnaNotification(int qNo, int userNo) {
+        NotificationVO notification = new NotificationVO();
+        notification.setType("qNo");
+        notification.setReferenceNo(qNo);
+        notification.setTitle("답변이 도착했습니다!");
+        notification.setMessage("의 답변을 확인해보세요!");
+        notification.setUserNo(userNo);
+        service.insertPopUpNotification(notification);
+        return notification;
+    }
+
+
     private void notifySpecificUser(NotificationVO notification, int userNo) throws Exception {
         for (WebSocketSession session : sessions) {
-            if (session.isOpen() && session.getAttributes().get("userNo").equals(userNo)) {
-                String notificationMessage = objectMapper.writeValueAsString(
-                    NotificationResponse.createWithAction("newNotification", List.of(notification), null)
-                );
-                session.sendMessage(new TextMessage(notificationMessage)); // 해당 유저에게 알림 전송
+            if (session.isOpen()) {
+                // session.getAttributes()에서 userNo를 안전하게 가져오고 null 체크
+                Object sessionUserNoObj = session.getAttributes().get("userNo");
+                if (sessionUserNoObj != null && sessionUserNoObj instanceof Integer) {
+                    int sessionUserNo = (Integer) sessionUserNoObj;
+                    // userNo와 비교
+                    if (sessionUserNo == userNo) {
+                        String notificationMessage = objectMapper.writeValueAsString(
+                            NotificationResponse.createWithAction("newNotification", List.of(notification), null)
+                        );
+                        session.sendMessage(new TextMessage(notificationMessage)); // 해당 유저에게 알림 전송
+                    }
+                } else {
+                    log.warn("세션에서 userNo를 찾을 수 없거나 타입이 일치하지 않습니다.");
+                }
             }
         }
     }
 
-    // 요청 데이터를 담는 내부 클래스
+
     private static class NotificationRequest {
         private String action;
         private int userNo;
         private int notificationNo; // 삭제할 알림 ID 추가
+        private int qnaNo; // 문의 ID 추가
+        private int noticeNo; // 공지 ID 추가 (새롭게 추가된 필드)
 
-        // getter, setter
+        // 기존 getter, setter
         public String getAction() { return action; }
         public void setAction(String action) { this.action = action; }
         public int getUserNo() { return userNo; }
         public void setUserNo(int userNo) { this.userNo = userNo; }
         public int getNotificationNo() { return notificationNo; }
         public void setNotificationNo(int notificationNo) { this.notificationNo = notificationNo; }
+        public int getQnaNo() { return qnaNo; }  // qnaNo getter
+        public void setQnaNo(int qnaNo) { this.qnaNo = qnaNo; }  // qnaNo setter
+        
+        // 추가된 noticeNo에 대한 getter, setter
+        public int getNoticeNo() {
+            return noticeNo;
+        }
+
+        public void setNoticeNo(int noticeNo) {
+            this.noticeNo = noticeNo;
+        }
     }
 
-    // 응답 데이터를 담는 내부 클래스
-    public static class NotificationResponse {
+    // 응답 메시지를 담는 내부 클래스
+    private static class NotificationResponse {
         private String action;
         private List<NotificationVO> notifications;
         private String message;
 
-        // private constructor to prevent direct instantiation
         private NotificationResponse(String action, List<NotificationVO> notifications, String message) {
             this.action = action;
             this.notifications = notifications;
             this.message = message;
         }
 
-        // 정적 팩토리 메서드 1: action과 notifications를 받는 메서드
+        // 생성 메서드
         public static NotificationResponse createWithAction(String action, List<NotificationVO> notifications, String message) {
             return new NotificationResponse(action, notifications, message);
         }
-        // 정적 팩토리 메서드 2: message와 notifications를 받는 메서드
-        public static NotificationResponse createWithMessage(String message, List<NotificationVO> notifications) {
-            return new NotificationResponse(null, notifications, message);
-        }
 
-        // getter
+        // getter, setter
         public String getAction() { return action; }
+        public void setAction(String action) { this.action = action; }
         public List<NotificationVO> getNotifications() { return notifications; }
+        public void setNotifications(List<NotificationVO> notifications) { this.notifications = notifications; }
         public String getMessage() { return message; }
+        public void setMessage(String message) { this.message = message; }
     }
+
 }

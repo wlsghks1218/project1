@@ -18,6 +18,10 @@ public interface GReplyService {
 	public int getReplyCount(@Param("gno") int gno,@Param("userNo") int userNo);
 	
 	// 윤씨 추가 부분 
-	public Map<String, Object> getGreplyReviews(int userNo);
+	public String getGName(int gno) ;
+	
+	public int getTotalUserReplyCount(@Param("userNo") int userNo);
+	
+	public List<gReplyVO> getUserRepliesWithPaging(int userNo, int pageNum, int amount);
 
 }

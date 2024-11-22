@@ -15,6 +15,6 @@ import lombok.Setter;
 public class gReplyVO {
 	private int greplyNo, gno, userNo, gscore;
 	private Date gregDate, gupdateDate;
-	private String gcomment, userId;
+	private String gcomment, userId, gname;;
 }
 	

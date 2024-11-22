@@ -14,13 +14,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class payVO {
-   
-   private  int userNo; // 구매 번호
-   private  int gno; // 상품 번호
-   private  int camount; // 구매 개수
-   private  Timestamp gbuyDate; // 구매일자
-   private  String gsituation; // 상품 현황
-   private  String gname;
-   private  int gprice;
-   private  List<gImgVO> gimg; 
+	   private  int userNo; // 援щℓ 踰덊샇
+	   private  int gno; //  긽 뭹 踰덊샇
+	   private  int camount; // 援щℓ 媛쒖닔
+	   private  Timestamp gbuyDate; // 援щℓ 씪 옄
+	   private  String gsituation; //  긽 뭹  쁽 솴
+	   private  String gname;
+	   private  int gprice;
+	   private  List<gImgVO> gimg; 
+	   public String iamUid;
+	   public String orderId;
+
+	   
+	   
 }

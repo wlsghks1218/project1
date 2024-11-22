@@ -29,11 +29,11 @@ public class NoticeServiceImpl implements NoticeService{
 
 
    @Override
-	public List<qnaVO> getInquiriesWithPaging(int pageNum, int amount, int userNo) {
-		int startRow = (pageNum - 1) * amount;
-	    int endRow = pageNum * amount; 
-	    return supportmapper.getInquiriesWithPaging(startRow, endRow, userNo);
-	}
+   public List<qnaVO> getInquiriesWithPaging(int pageNum, int amount, int userNo) {
+      int startRow = (pageNum - 1) * amount;
+       int endRow = pageNum * amount; 
+       return supportmapper.getInquiriesWithPaging(startRow, endRow, userNo);
+   }
 
 
    @Override
@@ -92,11 +92,11 @@ public class NoticeServiceImpl implements NoticeService{
 
 
    @Override
-	public int getTotalInquiryCount(int userNo) {
-		
-		return supportmapper.getTotalInquiryCount(userNo);
-	}
-   //추가
+   public int getTotalInquiryCount(int userNo) {
+      
+      return supportmapper.getTotalInquiryCount(userNo);
+   }
+   // ߰ 
    @Override
    public List<qnaVO> getUserInquiriesWithPaging(int userNo, int pageNum, int amount) {
       int startRow = (pageNum - 1) * amount;
@@ -114,17 +114,17 @@ public class NoticeServiceImpl implements NoticeService{
 
 @Override
 public List<qnaVO> replyCheckInquiries(int pageNum, int amount, int userNo, boolean answered) {
-	
-	int startRow = (pageNum - 1) * amount;
+   
+   int startRow = (pageNum - 1) * amount;
     int endRow = pageNum * amount; 
-	return supportmapper.replyCheckInquiries(startRow, endRow, userNo, answered);
+   return supportmapper.replyCheckInquiries(startRow, endRow, userNo, answered);
 }
 
 
 @Override
 public int replyCheckCount(int userNo, boolean answered) {
 
-	return supportmapper.replyCheckCount(userNo, answered);
+   return supportmapper.replyCheckCount(userNo, answered);
 }
 
 
@@ -141,5 +141,11 @@ public Map<String, Integer> getInquiryCounts(int userNo) {
 
     return counts;
 }
-   
+@Override
+public Integer getNoticeNo(String title) {
+    Integer result = supportmapper.getNoticeNo(title);
+    return result;
+}
+
+
 }

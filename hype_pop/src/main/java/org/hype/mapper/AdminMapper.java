@@ -18,57 +18,104 @@ import org.hype.domain.qnaVO;
 import org.hype.domain.signInVO;
 
 public interface AdminMapper {
-	// í˜ì´ì§•O
-	// ê´€ë¦¬ì íŒì—…ìŠ¤í† ì–´ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
+	// ÆäÀÌÂ¡O
+	// °ü¸®ÀÚ ÆË¾÷½ºÅä¾î ¸®½ºÆ® °¡Á®¿À±â
 	public List<popStoreVO> getPList(@Param("cri") Criteria cri, @Param("searchPs") String searchPs); 
 	public int getPTotal(String searchPs);
 	
-	// ê´€ë¦¬ì ìƒí’ˆ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸° 
+	// °ü¸®ÀÚ »óÇ° ¸®½ºÆ® °¡Á®¿À±â 
 	public List<goodsVO> getGList(@Param("cri") Criteria cri, @Param("searchGs") String searchGs);  
 	public int getGTotal(String searchGs);
 	
-	// ê´€ë¦¬ì íšŒì› ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
+	// °ü¸®ÀÚ Àü½ÃÈ¸ ¸®½ºÆ® °¡Á®¿À±â
+	public List<exhVO> getExhList(@Param("cri") Criteria cri, @Param("searchEs") String searchEs);  
+	public int getExhTotal(String searchEs);
+	
+	// °ü¸®ÀÚ È¸¿ø ¸®½ºÆ® °¡Á®¿À±â
 	public List<signInVO> getMList(@Param("cri") Criteria cri, @Param("searchMs") String searchMs);  
 	public int getMTotal(String searchMs);
 	
-	// íŠ¹ì • íŒì—…ìŠ¤í† ì–´ ì¡°íšŒ
+	// Æ¯Á¤ ÆË¾÷½ºÅä¾î Á¶È¸
 	public popStoreVO getPopStoreById (int psNo);
-	// íŠ¹ì • êµ¿ì¦ˆ(ìƒí’ˆ) ì¡°íšŒ
-	public goodsVO getGoodsById (int gNo);  
-	// íŠ¹ì • íšŒì› ì¡°íšŒ
+	// Æ¯Á¤ ±ÂÁî(»óÇ°) Á¶È¸
+	public goodsVO getGoodsById (int gno);  
+//	public goodsVO getGoodsById (int gNo);  
+	// Æ¯Á¤ Àü½ÃÈ¸ Á¶È¸
+	public exhVO getExhById (int exhNo); 
+	// Æ¯Á¤ È¸¿ø Á¶È¸
 	public signInVO getMembersById (String userId);  
 	
-	// íŒì—…ìŠ¤í† ì–´ ë“±ë¡í•˜ê¸°
+	// ÆË¾÷½ºÅä¾î µî·ÏÇÏ±â
 	public int insertPopStore(popStoreVO pvo);
-	public int insertPsImage(pImgVO imgVo);  // ì´ë¯¸ì§€ ë“±ë¡
-	public int insertPsCat(pCatVO cvo);  // ì¹´í…Œê³ ë¦¬ ë“±ë¡
+	public int insertPsImage(pImgVO imgVo);  // ÀÌ¹ÌÁö µî·Ï
+	public int insertPsCat(pCatVO cvo);  // Ä«Å×°í¸® µî·Ï
 	
-	// íŒì—…ìŠ¤í† ì–´ ìˆ˜ì •í•˜ê¸°
-//	public int updatePopStores(popStoreVO pvo);
+	// ÆË¾÷½ºÅä¾î ¼öÁ¤ÇÏ±â
+	public pImgVO getPsImg(int psNo);
+	public pCatVO getPsCat(int psNo);
+	public int updatePopStore(popStoreVO pvo);
+	public int updatePsImage(pImgVO imgVo);
+	public int updatePsCat(pCatVO cvo);
 	
-	// êµ¿ì¦ˆ ë“±ë¡í•˜ê¸°
-	public List<popStoreVO> getAllPopStores();	  // select box ëª¨ë“  íŒì—…ìŠ¤í† ì–´ ì¶œë ¥
+	// ÆË¾÷½ºÅä¾î »èÁ¦ÇÏ±â
+	public int deletePopStore(int psNo);
+	public int deletePsImage(int psNo);
+	public int deletePsCat(int psNo);
+	public int deletePsReply(int psNo);
+	public int deletePsLike(int psNo);
+	public List<goodsVO> getPsnoList(int psNo); // ÆË¾÷½ºÅä¾î »èÁ¦ À§ÇÑ mapper »ı¼º
+	
+	// »óÇ°(±ÂÁî) µî·ÏÇÏ±â
+	public List<popStoreVO> getAllPopStores();	  // select box ¸ğµç ÆË¾÷½ºÅä¾î Ãâ·Â
 	public int insertGoodsStore(goodsVO gvo);
-	public int insertBannerImage(gImgVO gImgVo);  // ë°°ë„ˆ ì´ë¯¸ì§€ ë“±ë¡
-	public int insertDetailImage(gImgVO gImgVo);  // ìƒì„¸ ì´ë¯¸ì§€ ë“±ë¡
-	public int insertGcat(gCatVO gvo); 			  // ì¹´í…Œê³ ë¦¬ ë“±ë¡
+	public int insertBannerImage(gImgVO gImgVo);  // ¹è³Ê ÀÌ¹ÌÁö µî·Ï
+	public int insertDetailImage(gImgVO gImgVo);  // »ó¼¼ ÀÌ¹ÌÁö µî·Ï
+	public int insertGcat(gCatVO gvo); 			  // Ä«Å×°í¸® µî·Ï
 	
-	// ì „ì‹œíšŒ ë“±ë¡í•˜ê¸°
+	// »óÇ°(±ÂÁî) ¼öÁ¤ÇÏ±â
+	public gImgVO getGImgBanner(int gno);
+	public gImgVO getGImgDetail(int gno);
+	public gCatVO getGCat(int gno);
+	public int updateGoodsStore(goodsVO gvo);
+	public int updateGImgBanner(gImgVO gImgVo);	  // ¹è³Ê ÀÌ¹ÌÁö ¼öÁ¤
+    public int updateGImgDetail(gImgVO gImgVo);   // »ó¼¼ ÀÌ¹ÌÁö ¼öÁ¤
+    public int updateGCat(gCatVO gcatVo);
+    
+    // »óÇ°(±ÂÁî) »èÁ¦ÇÏ±â
+    public int deleteGoodsStore(int gno);
+    public int deleteGImgBanner(int gno);
+    public int deleteGImgDetail(int gno);
+    public int deleteGCat(int gno);
+    public int deleteGCart(int gno);
+    public int deleteGPay(int gno);
+    public int deleteGLike(int gno);
+    public int deleteGReply(int gno);
+    
+	// Àü½ÃÈ¸ µî·ÏÇÏ±â
 	public int insertExhibition(exhVO evo);
-	public int insertExhBannerImage(exhImgVO exhImgVo);  // ë°°ë„ˆ ì´ë¯¸ì§€ ë“±ë¡
-	public int insertExhDetailImage(exhImgVO exhImgVo);  // ìƒì„¸ ì´ë¯¸ì§€ ë“±ë¡
+	public int insertExhBannerImage(exhImgVO exhImgVo);  // ¹è³Ê ÀÌ¹ÌÁö µî·Ï
+	public int insertExhDetailImage(exhImgVO exhImgVo);  // »ó¼¼ ÀÌ¹ÌÁö µî·Ï
 	
+	// Àü½ÃÈ¸ ¼öÁ¤ÇÏ±â
+	public exhImgVO getExhImgBanner(int exhNo);
+    public exhImgVO getExhImgDetail(int exhNo);
+	public int updateExhibition(exhVO evo);
+	public int updateExhBannerImage(exhImgVO exhImgVo);  // ¹è³Ê ÀÌ¹ÌÁö ¼öÁ¤
+	public int updateExhDetailImage(exhImgVO exhImgVo);  // »ó¼¼ ÀÌ¹ÌÁö ¼öÁ¤
 	
-	// ê´€ë¦¬ì ë¬¸ì˜ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°	
+	// Àü½ÃÈ¸ »èÁ¦ÇÏ±â
+	public int deleteExhibition(int exhNo);
+    public int deleteExhImgBanner(int exhNo);
+    public int deleteExhImgDetail(int exhNo);
+    public int deleteExhLike(int exhNo);
+    public int deleteExhReply(int exhNo);
+    
+	// °ü¸®ÀÚ ¹®ÀÇ ¸®½ºÆ® °¡Á®¿À±â	
 	public List<qnaVO> getQnaListByType(@Param("qnaType") String qnaType, @Param("qnaAnswer") String qnaAnswer); 	
-//	public List<qnaVO> getQList(@Param("cri") Criteria cri, @Param("qnaType") String qnaType);  // í˜ì´ì§•O
+//	public List<qnaVO> getQList(@Param("cri") Criteria cri, @Param("qnaType") String qnaType);  // ÆäÀÌÂ¡O
 //	public int getQTotal(String qnaType);
 	
-	// ìƒí’ˆ ìƒíƒœ ì¡°íšŒ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
-//	public int updatePurchaseList(payVO pvo);  
-	public List<payVO> getPurchaseList(); 	
-	
-	// íšŒì› ì •ë³´ ì—…ë°ì´íŠ¸
+	// È¸¿ø Á¤º¸ ¾÷µ¥ÀÌÆ®
 	public int updateMem(signInVO svo); 
 	
 }

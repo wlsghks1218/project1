@@ -15,29 +15,28 @@ public class CustomUser extends User {
 
     private signInVO member;
 
-    // ì¸ì ì—†ëŠ” ê¸°ë³¸ ìƒì„±ì ì¶”ê°€
+    // ÀÎÀÚ ¾ø´Â ±âº» »ı¼ºÀÚ Ãß°¡
     public CustomUser() {
         super("default", "default", List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        this.member = null; // ê¸°ë³¸ ìƒì„±ìì—ì„œ memberëŠ” nullë¡œ ì´ˆê¸°í™”
+        this.member = null; // ±âº» »ı¼ºÀÚ¿¡¼­ member´Â null·Î ÃÊ±âÈ­
     }
 
-    // username, password, authorities ê¸°ë°˜ ìƒì„±ì
+    // username, password, authorities ±â¹İ »ı¼ºÀÚ
     public CustomUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
-        this.member = null; // ì´ ìƒì„±ìë„ memberëŠ” nullë¡œ ì´ˆê¸°í™”
+        this.member = null; // ÀÌ »ı¼ºÀÚµµ member´Â null·Î ÃÊ±âÈ­
     }
 
-    // signInVO ê¸°ë°˜ ìƒì„±ì
+    // signInVO ±â¹İ »ı¼ºÀÚ
     public CustomUser(signInVO vo) {
         super(vo.getUserId(), vo.getUserPw(), vo.getAuth() == 2
                 ? List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
                 : List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        this.member = vo; // ì „ì²´ signInVO ê°ì²´ë¥¼ ì €ì¥
+        this.member = vo; // ÀüÃ¼ signInVO °´Ã¼¸¦ ÀúÀå
     }
 
-    // userNoë¥¼ ì§ì ‘ ê°€ì ¸ì˜¤ëŠ” ë©”ì†Œë“œ ì¶”ê°€
+    // userNo¸¦ Á÷Á¢ °¡Á®¿À´Â ¸Ş¼Òµå Ãß°¡
     public int getUserNo() {
         return this.member != null ? this.member.getUserNo() : -1;
     }
 }
-

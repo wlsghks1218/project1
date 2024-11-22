@@ -30,7 +30,11 @@ function loadQnaList() {
                 const formattedDate = new Date(qna.qnaRegDate).toLocaleDateString();
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${qna.qnaNo}</td>
+                    <td>
+	                    <a href="http://localhost:9010/support/inquiryInfo?qnaNo=${qna.qnaNo}">
+		                    ${qna.qnaNo}
+		                </a>
+                	</td>
                     <td>${qna.qnaType}</td>
                     <td>${qna.qnaTitle}</td>
                     <td>${formattedDate}</td>

@@ -55,7 +55,7 @@
 				where gno in ( 
 					select gno from goods_cat_tbl where
 			<choose>
-                <when test="key == 'healthbeauty'"> HEALTHBEAUTY = 1</when>
+                <when test="key == 'healthBeauty'"> HEALTHBEAUTY = 1</when>
                 <when test="key == 'game'"> GAME = 1</when>
                 <when test="key == 'culture'"> CULTURE = 1</when>
                 <when test="key == 'shopping'"> SHOPPING = 1</when>

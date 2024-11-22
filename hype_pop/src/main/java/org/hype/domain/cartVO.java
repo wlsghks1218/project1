@@ -19,5 +19,6 @@ public class cartVO {
 	   public int gprice; // 상품 가격
 	   public String gname; // 상품명
 	   public List<gImgVO> gimg; // 상품 사진 
+	   public String iamUid;
 	
 }

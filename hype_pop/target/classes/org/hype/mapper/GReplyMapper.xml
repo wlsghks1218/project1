@@ -9,7 +9,8 @@
 		gcomment, gscore, userId, gRegDate, gUpdateDate)
 		values
 		(goods_reply_seq.nextVal, #{gno}, #{userNo}, #{gcomment},
-		#{gscore}, #{userId},
+		#{gscore},
+		#{userId},
 		SYSDATE, SYSDATE)
 	</insert>
 	<select id="getAllReplyList"
@@ -22,11 +23,13 @@
 		goods_reply_table where gno = #{gno} and userNo = #{userNo}
 	</select>
 	<select id="getAvgStars" resultType="double">
-		select COALESCE(avg(gscore),0) from
+		select
+		COALESCE(avg(gscore),0) from
 		goods_reply_table where gno = #{gno}
 	</select>
 	<select id="chkReplied" resultType="int">
-		select count(*) from goods_reply_table where userNo = #{userNo} and gno = #{gno}
+		select count(*) from
+		goods_reply_table where userNo = #{userNo} and gno = #{gno}
 	</select>
 	<delete id="deleteReply">
 		delete from goods_reply_table where gno = #{gno} and
@@ -46,7 +49,8 @@
 		update goods_info_tbl set replycnt = replycnt -1
 		where gno = #{gno}
 	</update>
-	<select id="getAllReplyListWithPaging" resultType="org.hype.domain.gReplyVO">
+	<select id="getAllReplyListWithPaging"
+		resultType="org.hype.domain.gReplyVO">
 	    <![CDATA[
 	    SELECT * FROM (
 	        SELECT ROWNUM AS rnum, a.* 
@@ -65,16 +69,23 @@
 		goods_reply_table
 		WHERE gno = #{gno} AND userNo != #{userNo}
 	</select>
-	  
-	   <!--추가(윤)-->
-   
-   <!--userNo 로 greply 조회  -->
-   <select id="getGreply" parameterType="int"
-      resultType="org.hype.domain.gReplyVO">
-      select * from goods_reply_table where userNo=#{userNo}
-   </select>
-   <!--ganme 조회  -->
-   <select id="getGname" resultType="String"> 
-      select gname from goods_info_tbl where gno=#{gno} 
-   </select>
+
+	<!--추가(윤) -->
+
+	<!-- 추가(윤) -->
+	<!-- userNo 로 greply 조회 -->
+	<!-- <select id="getGreply" parameterType="int" resultType="org.hype.domain.gReplyVO"> 
+		select * from goods_reply_table where userNo=#{userNo} </select> -->
+	<!-- ganme 조회 -->
+	<select id="getGname" resultType="String"> select gname from
+		goods_info_tbl where gno=#{gno} </select>
+	<!-- 유저 총 댓글 수 -->
+	<select id="getTotalUserReplyCount" parameterType="int"
+		resultType="int"> SELECT COUNT(*) FROM goods_reply_table WHERE userNo =
+		#{userNo} </select>
+	<!-- 특정 유저의 댓글을 가져오는 쿼리 -->
+	<select id="getUserRepliesWithPaging"
+		resultType="org.hype.domain.gReplyVO">
+<![CDATA[ SELECT * FROM ( SELECT a.*, ROWNUM AS row_num FROM ( SELECT * FROM goods_reply_table WHERE userNo = #{userNo} ORDER BY gno DESC ) a WHERE ROWNUM <= #{endRow} ) WHERE row_num > #{startRow} ]]>
+	</select>
 </mapper>

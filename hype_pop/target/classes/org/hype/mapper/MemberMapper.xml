@@ -3,368 +3,242 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-
-<!--auth 는 나중에 추가할 예정 -->
+<!-- auth 는 나중에 추가할 예정 -->
 <mapper namespace="org.hype.mapper.MemberMapper">
-   <!-- <resultMap type="org.hype.domain.signInVO" id="memberMap"> <result 
-      property="userNo" column="USERNO" /> <result property="userId" column="USERID" 
-      /> <result property="userPw" column="USERPW" /> <result property="userEmail" 
-      column="USEREMAIL" /> <result property="userName" column="USERNAME" /> <result 
-      property="userNumber" column="USERNUMBER" /> <result property="userInterest" 
-      column="USERINTEREST" /> <result property="regDate" column="REGDATE" /> <result 
-      property="lastLoginDate" column="LASTLOGINDATE" /> <result property="enabled" 
-      column="ENABLED" /> <result property="snsToken" column="SNSTOKEN" /> <result 
-      property="snsType" column="SNSTYPE" /> </resultMap> -->
 
-
-   <!--회원가입 -->
-   <insert id="joinMember" parameterType="org.hype.domain.signInVO">
-      <selectKey keyProperty="userNo" resultType="int"
-         order="BEFORE"> SELECT userNo_seq.NEXTVAL FROM dual </selectKey>
-      insert into sign_in_info_tbl (userNo,userId,userPw,userEmail,userName,
-      userNumber, regDate, enabled, auth, idCardNum) values (#{userNo},
-      #{userId}, #{userPw}, #{userEmail}, #{userName}, #{userNumber}
-      ,sysdate, 1,1, #{idCardNum})
-   </insert>
-
-
-
-
-   <!-- 회원의 관심사를 개별적으로 삽입 -->
-   <insert id="insertInterest"
-      parameterType="org.hype.domain.mCatVO">
-      INSERT INTO member_cat_tbl (
-      userNo,
-      healthBeauty,
-      game,
-      culture,
-      shopping,
-      supply,
-      kids,
-      design,
-      foods,
-      interior,
-      policy,
-      character,
-      experience,
-      collaboration,
-      entertainment
-      ) VALUES (
-      #{userNo},
-      #{healthBeauty},
-      #{game},
-      #{culture},
-      #{shopping},
-      #{supply},
-      #{kids},
-      #{design},
-      #{foods},
-      #{interior},
-      #{policy},
-      #{character},
-      #{experience},
-      #{collaboration},
-      #{entertainment}
-      )
-   </insert>
-
-
-
-   <!--아이디 중복 확인 -->
-   <select id="checkDuplicateId" resultType="int"
-      parameterType="String">
-      SELECT COUNT(*) FROM sign_in_info_tbl WHERE userId = #{userId}
-   </select>
-
-
-
-   <!--////////////로그인 ////////////// -->
-   <select id="loginMember"
-      parameterType="org.hype.domain.signInVO"
-      resultType="org.hype.domain.signInVO">
-      select *
-      from sign_in_info_tbl
-      where userId = #{userId}
-      and
-      userPw = #{userPw}
-   </select>
-
-
-
-   <!--아이디 찾기 버튼 -->
-   <!--아이디 조회 , 테이블 행 수로 조회 -->
-   <select id="selectId" parameterType="String" resultType="int">
-      select
-      count(*) from sign_in_info_tbl where userId = #{userId}
-   </select>
-
-   <!--이메일로 회원 정보 조회 -->
-   <select id="selectEmail" parameterType="string"
-      resultType="org.hype.domain.signInVO">
-      select * from sign_in_info_tbl where userEmail =
-      #{userEmail}
-   </select>
-
-
-
-   <!--비밀번호 찾기로 비밀번호 변경 -->
-
-   <update id="updatePw" parameterType="string">
-      update sign_in_info_tbl
-      set userPw = #{userPw} where userEmail = {userEmail}
-   </update>
-
-
-   <!--////////////마이페이지 /////////////// -->
-
-   <!--이름, 아이디 , 이메일, 전화번호 가져오기 -->
-   <select id="selectMyPageInfo"
-      resultType="org.hype.domain.signInVO">
-      select userId,userName,userEmail,userNumber
-      from
-      sign_in_info_tbl
-      where userNo = #{userNo}
-   </select>
-
-
-
-
-   <!--관심사 가져오기 -->
-   <select id="selectMyInterest" parameterType="int"
-      resultType="org.hype.domain.mCatVO">
-      select * from member_cat_tbl where userNo = #{userNo}
-   </select>
-
-   <!--원래 관심사 삭제 -->
-   <delete id="deleteUserInterest" parameterType="int">
-      delete from
-      member_cat_tbl where userNo = #{userNo}
-   </delete>
-
-   <!--변경된 관심사 삽입  -->
-   <insert id="changeUserInterest" parameterType="org.hype.domain.mCatVO">
-   INSERT INTO member_cat_tbl (
-        userNo, healthBeauty, game, culture, shopping, supply, kids, design,
-        foods, interior, policy, character, experience, collaboration, entertainment
-    ) VALUES (
-        #{userNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply},
-        #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character},
-        #{experience}, #{collaboration}, #{entertainment}
-    )
-</insert>
-
-
-   <!--비밀번호 변경으로 비밀번호 변경 -->
-
-   <!--기존 비밀번호 조회 -->
-   <select id="selectOldPw"
-      parameterType="org.hype.domain.signInVO" resultType="int">
-      select count(*) from sign_in_info_tbl where userNo = #{userNo} and userPw =
-      #{oldPw}
-   </select>
-
-
-   <!--신규 비밀번호 입력 -->
-   <update id="updateNewPw"
-      parameterType="org.hype.domain.signInVO">
-      update sign_in_info_tbl set
-      userPw = #{newPw} where userNo = #{userNo} and userPw = #{oldPw}
-   </update>
-
-
-   <!--이메일 변경 -->
-
-   <!--기존 이메일 조회 -->
-   <!-- <select id="selectOldEmail" parameterType="org.hype.domain.signInVO" 
-      resultType="int"> select count(*) from sign_in_info_tbl where userNo = #{userNo} 
-      and userEmail= #{oldEmail} </select> -->
-   <!--신규 이메일 입력 -->
-   <update id="updateNewEmail"
-      parameterType="org.hype.domain.signInVO">
-      update sign_in_info_tbl set
-      userEmail = #{newEmail} where userNo = #{userNo}
-   </update>
-
-
-   <!--전화번호 변경 -->
-
-   <!--기존 전화번호 조회 -->
-   <select id="selectOldPhoneNum"
-      parameterType="org.hype.domain.signInVO" resultType="int">
-      select count(*) from sign_in_info_tbl where userNo = #{userNo} and
-      userNumber = #{oldPhoneNumber}
-   </select>
-
-   <!--신규 전화번호 입력 -->
-   <update id="updateNewPhoneNum"
-      parameterType="org.hype.domain.signInVO">
-      update sign_in_info_tbl set userNumber =
-      #{newPhoneNumber} where userNo = #{userNo} and userNumber =
-      #{oldPhoneNumber}
-   </update>
-
-
-   <!--좋아요 한 팝업스토어 -->
-   <select id="pLikeList"
-      resultType="org.hype.domain.likedPopImgVO">
-      select * from liked_pop_img_view where userNo = #{userNo}
-   </select>
-
-
-   <!--좋아요 한 굿즈 스토어 -->
-   <select id="gLikeList"
-      resultType="org.hype.domain.likedGoodsImgVO">
-      select * from liked_goods_img_view where userNo = #{userNo}
-   </select>
-
-   <!--좋아요 한 팝업스토어 삭제 -->
-   <delete id="pLikeListDelete" parameterType="int">
-      delete from like_list_tbl where userNo = #{userNo} and psNo=#{psNo}
-   </delete>
-   <!--좋아요 한 굿즈 스토어 삭제 -->
-   <delete id="gLikeListDelete" parameterType="int">
-      delete from goods_like_list_table where userNo = #{userNo} and gno=#{gno}
-   </delete>
-
-   <!--아이디 찾기 이메일 존재 여부 확인 -->
-   <select id="checkEmail" parameterType="org.hype.domain.signInVO"
-      resultType="int">
-      select COUNT(*) from sign_in_info_tbl where userEmail=#{userEmail} and
-      userName=#{userName}
-   </select>
-
-   <!--찾은 아이디 조회 -->
-   <select id="checkMyId" parameterType="String"
-      resultType="String">
-      select userId from sign_in_info_tbl where userEmail=#{userEmail} and
-      userName=#{userName}
-   </select>
-
-
-   <!--비밀번호 찾기에서 아이디 이메일 조회 -->
-   <select id="checkEmailPw"
-      parameterType="org.hype.domain.signInVO" resultType="int">
-      select COUNT(*) from sign_in_info_tbl where userEmail=#{userEmail} and
-      userId=#{userId}
-   </select>
-
-
-
-
-
-
-   <!--여기부터 안 썼지만 혹시몰라서 -->
-
-   <!--굿즈 댓글 목록 리스트 -->
-   <select id="gReplyList" resultType="org.hype.domain.gReplyVO">
-      select
-      goods_reply_table.gComment,
-      goods_reply_table.gRegDate,
-      goods_info_tbl.gName
-      from goods_reply_table
-      join goods_info_tbl
-      on
-      goods_reply_table.gno = goods_info_tbl.gno
-      where
-      goods_reply_table.userNo = #{userNo}
-   </select>
-
-   <!--팝업스토어 댓글 목록 리스트 -->
-   <select id="pReplyList" resultType="org.hype.domain.psReplyVO">
-      select
-      pop_reply_tbl.psName,
-      pop_reply_tbl.psComment,
-      pop_main_tbl.psRegDate
-      from pop_reply_tbl
-      join
-      pop_main_tbl
-      on pop_reply_tbl.psNo = pop_main_tbl.psNo
-      where
-      pop_reply_tbl.userNo = #{userNo}
-   </select>
-
-
-
-   <!--장바구니 리스트 출력 쿼리 -->
-   <select id="cartList" resultType="org.hype.domain.cartVO">
-      select cart_tbl.*,
-      goods_info_tbl.gNo,
-      goods_info_tbl.psNo,
-      goods_info_tbl.gName,
-      goods_info_tbl.gPrice,
-      goods_info_tbl.gImg,
-      goods_img_tbl.*
-      from cart_tbl
-      join goods_info_tbl on cart_tbl.gno = goods_info_tbl.gno
-      join
-      goods_img_tbl on goods_img_tbl.gno = goods_info_tbl.gno
-      where
-      cart_tbl.userNo = #{userNo}
-   </select>
-
-
-   <!--결제 전 배송 정보에서 회원 정보 조회 -->
-   <select id="deliveryInfo" resultType="org.hype.domain.signInVO">
-      SELECT
-      sign_in_info_tbl.userName,
-      sign_in_info_tbl.userEmail,
-      sign_in_info_tbl.userNumber,
-      cart_tbl.cPrice
-      FROM
-      sign_in_info_tbl
-      JOIN
-      cart_tbl ON sign_in_info_tbl.userNo = cart_tbl.userNo
-   </select>
-
-
-
-   <!--구매 내역 삽입 -->
-   <insert id="insertPaymentList"
-      parameterType="org.hype.domain.payVO">
-      insert into pay_list_tbl ( gNo, userNo, gBuyDate,
-      gSituation)
-      VALUES (#{gNo},#{userNo}, sysdate, '구매완료')
-   </insert>
-
-
-
-   <!--구매 상품 리스트 출력 (구매 날짜 기준 정렬) -->
-   <select id="selectPaymentList"
-      resultType="org.hype.domain.payVO">
-      select pay_list_tbl.key,
-      goods_info_tbl.gName,
-      pay_list_tbl.gAmount,
-      goods_info_tbl.gPrice,
-      pay_list_tbl.gBuyDate,
-      pay_list_tbl.gSituation
-      from pay_list_tbl
-      join goods_info_tbl
-      on
-      pay_list_tbl.gno = goods_info_tbl.gno
-      order by
-      pay_list_tbl.gBuyDate
-      DESC
-   </select>
-
-
-   <!--회원 삭제(나중에 다시 봐야 됨) -->
-   <delete id="deleteUser">
-      DELETE FROM user_interest_tbl WHERE userNo =
-      #{userNo}
-      DELETE FROM cart_tbl WHERE userNo = #{userNo}
-      DELETE FROM
-      pay_list_tbl WHERE userNo = #{userNo}
-      DELETE FROM delivery_tbl WHERE
-      userNo = #{userNo}
-      DELETE FROM sign_in_info_tbl WHERE userNo =
-      #{userNo}
-   </delete>
-
-
-
-
-
-
-
-
+	<!-- 회원가입 -->
+	<insert id="joinMember" parameterType="org.hype.domain.signInVO">
+		<selectKey keyProperty="userNo" resultType="int"
+			order="BEFORE"> SELECT userNo_seq.NEXTVAL FROM dual </selectKey>
+		insert into sign_in_info_tbl (userNo,userId,userPw,userEmail,userName,
+		userNumber, regDate, enabled, auth, idCardNum) values (#{userNo},
+		#{userId}, #{userPw}, #{userEmail}, #{userName}, #{userNumber}
+		,sysdate, 1,1, #{idCardNum})
+	</insert>
+	<!-- 회원의 관심사를 개별적으로 삽입 -->
+	<insert id="insertInterest"
+		parameterType="org.hype.domain.mCatVO"> INSERT INTO member_cat_tbl ( userNo, healthBeauty,
+		game, culture, shopping, supply, kids, design, foods, interior,
+		policy, character, experience, collaboration, entertainment ) VALUES (
+		#{userNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping},
+		#{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy},
+		#{character}, #{experience}, #{collaboration}, #{entertainment} )
+	</insert>
+	<!-- 아이디 중복 확인 -->
+	<select id="checkDuplicateId" resultType="int"
+		parameterType="String"> SELECT COUNT(*) FROM sign_in_info_tbl WHERE userId =
+		#{userId} </select>
+	<!-- ////////////로그인 ////////////// -->
+	<select id="loginMember"
+		parameterType="org.hype.domain.signInVO"
+		resultType="org.hype.domain.signInVO"> select * from sign_in_info_tbl where userId = #{userId}
+		and userPw = #{userPw} </select>
+	<!-- 아이디 찾기 버튼 -->
+	<!-- 아이디 조회 , 테이블 행 수로 조회 -->
+	<select id="selectId" parameterType="String" resultType="int"> select
+		count(*) from sign_in_info_tbl where userId = #{userId} </select>
+	<!-- 이메일로 회원 정보 조회 -->
+	<select id="selectEmail" parameterType="string"
+		resultType="org.hype.domain.signInVO"> select * from sign_in_info_tbl where userEmail =
+		#{userEmail} </select>
+	<!-- 비밀번호 찾기로 비밀번호 변경 -->
+	<update id="updatePw" parameterType="string"> update sign_in_info_tbl set
+		userPw = #{userPw} where userEmail = {userEmail} </update>
+	<!-- ////////////마이페이지 /////////////// -->
+	<!-- 이름, 아이디 , 이메일, 전화번호 가져오기 -->
+	<select id="selectMyPageInfo"
+		resultType="org.hype.domain.signInVO"> select userId,userName,userEmail,userNumber from
+		sign_in_info_tbl where userNo = #{userNo} </select>
+	<!-- 관심사 가져오기 -->
+	<select id="selectMyInterest" parameterType="int"
+		resultType="org.hype.domain.mCatVO"> select * from member_cat_tbl where userNo = #{userNo}
+	</select>
+	<!-- 원래 관심사 삭제 -->
+	<delete id="deleteUserInterest" parameterType="int"> delete from
+		member_cat_tbl where userNo = #{userNo} </delete>
+	<!-- 변경된 관심사 삽입 -->
+	<insert id="changeUserInterest"
+		parameterType="org.hype.domain.mCatVO"> INSERT INTO member_cat_tbl ( userNo, healthBeauty,
+		game, culture, shopping, supply, kids, design, foods, interior,
+		policy, character, experience, collaboration, entertainment ) VALUES (
+		#{userNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping},
+		#{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy},
+		#{character}, #{experience}, #{collaboration}, #{entertainment} )
+	</insert>
+	<!-- 비밀번호 변경으로 비밀번호 변경 -->
+	<!-- 기존 비밀번호 조회 -->
+	<select id="selectOldPw"
+		parameterType="org.hype.domain.signInVO" resultType="int"> select count(*)
+		from sign_in_info_tbl where userNo = #{userNo} and userPw = #{oldPw}
+	</select>
+	<!-- 신규 비밀번호 입력 -->
+	<update id="updateNewPw"
+		parameterType="org.hype.domain.signInVO"> update sign_in_info_tbl set userPw = #{newPw} where
+		userNo = #{userNo} and userPw = #{oldPw} </update>
+	<!-- 이메일 변경 -->
+	<!-- 기존 이메일 조회 -->
+	<!-- <select id="selectOldEmail" parameterType="org.hype.domain.signInVO" 
+		resultType="int"> select count(*) from sign_in_info_tbl where userNo = #{userNo} 
+		and userEmail= #{oldEmail} </select> -->
+	<!-- 신규 이메일 입력 -->
+	<update id="updateNewEmail"
+		parameterType="org.hype.domain.signInVO"> update sign_in_info_tbl set userEmail = #{newEmail}
+		where userNo = #{userNo} </update>
+	<!-- 전화번호 변경 -->
+	<!-- 기존 전화번호 조회 -->
+	<select id="selectOldPhoneNum"
+		parameterType="org.hype.domain.signInVO" resultType="int"> select count(*)
+		from sign_in_info_tbl where userNo = #{userNo} and userNumber =
+		#{oldPhoneNumber} </select>
+	<!-- 신규 전화번호 입력 -->
+	<update id="updateNewPhoneNum"
+		parameterType="org.hype.domain.signInVO"> update sign_in_info_tbl set userNumber =
+		#{newPhoneNumber} where userNo = #{userNo} and userNumber =
+		#{oldPhoneNumber} </update>
+	<!-- 좋아요 한 팝업스토어 -->
+	<select id="pLikeList"
+		resultType="org.hype.domain.likedPopImgVO"> select * from liked_pop_img_view where userNo = #{userNo}
+	</select>
+	<!-- 좋아요 한 굿즈 스토어 -->
+	<select id="gLikeList"
+		resultType="org.hype.domain.likedGoodsImgVO"> select * from liked_goods_img_view where userNo =
+		#{userNo} </select>
+	<!-- 좋아요 한 전시회 -->
+	<select id="eLikeList"
+		resultType="org.hype.domain.likedExhViewVO"> select * from liked_exh_view where userNo = #{userNo}
+	</select>
+	<!-- 좋아요 한 팝업스토어 삭제 -->
+	<delete id="pLikeListDelete" parameterType="int"> delete from
+		like_list_tbl where userNo = #{userNo} and psNo=#{psNo} </delete>
+	<!-- 좋아요 한 굿즈 스토어 삭제 -->
+	<delete id="gLikeListDelete" parameterType="int"> delete from
+		goods_like_list_table where userNo = #{userNo} and gno=#{gno} </delete>
+	<!-- 좋아요 한 전시회 삭제 -->
+	<delete id="eLikeListDelete" parameterType="int"> delete from
+		liked_exh_view where userNo = #{userNo} and exhNo=#{exhNo} </delete>
+	<!-- 아이디 찾기 이메일 존재 여부 확인 -->
+	<select id="checkEmail" parameterType="org.hype.domain.signInVO"
+		resultType="int"> select COUNT(*) from sign_in_info_tbl where
+		userEmail=#{userEmail} and userName=#{userName} </select>
+	<!-- 찾은 아이디 조회 -->
+	<select id="checkMyId" parameterType="String"
+		resultType="String"> select userId from sign_in_info_tbl where
+		userEmail=#{userEmail} and userName=#{userName} </select>
+	<!-- 비밀번호 찾기에서 아이디 이메일 조회 -->
+	<select id="checkEmailPw"
+		parameterType="org.hype.domain.signInVO" resultType="int"> select COUNT(*)
+		from sign_in_info_tbl where userEmail=#{userEmail} and
+		userId=#{userId} </select>
+	<!-- 여기부터 안 썼지만 혹시몰라서 -->
+	<!-- 굿즈 댓글 목록 리스트 -->
+	<select id="gReplyList" resultType="org.hype.domain.gReplyVO"> select
+		goods_reply_table.gComment, goods_reply_table.gRegDate,
+		goods_info_tbl.gName from goods_reply_table join goods_info_tbl on
+		goods_reply_table.gno = goods_info_tbl.gno where
+		goods_reply_table.userNo = #{userNo} </select>
+	<!-- 팝업스토어 댓글 목록 리스트 -->
+	<select id="pReplyList" resultType="org.hype.domain.psReplyVO"> select pop_reply_tbl.psName,
+		pop_reply_tbl.psComment, pop_main_tbl.psRegDate from pop_reply_tbl
+		join pop_main_tbl on pop_reply_tbl.psNo = pop_main_tbl.psNo where
+		pop_reply_tbl.userNo = #{userNo} </select>
+	<!-- 장바구니 리스트 출력 쿼리 -->
+	<select id="cartList" resultType="org.hype.domain.cartVO"> select cart_tbl.*,
+		goods_info_tbl.gNo, goods_info_tbl.psNo, goods_info_tbl.gName,
+		goods_info_tbl.gPrice, goods_info_tbl.gImg, goods_img_tbl.* from
+		cart_tbl join goods_info_tbl on cart_tbl.gno = goods_info_tbl.gno join
+		goods_img_tbl on goods_img_tbl.gno = goods_info_tbl.gno where
+		cart_tbl.userNo = #{userNo} </select>
+	<!-- 결제 전 배송 정보에서 회원 정보 조회 -->
+	<select id="deliveryInfo" resultType="org.hype.domain.signInVO"> SELECT
+		sign_in_info_tbl.userName, sign_in_info_tbl.userEmail,
+		sign_in_info_tbl.userNumber, cart_tbl.cPrice FROM sign_in_info_tbl
+		JOIN cart_tbl ON sign_in_info_tbl.userNo = cart_tbl.userNo </select>
+	<!-- 구매 내역 삽입 -->
+	<insert id="insertPaymentList"
+		parameterType="org.hype.domain.payVO"> insert into pay_list_tbl ( gNo, userNo, gBuyDate,
+		gSituation) VALUES (#{gNo},#{userNo}, sysdate, '구매완료') </insert>
+	<!-- 구매 상품 리스트 출력 (구매 날짜 기준 정렬) -->
+	<select id="selectPaymentList"
+		resultType="org.hype.domain.payVO"> select pay_list_tbl.key, goods_info_tbl.gName,
+		pay_list_tbl.gAmount, goods_info_tbl.gPrice, pay_list_tbl.gBuyDate,
+		pay_list_tbl.gSituation from pay_list_tbl join goods_info_tbl on
+		pay_list_tbl.gno = goods_info_tbl.gno order by pay_list_tbl.gBuyDate
+		DESC </select>
+	<!-- 회원 삭제(나중에 다시 봐야 됨) -->
+	<delete id="deleteUser"> DELETE FROM user_interest_tbl WHERE userNo =
+		#{userNo} DELETE FROM cart_tbl WHERE userNo = #{userNo} DELETE FROM
+		pay_list_tbl WHERE userNo = #{userNo} DELETE FROM delivery_tbl WHERE
+		userNo = #{userNo} DELETE FROM sign_in_info_tbl WHERE userNo =
+		#{userNo} </delete>
+		
+	   <!--회원 탈퇴-->
+	<delete id="deleteSignInInfo" parameterType="int">
+        DELETE FROM sign_in_info_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 회원 관심 카테고리 테이블에서 삭제 -->
+    <delete id="deleteMemberCategory" parameterType="int">
+        DELETE FROM member_cat_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 팝업스토어 댓글 테이블에서 삭제 -->
+    <delete id="deletePopReply" parameterType="int">
+        DELETE FROM pop_reply_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 팝업스토어 좋아요 테이블에서 삭제 -->
+    <delete id="deleteLikeList" parameterType="int">
+        DELETE FROM like_list_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 굿즈 정보 댓글 테이블에서 삭제 -->
+    <delete id="deleteGoodsReply" parameterType="int">
+        DELETE FROM goods_reply_table WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 굿즈 좋아요 리스트 테이블에서 삭제 -->
+    <delete id="deleteGoodsLikeList" parameterType="int">
+        DELETE FROM goods_like_list_table WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 장바구니 테이블에서 삭제 -->
+    <delete id="deleteCart" parameterType="int">
+        DELETE FROM cart_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 결제 내역 테이블에서 삭제 -->
+    <delete id="deletePayment" parameterType="int">
+        DELETE FROM pay_list_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- Q&A 테이블에서 삭제 -->
+    <delete id="deleteQna" parameterType="int">
+        DELETE FROM qna_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 파티 정보 테이블에서 삭제 -->
+    <delete id="deletePartyInfo" parameterType="int">
+        DELETE FROM party_info_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 채팅 참여 테이블에서 삭제 -->
+    <delete id="deleteChat" parameterType="int">
+        DELETE FROM chat_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 채팅 내용 테이블에서 삭제 -->
+    <delete id="deleteChatContent" parameterType="int">
+        DELETE FROM chat_content_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 전시 댓글 테이블에서 삭제 -->
+    <delete id="deleteExhReply" parameterType="int">
+        DELETE FROM exh_reply_tbl WHERE userNo = #{userNo}
+    </delete>
+
+    <!-- 전시 좋아요 리스트 테이블에서 삭제 -->
+    <delete id="deleteExhLikeList" parameterType="int">
+        DELETE FROM exh_like_list_tbl WHERE userNo = #{userNo}
+    </delete>
+	
 </mapper>

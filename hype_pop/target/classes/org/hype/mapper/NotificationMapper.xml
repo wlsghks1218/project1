@@ -23,14 +23,14 @@
     </update>
     
  <!-- 유저가 좋아요한 팝업스토어들의 ID 조회 쿼리 -->
-  <select id="getLikedPopUpStoresByUser" resultType="int">
+  <select id="getLikedPopUpStoresByUser" parameterType="int" resultType="int">
     SELECT psNo
     FROM like_list_tbl
     WHERE userNo = #{userNo}
     AND psNo IN (
         SELECT PSNO
         FROM pop_main_tbl
-        WHERE endDate = TRUNC(SYSDATE) + 5
+        WHERE psEndDate = TRUNC(SYSDATE) + 5
     )
 </select>
     
@@ -59,5 +59,57 @@
         sysdate  
     )
 </insert>
+  <select id="getLikedGoodsByUserNo" parameterType="int" resultType="int">
+    SELECT gno
+    FROM goods_like_list_tbl
+    WHERE userNo = #{userNo}
+    AND gno IN (
+        SELECT gno
+        FROM goods_info_tbl
+        WHERE sellDate = TRUNC(SYSDATE) + 5
+    )
+</select>
+  <select id="getLikedStartPopUpStoresByUser" parameterType="int" resultType="int">
+    SELECT psNo
+    FROM like_list_tbl
+    WHERE userNo = #{userNo}
+    AND psNo IN (
+        SELECT PSNO
+        FROM pop_main_tbl
+        WHERE psStartDate = TRUNC(SYSDATE) + 5
+    )
+</select>
 
+ <!-- 유저가 좋아요한 팝업스토어들의 ID 조회 쿼리 -->
+  <select id="getLikedEndExhByUserNo" parameterType="int" resultType="int">
+    SELECT EXHNO
+    FROM EXH_LIKE_LIST_TBL
+    WHERE userNo = #{userNo}
+    AND EXHNO IN (
+        SELECT EXHNO
+        FROM EXH_MAIN_TBL
+        WHERE EXHENDDATE = TRUNC(SYSDATE) + 5
+    )
+</select>
+  <select id="getLikedStartExhByUserNo" parameterType="int" resultType="int">
+    SELECT EXHNO
+    FROM EXH_LIKE_LIST_TBL
+    WHERE userNo = #{userNo}
+    AND EXHNO IN (
+        SELECT EXHNO
+        FROM EXH_MAIN_TBL
+        WHERE EXHSTARTDATE = TRUNC(SYSDATE) + 5
+    )
+</select>
+<select id="getAllUserNos" resultType="int">
+   select userNo
+   FROM sign_in_info_tbl
+</select>
+<select id="getUserNoByQnaNo" parameterType="int" resultType="int">
+    SELECT userNo
+    FROM qna_tbl
+    WHERE QNANO = #{qnaNo}
+</select>
+
+    
 </mapper>

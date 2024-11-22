@@ -3,8 +3,12 @@ package org.hype.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.hype.domain.Criteria;
+import org.hype.domain.exhImgVO;
 import org.hype.domain.exhVO;
+import org.hype.domain.gCatVO;
+import org.hype.domain.gImgVO;
 import org.hype.domain.goodsVO;
 import org.hype.domain.pCatVO;
 import org.hype.domain.pImgVO;
@@ -16,55 +20,79 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AdminService {	
-	// ê³µí†µ Headerì˜ì—­
-	// ê²€ìƒ‰ì–´ í¬í•¨ íŒì—…ìŠ¤í† ì–´ í˜ì´ì§• ì²˜ë¦¬ 
-	// íŒì—…ìŠ¤í† ì–´ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
+	// °øÅë Header¿µ¿ª
+	// °Ë»ö¾î Æ÷ÇÔ ÆË¾÷½ºÅä¾î ÆäÀÌÂ¡ Ã³¸® 
+	// ÆË¾÷½ºÅä¾î ¸®½ºÆ® °¡Á®¿À±â
 	public List<popStoreVO> getPList(Criteria cri, String searchPs);	
 	public int getPTotal(String searchPs);
-	// ê²€ìƒ‰ì–´ í¬í•¨ êµ¿ì¦ˆ í˜ì´ì§• ì²˜ë¦¬ 
-	// ìƒí’ˆ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
+	// °Ë»ö¾î Æ÷ÇÔ ±ÂÁî ÆäÀÌÂ¡ Ã³¸® 
+	// »óÇ° ¸®½ºÆ® °¡Á®¿À±â
 	public List<goodsVO> getGList(Criteria cri, String searchGs);  
 	public int getGTotal(String searchGs);
-	// ê²€ìƒ‰ì–´ í¬í•¨ íšŒì› í˜ì´ì§• ì²˜ë¦¬ 
-	// íšŒì› ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°
+	// °Ë»ö¾î Æ÷ÇÔ Àü½ÃÈ¸ ÆäÀÌÂ¡ Ã³¸® 
+	// Àü½ÃÈ¸ ¸®½ºÆ® °¡Á®¿À±â
+	public List<exhVO> getExhList(@Param("cri") Criteria cri, String searchEs);  
+	public int getExhTotal(String searchEs);
+	// °Ë»ö¾î Æ÷ÇÔ È¸¿ø ÆäÀÌÂ¡ Ã³¸® 
+	// È¸¿ø ¸®½ºÆ® °¡Á®¿À±â
 	public List<signInVO> getMList(Criteria cri, String searchMs);
 	public int getMTotal(String searchMs);
 	
-	// íŠ¹ì • íŒì—…ìŠ¤í† ì–´ ì¡°íšŒ
+	// Æ¯Á¤ ÆË¾÷½ºÅä¾î Á¶È¸
 	public popStoreVO getPopStoreById (int psNo);  
-	// íŠ¹ì • ìƒí’ˆ(êµ¿ì¦ˆ) ì¡°íšŒ
-	public goodsVO getGoodsById (int gNo);  
-	// íŠ¹ì • íšŒì› ì¡°íšŒ
+	// Æ¯Á¤ »óÇ°(±ÂÁî) Á¶È¸
+	public goodsVO getGoodsById (int gno);  
+	// Æ¯Á¤ Àü½ÃÈ¸ Á¶È¸
+	public exhVO getExhById (int exhNo); 
+	// Æ¯Á¤ È¸¿ø Á¶È¸
 	public signInVO getMembersById (String userId); 
 	
-	// íŒì—…ìŠ¤í† ì–´ ë“±ë¡í•˜ê¸°
+	// ÆË¾÷½ºÅä¾î µî·ÏÇÏ±â
 	public int insertPopStore(popStoreVO pvo); 
 	
-	// íŒì—…ìŠ¤í† ì–´ ìˆ˜ì •í•˜ê¸°
-//	public int updatePopStores(popStoreVO pvo);
+	// ÆË¾÷½ºÅä¾î ¼öÁ¤ÇÏ±â
+	public int updatePopStore(popStoreVO pvo);
+	public pImgVO getPsImg(int psNo);
+	public pCatVO getPsCat(int psNo);
 	
-	// êµ¿ì¦ˆ ë“±ë¡í•˜ê¸° 
-	// selectbox ëª¨ë“  íŒì—…ìŠ¤í† ì–´ ê°€ì ¸ì˜¤ê¸°
+	// ÆË¾÷½ºÅä¾î »èÁ¦ÇÏ±â
+	public int deletePopStore(int psNo);
+	
+	// »óÇ°(±ÂÁî) µî·ÏÇÏ±â 
+	// selectbox ¸ğµç ÆË¾÷½ºÅä¾î °¡Á®¿À±â
 	public List<popStoreVO> getAllPopStores();	
-	// êµ¿ì¦ˆ insert
+	// »óÇ°(±ÂÁî) insert
 	public int insertGoodsStore(goodsVO gvo);
 	
-	// ì „ì‹œíšŒ ë“±ë¡í•˜ê¸°
+	// »óÇ°(±ÂÁî) ¼öÁ¤ÇÏ±â
+	public int updateGoodsStore(goodsVO gvo);
+	// ¹è³Ê ÀÌ¹ÌÁö¿Í »ó¼¼ ÀÌ¹ÌÁö °¡Á®¿À±â
+    public gImgVO getGImgBanner(int gno);
+    public gImgVO getGImgDetail(int gno);
+    // Ä«Å×°í¸® °¡Á®¿À±â
+    public gCatVO getGCat(int gno);
+    
+    // »óÇ°(±ÂÁî) »èÁ¦ÇÏ±â
+    public int deleteGoodsStore(int gno);
+	
+	// Àü½ÃÈ¸ µî·ÏÇÏ±â
 	public int insertExhibition(exhVO evo);
 	
-	// ë¬¸ì˜ ë¦¬ìŠ¤íŠ¸ í™•ì¸ í˜ì´ì§€ ì˜ì—­
-	// ë¬¸ì˜ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸°	
-	public List<qnaVO> getQnaListByType(String qnaType, String qnaAnswer);
-//	public List<qnaVO> getQList(Criteria cri, String qnaType);  // í˜ì´ì§•O
-//	public int getQTotal(String qnaType);
+	// Àü½ÃÈ¸ ¼öÁ¤ÇÏ±â
+	public int updateExhibition(exhVO evo);
+	// ¹è³Ê ÀÌ¹ÌÁö¿Í »ó¼¼ ÀÌ¹ÌÁö °¡Á®¿À±â
+    public exhImgVO getExhImgBanner(int exhNo);
+    public exhImgVO getExhImgDetail(int exhNo);
 	
-	// ìƒí’ˆ ìƒíƒœ ì¡°íšŒ í˜ì´ì§€ ì˜ì—­
-	// ìƒí’ˆ ìƒíƒœ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸° 
-//	public int updatePurchaseList(payVO pvo); 
-	public List<payVO> getPurchaseList(); 	
+    // Àü½ÃÈ¸ »èÁ¦ÇÏ±â
+    public int deleteExhibition(int exhNo);
+    
+	// ¹®ÀÇ ¸®½ºÆ® È®ÀÎ ÆäÀÌÁö ¿µ¿ª
+	// ¹®ÀÇ ¸®½ºÆ® °¡Á®¿À±â	
+	public List<qnaVO> getQnaListByType(String qnaType, String qnaAnswer);	
 
-	// íšŒì› ì •ë³´ ìˆ˜ì • í˜ì´ì§€ ì˜ì—­
-	// íšŒì› ì •ë³´ ì—…ë°ì´íŠ¸
+	// È¸¿ø Á¤º¸ ¼öÁ¤ ÆäÀÌÁö ¿µ¿ª
+	// È¸¿ø Á¤º¸ ¾÷µ¥ÀÌÆ®
 	public int updateMem(signInVO svo); 
 	
 

@@ -1,24 +1,40 @@
 package org.hype.controller;
 
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.hype.domain.gImgVO;
 import org.hype.domain.goodsVO;
 import org.hype.domain.likeVO;
 import org.hype.domain.mCatVO;
 import org.hype.domain.pCatVO;
+import org.hype.domain.pImgVO;
 import org.hype.domain.popStoreVO;
 import org.hype.domain.psReplyVO;
+import org.hype.security.domain.CustomUser;
+import org.hype.service.GoodsService;
 import org.hype.service.PopUpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,153 +46,175 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Controller
-@RequestMapping("/hypePop")
+@RequestMapping("/hypePop/*")
 public class PopUpController {
 	@Autowired
 	PopUpService service;
+	@Autowired
+	GoodsService gService;
 	
-	  @RequestMapping(value = "/popUpMain", method = RequestMethod.GET)
-	    public String home(Locale locale, Model model) {
-	        int userno = 5; // 임의의 사용자 번호 (예: 로그인한 사용자의 번호)
+	@RequestMapping(value = "/popUpMain", method = RequestMethod.GET)
+	public String home(Locale locale, Model model) {
+	    // 현재 인증된 사용자 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    int userNo = 0;
 
-	        // 인기 팝업 스토어 조회
-	        List<popStoreVO> popularPopUps = service.getPopularPopUps(); 
-
-	        // 각 스토어에 이미지 데이터 추가
-	        for (popStoreVO popUp : popularPopUps) {
-	           
-	        	// 이미지 삽입 기능
-	        	
-	        	//  List<pImgVO> imgVo = service.getImageByStoreId(popUp.getPsNo()); // 스토어 ID로 이미지 조회
-	           // popUp.setPsImg(imgVo); // 이미지 설정 (setImage() 메소드가 필요함)
-	        }
-
-	        model.addAttribute("popularPopUps", popularPopUps); // 모델에 인기 팝업 추가
-
-	        // 사용자 관심사에 따른 상위 스토어 조회
-	        Map<String, List<popStoreVO>> topStoresByInterest = service.getTopStoresByInterests(userno);
-
-	        // 각 관심사별 상위 스토어에 이미지 데이터 추가
+	    // 인기 팝업 스토어 목록 가져오기
+	    List<popStoreVO> popularPopUps = service.getPopularPopUps();
+	   
+	    // 팝업 스토어 이미지 처리
+	    for (popStoreVO popUp : popularPopUps) {
+	    	pImgVO imgVo = service.getImageByStoreId(popUp.getPsNo());
+	    	if (imgVo != null) {
+	    		popUp.setPsImg(imgVo); // 이미지 설정
+	    	}
+	    }
+	    model.addAttribute("popularPopUps", popularPopUps); // 인기 팝업 스토어 리스트 모델에 추가
+	
+	    if (authentication != null && authentication.getPrincipal() instanceof CustomUser) {
+	        CustomUser userDetails = (CustomUser) authentication.getPrincipal();
+	        userNo = userDetails.getUserNo(); // userNo 가져오기
+	        Map<String, List<popStoreVO>> topStoresByInterest = service.getTopStoresByInterests(userNo);
+	        System.out.println("유저 넘버 제발 제대로 좀 주세요 .... : " + userNo);
 	        for (List<popStoreVO> storeList : topStoresByInterest.values()) {
-	            for (popStoreVO popUp : storeList) {
-	         
-	            	
-	              // 이미지 삽입 기능 	
-	           //  	List<pImgVO> imgVo = service.getImageByStoreId(popUp.getPsNo()); // 스토어 ID로 이미지 조회
-	          //      popUp.setPsImg(imgVo); // 이미지 설정
+	        	for (popStoreVO popUp2 : storeList) {
+	        		pImgVO imgVo = service.getImageByStoreId(popUp2.getPsNo());
+	        		if (imgVo != null) {
+	        			popUp2.setPsImg(imgVo); // 이미지 설정
+	        		}
+	        	}
+	        }
+	        model.addAttribute("topStoresByInterestMap", topStoresByInterest); // 관심사 기반 팝업 스토어 리스트 모델에 추가
+	    }
+	    
+
+	    // 좋아요 수로 분류한 상위 카테고리 팝업 스토어
+	    Map<String, List<popStoreVO>> topCategoriesByLikes = service.getTopCategoriesByLikes();
+	    for (List<popStoreVO> storeList : topCategoriesByLikes.values()) {
+	        for (popStoreVO popUp3 : storeList) {
+	            pImgVO imgVo = service.getImageByStoreId(popUp3.getPsNo());
+	            if (imgVo != null) {
+	                popUp3.setPsImg(imgVo); // 이미지 설정
 	            }
 	        }
-
-	        model.addAttribute("topStoresByInterest", topStoresByInterest); // 모델에 관심사별 상위 스토어 추가
-
-	        return "popUp/popUpMainPage"; // JSP 페이지 이름 반환
 	    }
-	
+	    model.addAttribute("topCategoriesByLikesMap", topCategoriesByLikes); // 카테고리 기반 팝업 스토어 리스트 모델에 추가
 
-	@GetMapping("/search") // URL 매핑에 해당하는 메서드
+	    return "popUp/popUpMainPage"; // JSP 페이지 반환
+	}
+
+
+	
+	@GetMapping("/search") // URL 留ㅽ���� �대�뱁���� 硫�����
 	public String search(@RequestParam("searchData") String searchData, Model model) {
-	    // searchData를 받아 검색 결과를 처리
-	    System.out.println("검색 데이터: " + searchData);
+	    // searchData瑜� 諛��� 寃��� 寃곌낵瑜� 泥�由�
+
 	    
-	    // DB에서 검색 결과를 가져오는 로직 작성
+	    // DB���� 寃��� 寃곌낵瑜� 媛��몄�ㅻ�� 濡�吏� ����
 	    List<popStoreVO> vo = service.popUpSearchByData(searchData);
 	   
 	    for (popStoreVO store : vo) {
 	     
 	        
-	        // 각 스토어의 관심사 조회
+	        // 媛� �ㅽ���댁�� 愿��ъ�� 議고��
 	        List<Map<String, Object>> interestsList = service.getInterestsByPsNo(store.getPsNo());
 
-	        // 관심사를 문자열로 변환
+	        // 愿��ъ�щ�� 臾몄���대� 蹂���
 	        StringBuilder interestsBuilder = new StringBuilder();
 	        for (Map<String, Object> interest : interestsList) {
 	            if (interestsBuilder.length() > 0) {
-	                interestsBuilder.append(", "); // 콤마로 구분
+	                interestsBuilder.append(", "); // 肄ㅻ�濡� 援щ�
 	            }
-	            log.info("관심사 : " + interestsBuilder);
+	            log.info("愿��ъ�� : " + interestsBuilder);
 	            interestsBuilder.append(interest.get("INTERESTS"));
 	        }
 	        store.setInterest(interestsBuilder.toString());
 	        
-	        //평균 별점 계산
+	        //��洹� 蹂��� 怨���
 	        double averageRating = service.calculateAverageRating(store.getPsNo());
-	        store.setAvgRating(averageRating); // 평균 평점 설정
+	        store.setAvgRating(averageRating); // ��洹� ���� �ㅼ��
 
-	        System.out.println("관심사: " + store.getInterest());
-	        System.out.println("------------------------------");
+	   
+
 	    }
 	    
-	    // searchData를 JSP에 전달
+	    // searchData瑜� JSP�� ����
 	    model.addAttribute("searchData", vo);	
 	    
-	    return "/popUp/searchResultPage"; // 검색 결과를 보여주는 JSP 경로
+	    return "/popUp/searchResultPage"; // 寃��� 寃곌낵瑜� 蹂댁�ъ＜�� JSP 寃쎈�
 	}
-    // 검색 결과가 없는 경우를 처리하는 메서드
-    @GetMapping("/search/noData") // 특정 URL 매핑
+    // 寃��� 寃곌낵媛� ���� 寃쎌�곕�� 泥�由ы���� 硫�����
+    @GetMapping("/search/noData") // �뱀�� URL 留ㅽ��
     public String searchWithoutData(Model model) {
     	
     	 List<popStoreVO> vo = service.getAllPopUpData();
     	
     	  for (popStoreVO store : vo) {
-  	        System.out.println("스토어 번호: " + store.getPsNo());
-  	        System.out.println("스토어 이름: " + store.getPsName());
-  	        System.out.println("주소: " + store.getPsAddress());
-  	        System.out.println("설명: " + store.getPsExp());
-  	        System.out.println("좋아요 수: " + store.getLikeCount());
-  	        System.out.println("평균 별점: " + store.getAvgRating());
-  	        
-  	        // 각 스토어의 관심사 조회
+
+  	        // 媛� �ㅽ���댁�� 愿��ъ�� 議고��
   	        List<Map<String, Object>> interestsList = service.getInterestsByPsNo(store.getPsNo());
 
-  	        // 관심사를 문자열로 변환
+  	        // 愿��ъ�щ�� 臾몄���대� 蹂���
   	        StringBuilder interestsBuilder = new StringBuilder();
   	        for (Map<String, Object> interest : interestsList) {
-  	            // 관심사 문자열 추가
+  	            // 愿��ъ�� 臾몄���� 異�媛�
   	            if (interestsBuilder.length() > 0) {
-  	                interestsBuilder.append(", "); // 쉼표로 구분
+  	                interestsBuilder.append(", "); // �쇳��濡� 援щ�
   	            }
-  	            interestsBuilder.append(interest.get("INTERESTS")); // INTERESTS 키에서 값 가져오기
+  	            interestsBuilder.append(interest.get("INTERESTS")); // INTERESTS �ㅼ���� 媛� 媛��몄�ㅺ린
   	        }
 
-  	        // 관심사 설정
+  	        // 愿��ъ�� �ㅼ��
   	        store.setInterest(interestsBuilder.toString());
-  	        //평균 별점 계산
+  	        //��洹� 蹂��� 怨���
   	        double averageRating = service.calculateAverageRating(store.getPsNo());
-  	        store.setAvgRating(averageRating); // 평균 평점 설정
+  	        store.setAvgRating(averageRating); // ��洹� ���� �ㅼ��
 
-  	        System.out.println("관심사: " + store.getInterest());
-  	        System.out.println("------------------------------");
   	    }
   	    
-  	    // searchData를 JSP에 전달
+  	    // searchData瑜� JSP�� ����
   	    model.addAttribute("searchData", vo);
   	    
-  	    return "/popUp/searchResultPage"; // 검색 결과를 보여주는 JSP 경로
+  	    return "/popUp/searchResultPage"; // 寃��� 寃곌낵瑜� 蹂댁�ъ＜�� JSP 寃쎈�
     }
+    
 
     @GetMapping("/popUpDetails")
     public String popUpDetails(@RequestParam("storeName") String storeName, Model model) {
-        // storeName을 받아 상세 정보를 처리
-        System.out.println("스토어 이름: " + storeName);
+        // storeName�� 諛��� ���� ��蹂대�� 泥�由�
         
-        // DB에서 상세 정보를 가져오는 로직 작성
+        // DB���� ���� ��蹂대�� 媛��몄�ㅻ�� 濡�吏� ����
         popStoreVO vo = service.getStoreInfoByName(storeName);
-       
-         List<goodsVO> gvo = service.getGoodsInfoByName(storeName);
-         
-         for (goodsVO goods : gvo) {
-        	    System.out.println("상품명: " + goods.getGname() + ", 가격: " + goods.getGprice() + "원");
-        	}
         
-    
-        // storeName을 JSP에 전달
+        System.out.println("���� �ㅽ���� 踰��몃�� : " + vo.getPsNo());
+        
+        pImgVO imgVo = service.getImageByStoreId(vo.getPsNo());
+        vo.setPsImg(imgVo);
+        
+        List<goodsVO> gvo = service.getGoodsInfoByName(storeName);
+        for (goodsVO goodsVo : gvo) {
+            List<gImgVO> gImgVo = new ArrayList<>();
+            gImgVO imgVo1 = gService.getImgByGno(goodsVo.getGno());
+            gImgVo.add(imgVo1);
+            goodsVo.setAttachList(gImgVo);
+        }
+        
+     
+        
+        // ��洹� 蹂��� 怨���
+        double avgRating = service.getAvgRating(vo.getPsNo());
+        
+        // popStoreVO 媛�泥댁�� ��洹� 蹂��� 異�媛�
+        vo.setAvgRating(avgRating);  // popStoreVO�� avgRating ����瑜� 異�媛��� 寃쎌��
+        
+        // storeName怨� 愿��⑤�� �곗�댄�� ����
         model.addAttribute("storeInfo", vo);
         model.addAttribute("goodsInfo", gvo);
         
-        return "/popUp/popUpDetailsPage"; // 상세 정보를 보여주는 JSP 경로
+        return "/popUp/popUpDetailsPage"; // ���� ��蹂대�� 蹂댁�ъ＜�� JSP 寃쎈�
     }
 
-    // 캘린더를 보여주는 메서드
+    // 罹�由곕��瑜� 蹂댁�ъ＜�� 硫�����
     @RequestMapping("/calendar")
     public String showCalendarPage() {
         return "/popUpCalendar/calendarMain";  
@@ -187,15 +225,14 @@ public class PopUpController {
         int psNo = likeVO.getPsNo();
         int userNo = likeVO.getUserNo();
 
-        System.out.println("Received psNo: " + psNo + ", userNo: " + userNo);
         
-        // 서비스 호출하여 좋아요 상태 업데이트
+        // ��鍮��� �몄����� 醫����� ���� ���곗�댄��
         likeVO result = service.likeCount(psNo, userNo);
 
-        // 결과 처리
+        // 寃곌낵 泥�由�
         Map<String, Object> response = new HashMap<>();
         if (result != null) {
-            response.put("status", "liked"); // 좋아요가 추가된 경우
+            response.put("status", "liked"); // 醫�����媛� 異�媛��� 寃쎌��
             response.put("psNo", psNo);
             response.put("userNo", userNo);
             response.put("message", "Like added successfully");
@@ -216,16 +253,15 @@ public class PopUpController {
     public ResponseEntity<Map<String, Object>> updateLikeCount(@RequestBody likeVO likeVO) {
         int psNo = likeVO.getPsNo();
 
-        System.out.println("Received psNo: " + psNo);
 
-        // 서비스 호출하여 좋아요 수 가져오기
+        // ��鍮��� �몄����� 醫����� �� 媛��몄�ㅺ린
         Integer likeCount = service.getLikeCount(psNo);
 
-        // 결과 처리
+        // 寃곌낵 泥�由�
         Map<String, Object> response = new HashMap<>();
         if (likeCount != null) {
             response.put("status", "success");
-            response.put("likeCount", likeCount); // likeCount 추가
+            response.put("likeCount", likeCount); // likeCount 異�媛�
         } else {
             response.put("status", "failure");
         }
@@ -238,19 +274,19 @@ public class PopUpController {
         int psNo = likeVO.getPsNo();
         int userNo = likeVO.getUserNo();
 
-        // 유저가 해당 팝업스토어에 좋아요를 눌렀는지 확인
+        // ����媛� �대�� �����ㅽ���댁�� 醫�����瑜� ������吏� ����
         boolean hasLiked = service.checkUserLike(psNo, userNo);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("hasLiked", hasLiked);  // 좋아요 상태 반환
+        response.put("hasLiked", hasLiked);  // 醫����� ���� 諛���
         return ResponseEntity.ok(response);
     }
-    // 요셉이 거 병합 부분 
+    // ������ 嫄� 蹂��� 遺�遺� 
     @GetMapping(value = "/calendarData", produces = MediaType.APPLICATION_JSON_VALUE) 
     @ResponseBody
     public List<popStoreVO> calendarData() {
         List<popStoreVO> cData = service.showCalendar();
-        log.info("Calendar Data: " + cData); // 데이터 확인을 위한 로그
+        log.info("Calendar Data: " + cData); // �곗�댄�� ���몄�� ���� 濡�洹�
         return cData;
     }
     
@@ -260,7 +296,7 @@ public class PopUpController {
         return service.getCategoryData();
     }
     
-    @GetMapping("/customerMain") // 고객 센터로 이동하는 메서드
+    @GetMapping("/customerMain") // 怨�媛� �쇳�곕� �대������ 硫�����
 	public String customerMain() {
 		
 		return "/customerService/customerServiceMain";
@@ -271,7 +307,7 @@ public class PopUpController {
         return service.getUserInterest(userNo);
     }
     
-    // 유저 좋아요 가져오기
+    // ���� 醫����� 媛��몄�ㅺ린
     @GetMapping(value = "userLike", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<likeVO> getUserLike(@RequestParam("userNo") int userNo) {
@@ -279,28 +315,66 @@ public class PopUpController {
     }
     
     
-    // 윤씨 취합부분!
+    // �ㅼ�� 痍⑦�⑸�遺�!
     
     @GetMapping("/myDetail")
     public String myDetail(@RequestParam("storeName") String storeName, Model model) {
-        // storeName을 받아 상세 정보를 처리
-        System.out.println("스토어 이름: " + storeName);
+        // storeName�� 諛��� ���� ��蹂대�� 泥�由�
         
-        // DB에서 상세 정보를 가져오는 로직 작성
+        // DB���� ���� ��蹂대�� 媛��몄�ㅻ�� 濡�吏� ����
         popStoreVO vo = service.getStoreInfoByName(storeName);
        
          List<goodsVO> gvo = service.getGoodsInfoByName(storeName);
-         
-         for (goodsVO goods : gvo) {
-        	    System.out.println("상품명: " + goods.getGname() + ", 가격: " + goods.getGprice() + "원");
-        	}
+        
         
     
-        // storeName을 JSP에 전달
+        // storeName�� JSP�� ����
         model.addAttribute("storeInfo", vo);
         model.addAttribute("goodsInfo", gvo);
         
-        return "/popUp/popUpDetailsPage"; // 상세 정보를 보여주는 JSP 경로
+        return "/popUp/popUpDetailsPage"; // ���� ��蹂대�� 蹂댁�ъ＜�� JSP 寃쎈�
     }
+ // 캘린더에 쓸 팝업이미지 가져오기
+    @GetMapping(value = "/getPopUpImage", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<pImgVO> getPopUpImage(@RequestParam("psNo") int psNo) {
+
+	    List<pImgVO> popUpStore = service.getPopImg(psNo);
+	    return popUpStore;
+	}
+	
+	@GetMapping("/popUpStoreImages/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveImage(@PathVariable String fileName) throws MalformedURLException {
+    	String[] parts = fileName.split("_", 2);
+	    if (parts.length != 2) {
+	        throw new RuntimeException("파일 이름 형식이 잘못되었습니다. 형식: uuid_fileName");
+	    }
+	    String uuid = parts[0];  
+	    String originalFileName = parts[1];  
+
+	    // 파일이 저장된 경로
+	    String uploadFolder = "\\\\192.168.0.129\\storeGoodsImg\\팝업스토어 사진";
+	    String imagePath = uploadFolder + File.separator + uuid + "_" + originalFileName;
+	    Path path = Paths.get(imagePath);
+
+
+	    // 파일이 존재하지 않으면 예외 처리
+	    if (!Files.exists(path)) {
+	        throw new RuntimeException("파일이 존재하지 않습니다: " + fileName);
+	    }
+
+	    // 파일이 읽을 수 없으면 예외 처리
+	    if (!Files.isReadable(path)) {
+	        throw new RuntimeException("파일을 읽을 수 없습니다: " + fileName);
+	    }
+
+	    // 파일을 리소스로 읽어 반환
+	    Resource file = new FileSystemResource(path.toFile());
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + originalFileName + "\"")
+	        .body(file);
+    }
+	
 }
   

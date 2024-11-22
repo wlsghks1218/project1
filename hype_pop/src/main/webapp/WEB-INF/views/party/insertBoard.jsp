@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>게시판 작성 페이지</title>
 <style>
@@ -16,9 +17,10 @@ body {
 }
 
 .container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 20px;
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 20px;
+   min-height: 600px;
 }
 
 /* 헤더와 메인 배너 */
@@ -198,8 +200,8 @@ footer, nav {
 			</form>
 		</div>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
-	<jsp:include page="layout/goodsNavBar.jsp" />
+	<jsp:include page="layout/partyFooter.jsp" />
+	<jsp:include page="layout/partyNavBar.jsp" />
 </body>
 <script type="text/javascript" src="/resources/partyJs/insertBoard.js"></script>
 <script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>

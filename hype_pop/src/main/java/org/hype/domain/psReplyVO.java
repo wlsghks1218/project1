@@ -21,4 +21,5 @@ public class psReplyVO {
 	 public Date psRegDate; // 댓글 작성일
 	 public Date psUpdateDate; // 댓글 수정일
 	 public String userId;
+	 public String psName;  
 }

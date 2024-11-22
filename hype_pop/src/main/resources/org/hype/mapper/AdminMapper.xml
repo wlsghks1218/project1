@@ -42,21 +42,21 @@
 	<!-- 상품(굿즈) 리스트 출력 -->
 	<select id="getGList" resultType="org.hype.domain.goodsVO">
 	<![CDATA[
-		SELECT gNo, gName, gPrice, sellDate
+		SELECT gno, gname, gprice, sellDate
 	        FROM (
-	            SELECT ROWNUM rn, gNo, gName, gPrice, sellDate
+	            SELECT ROWNUM rn, gno, gname, gprice, sellDate
 	            FROM (
 	                SELECT * FROM goods_info_tbl 
 	                ]]>
 	                WHERE  
 	                <if test="searchGs != null and searchGs != ''">
-		            	gName LIKE '%' || #{searchGs} || '%'
+		            	gname LIKE '%' || #{searchGs} || '%'
 		            </if>
 		            <if test="searchGs == null or searchGs == ''">
 		            	1=1
 		            </if> 
 		        <![CDATA[
-				ORDER BY gNo asc
+				ORDER BY gno asc
 	            ) a
 	            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}	
 	        )
@@ -67,6 +67,36 @@
     <!-- 검색 시 특정 상품(굿즈) 리스트 출력 -->
     <select id="getGTotal" resultType="int">
 	    SELECT COUNT(*) FROM goods_info_tbl 
+	</select>
+	
+	<!-- 전시회 전체 리스트 출력 -->
+	<select id="getExhList" resultType="org.hype.domain.exhVO">
+	<![CDATA[
+		SELECT exhNo, exhName, exhStartDate, exhEndDate, exhWatchAge
+	        FROM (
+	            SELECT ROWNUM rn, exhNo, exhName, exhStartDate, exhEndDate, exhWatchAge
+	            FROM (
+	                SELECT * FROM exh_main_tbl 
+	                ]]>
+	                WHERE  
+	                <if test="searchEs != null and searchEs != ''">
+		            	exhName LIKE '%' || #{searchEs} || '%'
+		            </if>
+		            <if test="searchEs == null or searchEs == ''">
+		            	1=1
+		            </if> 
+		        <![CDATA[
+				ORDER BY exhNo asc
+	            ) a
+	            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}	
+	        )
+	        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+	   ]]>
+	</select>
+	
+	<!-- 검색 시 특정 전시회 리스트 출력 -->
+	<select id="getExhTotal" resultType="int">
+	    SELECT COUNT(*) FROM exh_main_tbl 
 	</select>
 	
 	<!-- 회원 리스트 출력 -->
@@ -107,7 +137,12 @@
 	
     <!-- 특정 상품(굿즈) 조회 -->
 	<select id="getGoodsById" parameterType="int" resultType="org.hype.domain.goodsVO">
-   		SELECT gNo, gName, gPrice, sellDate FROM goods_info_tbl WHERE gNo = #{gNo}
+   		SELECT gno, gname, gprice, sellDate, gexp FROM goods_info_tbl WHERE gno = #{gno}
+	</select>
+	
+	<!-- 특정 전시회 조회 -->
+	<select id="getExhById" parameterType="int" resultType="org.hype.domain.exhVO">
+   		SELECT exhNo, exhName, exhLocation, exhStartDate, exhEndDate, exhWatchAge, exhInfo FROM exh_main_tbl WHERE exhNo = #{exhNo}
 	</select>
 	
     <!-- 특정 회원 조회 -->
@@ -143,9 +178,19 @@
 	    (#{psNo}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character}, #{experience}, #{collaboration}, #{entertainment})
 	</insert>
 	
-	<!-- 팝업스토어 수정/삭제 페이지 -->	
+	<!-- 팝업스토어 수정 페이지 -->	
+	<!-- 이미지 받아오기 -->
+ 	<select id="getPsImg" resultType="org.hype.domain.pImgVO">
+	    SELECT * FROM pop_img_tbl WHERE psNo = #{psNo}
+	</select>
+	
+	<!-- 카테고리 받아오기 -->
+ 	<select id="getPsCat" resultType="org.hype.domain.pCatVO">
+	    SELECT * FROM pop_cat_tbl WHERE psNo = #{psNo}
+	</select>
+	
 	<!-- 수정 -->
-<!-- 	<update id="updatePopStores" parameterType="org.hype.domain.popStoreVO">
+ 	<update id="updatePopStore" parameterType="org.hype.domain.popStoreVO">
 		UPDATE pop_main_tbl
 		SET 
 			PSNAME = #{psName},
@@ -161,13 +206,70 @@
 			PARKINGINFO = #{parkingInfo}
 		WHERE 
 			psNo = #{psNo}
-	</update>	 -->
+	</update>	
 	
+	<update id="updatePsImage" parameterType="org.hype.domain.pImgVO">
+        UPDATE pop_img_tbl 
+        SET 
+        	uuid = #{uuid},
+        	uploadPath = #{uploadPath},
+        	fileName = #{fileName}
+        WHERE 
+			psNo = #{psNo}
+    </update>
+    
+    <update id="updatePsCat" parameterType="org.hype.domain.pCatVO">
+	    UPDATE pop_cat_tbl 
+        SET 
+        	healthBeauty = #{healthBeauty},
+	        game = #{game},
+	        culture = #{culture},
+	        shopping = #{shopping},
+	        supply = #{supply},
+	        kids = #{kids},
+	        design = #{design},
+	        foods = #{foods},
+	        interior = #{interior},
+	        policy = #{policy},
+	        character = #{character},
+	        experience = #{experience},
+	        collaboration = #{collaboration},
+	        entertainment = #{entertainment}
+        WHERE 
+			psNo = #{psNo}
+	</update>
 	
-	<!-- 상품(굿즈) 등록하기 페이지 -->
+	<!-- 팝업스토어 삭제 페이지 -->
+	<delete id="deletePopStore" parameterType="org.hype.domain.popStoreVO">
+		DELETE FROM pop_main_tbl
+		WHERE psNo = #{psNo}
+	</delete>
+	
+	<delete id="deletePsImage" parameterType="org.hype.domain.pImgVO">
+		DELETE FROM pop_img_tbl
+		WHERE psNo = #{psNo}
+	</delete>
+	
+	<delete id="deletePsCat" parameterType="org.hype.domain.pCatVO">
+		DELETE FROM pop_cat_tbl
+		WHERE psNo = #{psNo}
+	</delete>	
+	
+	<delete id="deletePsReply" parameterType="org.hype.domain.psReplyVO">
+		DELETE FROM pop_reply_tbl
+		WHERE psNo = #{psNo}
+	</delete>	
+	
+	<delete id="deletePsLike" parameterType="org.hype.domain.likeVO">
+		DELETE FROM like_list_tbl
+		WHERE psNo = #{psNo}
+	</delete>	
+	
+	<!-- 상품(굿즈) 등록 페이지 -->
 	<select id="getAllPopStores" resultType="org.hype.domain.popStoreVO">
 	    SELECT psNo, psName 
-	    FROM pop_main_tbl order by psname
+	    FROM pop_main_tbl
+	    ORDER BY psName
 	</select>
 	
 	<insert id="insertGoodsStore" parameterType="org.hype.domain.goodsVO">
@@ -198,7 +300,126 @@
 	    (#{gno}, #{healthBeauty}, #{game}, #{culture}, #{shopping}, #{supply}, #{kids}, #{design}, #{foods}, #{interior}, #{policy}, #{character}, #{experience}, #{collaboration}, #{entertainment})
 	</insert>
 	
-	<!-- 전시회 등록하기 페이지 -->	
+	<!-- 상품(굿즈) 수정 페이지 -->
+	<!-- 배너 이미지 받아오기 -->
+    <select id="getGImgBanner" resultType="org.hype.domain.gImgVO">
+        SELECT * FROM goods_banner_img_tbl
+        WHERE gno = #{gno} 
+    </select>
+
+	<!-- 상세 이미지 받아오기 -->
+    <select id="getGImgDetail" resultType="org.hype.domain.gImgVO">
+        SELECT * FROM goods_detail_img_tbl
+        WHERE gno = #{gno} 
+    </select>
+    
+    <!-- 카테고리 받아오기 -->
+    <select id="getGCat" resultType="org.hype.domain.gCatVO">
+	    SELECT *
+	    FROM goods_cat_tbl
+	    WHERE gno = #{gno}
+	</select>
+
+	<!-- 수정 -->
+	<update id="updateGoodsStore" parameterType="org.hype.domain.goodsVO">      	
+	    UPDATE goods_info_tbl
+		SET 
+			gname = #{gname},
+			gprice = #{gprice},
+			sellDate = #{sellDate},
+			gexp = #{gexp}
+		WHERE 
+			gno = #{gno}
+	</update>
+	
+	<update id="updateGImgBanner" parameterType="org.hype.domain.gImgVO">
+	    UPDATE goods_banner_img_tbl 
+        SET 
+        	uuid = #{uuid},
+        	uploadPath = #{uploadPath},
+        	fileName = #{fileName}
+        WHERE 
+			gno = #{gno}
+	</update>
+	
+	<update id="updateGImgDetail" parameterType="org.hype.domain.gImgVO">
+	    UPDATE goods_detail_img_tbl 
+        SET 
+        	uuid = #{uuid},
+        	uploadPath = #{uploadPath},
+        	fileName = #{fileName}
+        WHERE 
+			gno = #{gno}
+	</update>
+	
+	<update id="updateGCat" parameterType="org.hype.domain.gCatVO">
+		UPDATE goods_cat_tbl 
+        SET 
+        	healthBeauty = #{healthBeauty},
+	        game = #{game},
+	        culture = #{culture},
+	        shopping = #{shopping},
+	        supply = #{supply},
+	        kids = #{kids},
+	        design = #{design},
+	        foods = #{foods},
+	        interior = #{interior},
+	        policy = #{policy},
+	        character = #{character},
+	        experience = #{experience},
+	        collaboration = #{collaboration},
+	        entertainment = #{entertainment}
+        WHERE 
+			gno = #{gno}
+	</update>
+	
+	<!-- 상품(굿즈) 삭제 페이지 -->
+	<delete id="deleteGoodsStore" parameterType="org.hype.domain.goodsVO">
+		DELETE FROM goods_info_tbl
+		WHERE gno = #{gno}
+	</delete>
+	
+	<delete id="deleteGImgBanner" parameterType="org.hype.domain.gImgVO">
+		DELETE FROM goods_banner_img_tbl
+		WHERE gno = #{gno}
+	</delete>
+	
+	<delete id="deleteGImgDetail" parameterType="org.hype.domain.gImgVO">
+		DELETE FROM goods_detail_img_tbl
+		WHERE gno = #{gno}
+	</delete>
+	
+	<delete id="deleteGCat" parameterType="org.hype.domain.gCatVO">
+		DELETE FROM goods_cat_tbl
+		WHERE gno = #{gno}
+	</delete>
+	
+	<delete id="deleteGCart" parameterType="org.hype.domain.cartVO">
+		DELETE FROM cart_tbl
+		WHERE gno = #{gno}
+	</delete>
+	
+	<delete id="deleteGPay" parameterType="org.hype.domain.payVO">
+		DELETE FROM pay_list_tbl
+		WHERE gno = #{gno}
+	</delete>
+
+	<delete id="deleteGLike" parameterType="int">
+		DELETE FROM goods_like_list_table
+		WHERE gno = #{gno}
+	</delete>
+
+	<delete id="deleteGReply" parameterType="org.hype.domain.gReplyVO">
+		DELETE FROM goods_reply_table
+		WHERE gno = #{gno}
+	</delete>
+	
+	<select id="getPsnoList" resultType="org.hype.domain.goodsVO">
+        SELECT * FROM goods_info_tbl
+        WHERE psNo = #{psNo} 
+    </select>
+		
+	<!-- 전시회 등록 페이지 -->	
     <insert id="insertExhibition" parameterType="org.hype.domain.exhVO">
 		<selectKey keyProperty="exhNo" resultType="int" order="BEFORE">
          	SELECT exhno_seq.nextVal FROM dual
@@ -221,6 +442,81 @@
 	    INSERT INTO exh_detail_img_tbl  (exhNo, uuid, uploadPath, filename) 
 	    VALUES (#{exhNo}, #{uuid}, #{uploadPath}, #{fileName})
 	</insert>
+	
+	<!-- 전시회 수정 페이지 -->	
+	<!-- 배너 이미지 받아오기 -->
+    <select id="getExhImgBanner" resultType="org.hype.domain.exhImgVO">
+        SELECT * FROM exh_img_tbl
+        WHERE exhNo = #{exhNo} 
+    </select>
+
+	<!-- 상세 이미지 받아오기 -->
+    <select id="getExhImgDetail" resultType="org.hype.domain.exhImgVO">
+        SELECT * FROM exh_detail_img_tbl
+        WHERE exhNo = #{exhNo} 
+    </select>
+    
+	<!-- 수정 -->
+	<update id="updateExhibition" parameterType="org.hype.domain.exhVO">      	
+	    UPDATE exh_main_tbl
+		SET 
+			exhName = #{exhName},
+			exhLocation = #{exhLocation},
+			exhStartDate = #{exhStartDate},
+			exhEndDate = #{exhEndDate},
+			exhWatchTime = #{exhWatchTime},
+			exhWatchAge = #{exhWatchAge},
+			exhPrice = #{exhPrice},
+			exhInfo = #{exhInfo}
+		WHERE 
+			exhNo = #{exhNo}
+	</update>
+	
+	<update id="updateExhBannerImage" parameterType="org.hype.domain.exhImgVO">
+	    UPDATE exh_img_tbl 
+        SET 
+        	uuid = #{uuid},
+        	uploadPath = #{uploadPath},
+        	fileName = #{fileName}
+        WHERE 
+			exhNo = #{exhNo}
+	</update>
+	
+	<update id="updateExhDetailImage" parameterType="org.hype.domain.exhImgVO">
+	    UPDATE exh_detail_img_tbl 
+        SET 
+        	uuid = #{uuid},
+        	uploadPath = #{uploadPath},
+        	fileName = #{fileName}
+        WHERE 
+			exhNo = #{exhNo}
+	</update>
+	
+	<!-- 전시회 삭제 페이지 -->
+	<delete id="deleteExhibition" parameterType="org.hype.domain.exhVO">
+		DELETE FROM exh_main_tbl
+		WHERE exhNo = #{exhNo}
+	</delete>
+	
+	<delete id="deleteExhImgBanner" parameterType="org.hype.domain.exhImgVO">
+		DELETE FROM exh_img_tbl
+		WHERE exhNo = #{exhNo}
+	</delete>
+	
+	<delete id="deleteExhImgDetail" parameterType="org.hype.domain.exhImgVO">
+		DELETE FROM exh_detail_img_tbl
+		WHERE exhNo = #{exhNo}
+	</delete>
+	
+	<delete id="deleteExhLike" parameterType="org.hype.domain.exhLikeVO">
+		DELETE FROM exh_like_list_tbl
+		WHERE exhNo = #{exhNo}
+	</delete>
+	
+	<delete id="deleteExhReply" parameterType="org.hype.domain.exhReplyVO">
+		DELETE FROM exh_reply_tbl
+		WHERE exhNo = #{exhNo}
+	</delete>
 	
 	<!-- 문의 리스트 회원 페이지 -->	
  	<select id="getQnaListByType" resultType="org.hype.domain.qnaVO">
@@ -253,16 +549,7 @@
 	    </where>
 	    ORDER BY qnaRegDate DESC
 	</select>
-	
-	<!-- 상품 상태 조회 페이지 -->
-	<!-- 상품 상태 조회 -->
-	<!-- <select id="getPurchaseList" resultType="org.hype.domain.payVO">
-	    SELECT p.gno, g.gname, p.gamount, 
-	           p.gprice, p.gbuydate, p.gsituation
-	    FROM pay_list_tbl p
-	    LEFT JOIN goods_info_tbl g ON p.gno = g.gno
-	</select>  -->
-    
+
 	<!-- 회원 정보 수정페이지 -->
 	<!-- 회원 정보 업데이트 -->
 	<update id="updateMem" parameterType="org.hype.domain.signInVO">
@@ -273,7 +560,7 @@
 			userNumber = #{userNumber},					
 			enabled = #{enabled},			
 			auth = #{auth},
-        	lastLoginDate = #{lastLoginDate}
+        	lastLoginDate = #{lastLoginDate, jdbcType=DATE}
 		WHERE 
 			userNo = #{userNo}
 	</update>

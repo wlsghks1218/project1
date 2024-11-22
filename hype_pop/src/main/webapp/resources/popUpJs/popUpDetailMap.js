@@ -14,7 +14,6 @@ storeInfo = JSON.parse(storeInfo.replace(/&lt;/g, "<").replace(/&gt;/g, ">").rep
 if (navigator.geolocation) {
     if (localStorage.getItem("userLocation")) {
         const savedLocation = JSON.parse(localStorage.getItem("userLocation"));
-        console.log("저장된 위치 사용:", savedLocation);
         initMap(savedLocation.latitude, savedLocation.longitude);
     } else {
         // 사용자 위치 정보 동의를 받지 않은 경우
@@ -56,13 +55,34 @@ function initMap(latitude, longitude) {
 function createMyLocationButton() {
     const button = document.createElement('button');
     button.textContent = '내 위치 보기';
+    
+    // 버튼 스타일
     button.style.position = 'absolute';
     button.style.top = '10px';
     button.style.right = '10px';
-    button.style.zIndex = 1000; // 버튼이 지도의 위에 표시되도록 설정
-    button.onclick = focusOnCurrentLocation; // 버튼 클릭 시 함수 호출
+    button.style.padding = '10px 20px'; // 버튼 크기 설정
+    button.style.fontSize = '14px'; // 글자 크기
+    button.style.backgroundColor = '#007BFF'; // 버튼 배경색 (파란색)
+    button.style.color = '#ffffff'; // 글자 색
+    button.style.border = 'none'; // 테두리 제거
+    button.style.borderRadius = '5px'; // 둥근 모서리
+    button.style.cursor = 'pointer'; // 커서 모양
+    button.style.zIndex = 10; // 버튼이 지도의 위에 표시되도록 설정
+    
+    // 호버 효과
+    button.style.transition = 'background-color 0.3s';
+    button.onmouseover = () => {
+        button.style.backgroundColor = '#0056b3'; // 호버 시 배경색 변경
+    };
+    button.onmouseout = () => {
+        button.style.backgroundColor = '#007BFF'; // 호버 벗어나면 원래 색으로 복귀
+    };
 
-    document.getElementById('map').appendChild(button); // 버튼을 지도에 추가
+    // 클릭 시 함수 호출
+    button.onclick = focusOnCurrentLocation;
+
+    // 버튼을 지도에 추가
+    document.getElementById('map').appendChild(button);
 }
 
 function focusOnCurrentLocation() {
@@ -76,7 +96,7 @@ function focusOnCurrentLocation() {
         let endLat = currentPosition.lat();
         let endLng = currentPosition.lng();
 
-        let steps = 300; // 이동 단계 수 (값이 클수록 이동이 부드러움)
+        let steps = 150; // 이동 단계 수 (값이 클수록 이동이 부드러움)
         let step = 0;
         
         // 애니메이션을 위한 setInterval 사용

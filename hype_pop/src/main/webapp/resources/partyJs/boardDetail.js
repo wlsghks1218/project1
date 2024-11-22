@@ -337,14 +337,14 @@ document.getElementById("leavePartyBtn").addEventListener('click', () => {
 const psExhName = document.querySelector(".targetName").textContent;
 const category = document.querySelector(".category").textContent;
 document.querySelector(".moveToDetail").addEventListener('click', () => {
-	if(category == "popup"){
-		location.href = `/hypePop/popUpDetails?storeName=${psExhName}`;
-	}else if(category == "exhibition"){
-		fetch(`/party/findExhNo/${psExhName}`)
-		.then(response => response.json())
-		.then(data => 
-		location.href = `/exhibition/exhibitionDetail/exhNo=${data.exhNo}`);
-	}
+   if(category == "popup"){
+      location.href = `/hypePop/popUpDetails?storeName=${psExhName}`;
+   }else if(category == "exhibition"){
+      fetch(`/party/findExhNo/${psExhName}`)
+      .then(response => response.json())
+      .then(data => 
+      location.href = `/exhibition/exhibitionDetail/exhNo=${data.exhNo}`);
+   }
 })
 console.log(psExhName);
 console.log(category);
@@ -357,6 +357,6 @@ function scrollToBottom() {
 }
 
 function getFormattedTime() {     
-	const now = new Date();     
-	return `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`; 
+   const now = new Date();     
+   return `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`; 
 }

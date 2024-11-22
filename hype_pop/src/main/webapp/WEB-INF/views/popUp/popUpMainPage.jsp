@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>HYPE POP</title>
  <link rel="stylesheet" type="text/css" href="/resources/css/popUpMain.css">

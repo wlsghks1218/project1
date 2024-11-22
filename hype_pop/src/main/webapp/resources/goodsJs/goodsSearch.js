@@ -173,6 +173,60 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+           const scrollUpButton = document.getElementById("scrollUp");
+           const scrollDownButton = document.getElementById("scrollDown");
+
+           // 최상단으로 스크롤
+           function scrollToTop() {
+               window.scrollTo({ top: 0, behavior: 'smooth' });
+           }
+
+           // 최하단으로 스크롤
+           function scrollToBottom() {
+               window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+           }
+
+           // 스크롤 상태에 따라 버튼 보이기/숨기기 설정
+           function checkScrollPosition() {
+               if (window.scrollY === 0) {
+                   scrollUpButton.style.display = 'none'; // 위 버튼 숨기기
+                   scrollDownButton.style.display = 'block'; // 아래 버튼 보이기
+               } else if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                   scrollUpButton.style.display = 'block'; // 위 버튼 보이기
+                   scrollDownButton.style.display = 'none'; // 아래 버튼 숨기기
+               } else {
+                   scrollUpButton.style.display = 'block'; // 위 버튼 보이기
+                   scrollDownButton.style.display = 'block'; // 아래 버튼 보이기
+               }
+           }
+
+           // 버튼에 클릭 이벤트 리스너 추가
+           scrollUpButton.addEventListener("click", scrollToTop);
+           scrollDownButton.addEventListener("click", scrollToBottom);
+
+           // 버튼 호버 시 불투명도 변경
+           scrollUpButton.addEventListener("mouseenter", function() {
+               scrollUpButton.style.opacity = 1; // 호버 시 불투명도 1로 설정
+           });
+           scrollUpButton.addEventListener("mouseleave", function() {
+               if (window.scrollY !== 0) {
+                   scrollUpButton.style.opacity = 0.5; // 호버를 떼면 불투명도 0.5로 설정
+               }
+           });
+
+           scrollDownButton.addEventListener("mouseenter", function() {
+               scrollDownButton.style.opacity = 1; // 호버 시 불투명도 1로 설정
+           });
+           scrollDownButton.addEventListener("mouseleave", function() {
+               if (window.innerHeight + window.scrollY < document.body.offsetHeight) {
+                   scrollDownButton.style.opacity = 0.5; // 호버를 떼면 불투명도 0.5로 설정
+               }
+           });
+
+           // 페이지 로드 및 스크롤 시 버튼 상태 업데이트
+           window.addEventListener("scroll", checkScrollPosition);
+           checkScrollPosition(); // 초기 로딩 시 상태 설정
+
         document.querySelectorAll('.searchCategory span').forEach(sortButton => {
             sortButton.addEventListener('click', () => {
                 handleSortButton(sortButton);
@@ -194,18 +248,20 @@ function createGoodsElement(item) {
     const goodsResult = document.createElement('div');
     goodsResult.classList.add('goodsResult');
 
+    const formattedSellDate = displayTime(item.sellDate); // sellDate를 displayTime 함수로 변환
+
     goodsResult.innerHTML = `
         <div class="goodsImg"></div>
         <div class="goodsInfo">
             <input type="hidden" value="${item.gno}">
             <input type="hidden" class="goodsReply" value="${item.replycnt}">
             <input type="hidden" value="${item.attachList[0].uuid}_${item.attachList[0].fileName}" id="fileName">
-            <div class="goodsLike">좋아요: ${item.likeCount}</div>
+            <div class="goodsLike">❤️ ${item.likeCount}</div>
             <div class="goodsName">상품명: ${item.gname}</div>
             <div class="goodsPrice">가격: ${item.gprice} 원</div>
             <div class="goodsExp">설명: ${item.gexp}</div>
-            <div class="goodsSellDate">판매종료일 : ${item.sellDate}</div>
-            <div class="goodsCategory">굿즈 관심사:
+            <div class="goodsSellDate">판매종료일 : ${formattedSellDate}</div>
+            <div class="goodsCategory">
                 <span class="categories">
                     ${item.gcat.healthBeauty ? '건강 & 뷰티' : ''}
                     ${item.gcat.game ? '게임' : ''}
@@ -301,4 +357,11 @@ function setLink() {
             location.href = `/goodsStore/goodsDetails?gno=${gno}`;
         });
     });
+}
+function displayTime(unixTimeStamp) {
+    const myDate = new Date(unixTimeStamp);
+    const y = myDate.getFullYear();
+    const m = String(myDate.getMonth() + 1).padStart(2, '0');
+    const d = String(myDate.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 }

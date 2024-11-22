@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -190,21 +191,24 @@ body {
     object-fit: cover; /* 이미지 비율 유지 및 부모 요소에 꽉 채움 */
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-<script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script>
 </head>
 <body>
     <!-- 오버레이 -->
     <div class="overlay" id="overlay"></div>
-    <div class="popUpHeader">
+      <sec:authorize access="isAuthenticated()">
+      <sec:authentication property="principal" var="pinfo"/>
+         <input type="hidden" id="userNo" value="${pinfo.member.userNo}">
+         <input type="hidden" id="userId" value="${pinfo.member.userId}">
+   </sec:authorize>
+    <div class="popUpHeader"> 
         <button id="mainLogoButton" onclick="showLogos()" class="noOverlay">
             <img src="/resources/images/mainLogo.png" alt="메인 로고" id="mainLogo">
         </button>
         <div id="alarmDiv">
             <img src="/resources/images/alarm.png" alt="알림" id="alarmImage" style="cursor: pointer; max-height: 35px; width: auto;" onclick="handleAlarmClick()">
-            <span id="notificationDot" class="notification-dot"></span> <!-- 빨간 점 -->
+            <span id="notificationDot"  class="notification-dot"></span> <!-- 빨간 점 추가 -->
         </div>
-        <div id="notificationList"></div> <!-- 알림 목록 -->
+        <div id="notificationList"></div> <!-- 알림 목록 추가 -->
     </div>
 
     <!-- 슬라이드 메뉴 -->
@@ -219,6 +223,7 @@ body {
             <img src="/resources/images/exhibition.png" alt="전시관 로고">
         </div>
     </div>
-   	<div id="bannerDiv"><img id="bannerImg" src="../resources/images/partyBanner.jpeg" alt="배너 이미지" /></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script type="text/javascript" src="/resources/partyJs/partyHeader.js"></script> <!-- 새로운 JS 파일 추가 -->
 </body>
 </html>

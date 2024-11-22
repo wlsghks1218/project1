@@ -2,7 +2,11 @@ let currentPage = 1;
 let totalPages = 0; 
 let inquiryList = document.querySelector('.inquiry-list');
 let createInquiryBtn = document.querySelector('.createInquiryBtn');
-const userNo = localStorage.getItem("userNo");
+let userNoElement = document.getElementById("userNo");
+let userNo = userNoElement ? userNoElement.value : null;
+console.log(userNo);
+var isLoggedIn = (userNo !== null && userNo !== undefined && userNo !== '');
+
 if (userNo) {
     console.log("현재 사용자 번호:", userNo);
 } else {
@@ -117,13 +121,14 @@ function switchTab(id) {
             break;
         case 'inquiry':
             if (!userNo) {
-                if (confirm("로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
-                   location.href = "/member/login";  // 로그인 페이지로 이동
+                if (!isLoggedIn) {
+                    showLoginModal(); // 로그인 모달 표시
                 }
             } else {
                 handleReplyStatusChange(); // 로그인된 경우 1:1 문의 로드
             }
             break;
+
     }
 }
 
@@ -224,36 +229,39 @@ function handleReplyStatusChange(pageNum = 1, amount = 5) {
                 (isReplyChecked !== undefined ? `&answered=${isReplyChecked}` : '');
 
     fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            inquiryList.innerHTML = '';
-            totalPages = Math.ceil(data.totalCount / amount);
+    .then(response => response.json())
+    .then(data => {
+        inquiryList.innerHTML = '';
+        totalPages = Math.ceil(data.totalCount / amount);
 
-            if (data.inquiries.length === 0) {
-                inquiryList.innerHTML = '<p>문의 없음</p>';
-            } else {
-                data.inquiries.forEach(inquiry => {
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('inquiry');
+        if (data.inquiries.length === 0) {
+            inquiryList.innerHTML = '<p>문의 없음</p>';
+        } else {
+            data.inquiries.forEach(inquiry => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('inquiry');
 
-                    // 클릭 시 이동하는 이벤트 리스너
-                    listItem.addEventListener('click', function() {
-                        location.href = `/support/inquiryInfo?qnaNo=${inquiry.qnaNo}`;
-                    });
-
-                    const hasAnswer = inquiry.qnaAnswer ? '답변 완료' : '답변 대기 중';
-                    listItem.innerHTML = `
-                        <span class="inquiryType">${inquiry.qnaType}</span>
-                        <span class="inquiryTitle">${inquiry.qnaTitle}</span>
-                        <span class="inquiryRegDate">${new Date(inquiry.qnaRegDate).toLocaleDateString()}</span>
-                        <span class="answerStatus">${hasAnswer}</span>
-                    `;
-                    inquiryList.appendChild(listItem);
+                // 클릭 시 이동하는 이벤트 리스너
+                listItem.addEventListener('click', function() {
+                    location.href = `/support/inquiryInfo?qnaNo=${inquiry.qnaNo}`;
                 });
-            }
-            updateInquiryPagination();
-        })
-        .catch(error => console.error('Fetch error:', error));
+
+                // 답변 상태 설정
+                const hasAnswer = inquiry.qnaAnswer ? '답변 완료' : '답변 대기 중';
+                const answerColor = inquiry.qnaAnswer ? 'green' : 'red'; // 색상 설정
+
+                listItem.innerHTML = `
+                    <span class="inquiryType">${inquiry.qnaType}</span>
+                    <span class="inquiryTitle">${inquiry.qnaTitle}</span>
+                    <span class="inquiryRegDate">${new Date(inquiry.qnaRegDate).toLocaleDateString()}</span>
+                    <span class="answerStatus" style="color: ${answerColor};">${hasAnswer}</span>
+                `;
+                inquiryList.appendChild(listItem);
+            });
+        }
+        updateInquiryPagination();
+    })
+    .catch(error => console.error('Fetch error:', error));
 }
 
 window.onload = function() {
@@ -270,6 +278,34 @@ window.onload = function() {
     // 페이지 로드 시 전체 목록 가져오기
     handleReplyStatusChange(); 
 };
+
+//모달 닫기 버튼 클릭 시
+document.querySelector(".close").onclick = function() {
+    document.getElementById("loginModal").style.display = "none";
+};
+
+//로그인 모달을 표시하는 함수
+function showLoginModal() {
+    var modal = document.getElementById("loginModal");
+    modal.style.display = "block";
+
+    // 로그인 페이지로 이동하는 버튼 클릭 시
+    document.getElementById("goToLogin").onclick = function() {      
+            location.href = "/member/login"; 
+    }
+
+    // 모달 닫기 버튼 클릭 시 모달 숨기기
+    document.querySelector(".close").onclick = function() {
+        modal.style.display = "none";
+    };
+
+    // 모달 외부 클릭 시 모달 숨기기
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+}
 
 
 

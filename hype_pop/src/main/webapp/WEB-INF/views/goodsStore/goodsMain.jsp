@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" href="/resources/images/favicon.ico">
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
@@ -172,11 +173,77 @@ body {
 }
 
 
+.scroll-btn {
+   position: fixed;
+   bottom: 10vh;
+   right: 2vw;
+   display: flex;
+   flex-direction: column; /* 버튼들이 위에서 아래로 정렬되게 설정 */
+   gap: 0.625rem;
+   z-index: 20;
+}
+
+.scroll-btn button {
+   background-color: #00aff0; /* 배경색을 #00aff0로 변경 */
+   color: white;
+   padding: 1rem;
+   border: none;
+   border-radius: 10px; /* 모서리 둥글게 설정 */
+   font-size: 0; /* 텍스트는 보이지 않도록 설정 */
+   cursor: pointer;
+   transition: background-color 0.3s, opacity 0.3s;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 3rem; /* 버튼 크기 */
+   height: 3rem; /* 버튼 크기 */
+   position: relative; /* 삼각형을 위한 relative 위치 지정 */
+   opacity: 0.5; /* 기본적으로 불투명 상태 */
+}
+
+.scroll-btn button:hover {
+   background-color: #0092c4; /* 호버 시 색상 변경 */
+   opacity: 1; /* 호버 시 불투명도 1로 설정 */
+}
+
+
+.scroll-btn button::before {
+   content: "";
+   position: absolute;
+   width: 0;
+   height: 0;
+   border-left: 0.6rem solid transparent; /* 삼각형 크기 조정 */
+   border-right: 0.6rem solid transparent; /* 삼각형 크기 조정 */
+   left: 50%; /* 수평 중앙 정렬 */
+   transform: translateX(-50%); /* 정확한 중앙 정렬 */
+}
+
+#scrollUp::before {
+   border-bottom: 1.2rem solid white; /* 위로 화살표 크기 조정 */
+   top: 50%; /* 버튼 중앙에 삼각형을 배치 */
+   transform: translateY(-50%) translateX(-50%); /* 삼각형을 정확히 중앙에 맞추기 위한 변환 */
+}
+
+#scrollDown::before {
+   border-top: 1.2rem solid white; /* 아래로 화살표 크기 조정 */
+   bottom: 50%; /* 버튼 중앙에 삼각형을 배치 */
+   transform: translateY(50%) translateX(-50%); /* 삼각형을 정확히 중앙에 맞추기 위한 변환 */
+}
+
+.scroll-btn button:hover {
+   background-color: #0092c4; /* 호버 시 색상 변경 */
+}
+
+button:disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+}
+
 
 </style>
 </head>
 <body>
-	<jsp:include page="layout/popUpHeader.jsp" />
+	<jsp:include page="layout/goodsHeader.jsp" />
 	<sec:authorize access="isAuthenticated()">
 		<sec:authentication property="principal" var="pinfo" />
 		<input type="hidden" id="userNo" value="${pinfo.member.userNo}">
@@ -320,7 +387,7 @@ body {
 			<h1>관심사별 인기 목록</h1>
 			<h2>
 				<c:choose>
-					<c:when test="${categoryFour == 'healthbeauty'}">건강 & 뷰티</c:when>
+					<c:when test="${categoryFour == 'healthBeauty'}">건강 & 뷰티</c:when>
 					<c:when test="${categoryFour == 'game'}">게임</c:when>
 					<c:when test="${categoryFour == 'culture'}">문화</c:when>
 					<c:when test="${categoryFour == 'shopping'}">쇼핑</c:when>
@@ -358,7 +425,7 @@ body {
 			</div>
 			<h2>
 				<c:choose>
-					<c:when test="${categoryFive == 'healthbeauty'}">건강 & 뷰티</c:when>
+					<c:when test="${categoryFive == 'healthBeauty'}">건강 & 뷰티</c:when>
 					<c:when test="${categoryFive == 'game'}">게임</c:when>
 					<c:when test="${categoryFive == 'culture'}">문화</c:when>
 					<c:when test="${categoryFive == 'shopping'}">쇼핑</c:when>
@@ -395,7 +462,7 @@ body {
 			</div>
 			<h2>
 				<c:choose>
-					<c:when test="${categorySix == 'healthbeauty'}">건강 & 뷰티</c:when>
+					<c:when test="${categorySix == 'healthBeauty'}">건강 & 뷰티</c:when>
 					<c:when test="${categorySix == 'game'}">게임</c:when>
 					<c:when test="${categorySix == 'culture'}">문화</c:when>
 					<c:when test="${categorySix == 'shopping'}">쇼핑</c:when>
@@ -432,10 +499,14 @@ body {
 			</div>
 	</sec:authorize>
 	</div>
-	<jsp:include page="layout/popUpFooter.jsp" />
+<div class="scroll-btn">
+    <button id="scrollUp" aria-label="위로 이동"></button>
+    <button id="scrollDown" aria-label="아래로 이동"></button>
+</div>
+	
+	
+	<jsp:include page="layout/goodsFooter.jsp" />
 	<jsp:include page="layout/goodsNavBar.jsp" />
 </body>
-<script type="text/javascript" src="/resources/goodsJs/goodsHeader.js"></script>
 <script type="text/javascript" src="/resources/goodsJs/goodsMain.js"></script>
-<script type="text/javascript" src="/resources/goodsJs/goodsNav.js"></script>
 </html>

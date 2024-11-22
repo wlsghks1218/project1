@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // 이전에 저장된 위치가 있으면 사용
         if (localStorage.getItem("userLocation")) {
             const savedLocation = JSON.parse(localStorage.getItem("userLocation"));
-            console.log("저장된 위치 사용:", savedLocation);
+   
 
             // 필요한 작업: 저장된 위치로 지도 설정
             initMap(savedLocation.latitude, savedLocation.longitude);
