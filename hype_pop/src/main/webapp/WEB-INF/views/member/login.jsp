@@ -144,16 +144,16 @@ button:hover {
 
 /* 모달 내용 */
 .modal-content {
-    background-color: white;
-    padding: 20px;
-    width: 400px; /* 가로 크기 */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+	background-color: white;
+	padding: 20px;
+	width: 400px; /* 가로 크기 */
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 /* 모달 닫기 버튼 */
@@ -176,7 +176,6 @@ button:hover {
 .modal-body .form-group {
 	margin-bottom: 15px;
 }
-
 
 /* 모달의 제출 버튼 */
 .modal-footer {
@@ -231,15 +230,15 @@ button:hover {
 	<div class="container">
 		<h1>로그인</h1>
 		<form action="/member/login" method="post">
-		<input type="hidden" id="redirect" name="redirect">  
-			<label for="username">아이디</label> <input type="text" id="userId"
+			<input type="hidden" id="redirect" name="redirect"> <label
+				for="username">아이디</label> <input type="text" id="userId"
 				name="userId" required placeholder="아이디를 입력하세요."> <label
 				for="password">비밀번호</label> <input type="password" id="userPw"
 				name="userPw" required placeholder="비밀번호를 입력하세요.">
-            <div class="checkbox-group">
-                <input type="checkbox" id="rememberMe" name="remember-me">
-                <label for="rememberMe">로그인 상태 유지</label>
-            </div>
+			<div class="checkbox-group">
+				<input type="checkbox" id="rememberMe" name="remember-me"> <label
+					for="rememberMe">로그인 상태 유지</label>
+			</div>
 			<button type="submit" class="btn btn-sec" id="loginBtn">로그인</button>
 
 		</form>
@@ -336,11 +335,12 @@ button:hover {
 						변경하기</button>
 				</div>
 
-
 			</form>
 		</div>
 	</div>
-
+	<div id="snsLogin">
+		<span>google</span>
+	</div>
 
 	<script type="text/javascript" src="/resources/memberJs/login.js"></script>
 	<script src="https://accounts.google.com/gsi/client" async defer></script>
